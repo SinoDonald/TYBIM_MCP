@@ -1,4 +1,4 @@
-param([ValidateSet('2024','2025')][string]$RevitVersion='2025')
+param([ValidateSet('2024','2025','2026')][string]$RevitVersion='2025')
 $ErrorActionPreference='Stop'
 $root=Split-Path $PSScriptRoot -Parent
 $package=Join-Path $root "artifacts/packages/$RevitVersion/Tybim.Mcp"

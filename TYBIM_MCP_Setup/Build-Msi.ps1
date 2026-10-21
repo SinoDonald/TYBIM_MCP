@@ -1,4 +1,4 @@
-param([ValidateSet('2024','2025')][string[]]$RevitVersion=@('2024','2025'),[switch]$SkipBuild)
+param([ValidateSet('2024','2025','2026')][string[]]$RevitVersion=@('2024','2025','2026'),[switch]$SkipBuild)
 $ErrorActionPreference='Stop'
 $root=Split-Path $PSScriptRoot -Parent
 $vswhere='C:/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe'
@@ -22,10 +22,13 @@ try {
   & (Join-Path $PSScriptRoot 'Prepare-Payload.ps1') -RevitVersion $year
   $solution=Join-Path $PSScriptRoot "generated/$year/TYBIM_MCP_$year.sln"
   $log=Join-Path $PSScriptRoot "generated/$year/build.log"
-  & $devenv $solution /Rebuild Release /Out $log
+  & $devenv $solution /Rebuild Release /Out $log > (Join-Path $PSScriptRoot "generated/$year/console.log") 2>&1
   if($LASTEXITCODE -ne 0){throw "MSI build failed: $log"}
   $version=(Get-Content server/package.json -Raw | ConvertFrom-Json).version
   if(!(Test-Path -LiteralPath (Join-Path $PSScriptRoot "Release/TYBIM_MCP_Revit${year}_$version.msi"))){throw "Visual Studio skipped the setup project. Inspect $log"}
+  # Isolate MSI writer COM handles before opening the same package for review.
+  & (Get-Process -Id $PID).Path -NoProfile -File (Join-Path $PSScriptRoot 'Set-MsiRegistration.ps1') -RevitVersion $year
+  if($LASTEXITCODE -ne 0){throw "MSI registration settings failed for $year"}
   & (Join-Path $PSScriptRoot 'Verify-Msi.ps1') -RevitVersion $year
  }
 }finally{Pop-Location}

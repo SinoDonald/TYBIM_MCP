@@ -1,5 +1,25 @@
 # Revit 內嵌 AI 對話面板
 
+## v0.5.2 Claude／API 穩定性與三版 MSI（2026-10-21）
+
+- Claude 與 Gemini 共用 ApiTools 本機功能搜尋，先載入本回合相關工具；既有文件身分驗證、完整參數確認及不明寫入狀態保護不變。Claude 也顯示等待、接收串流、工具後續回應及等待秒數。
+- Claude 模型清單讀完分頁，保留 API 有回傳的 Sonnet／Haiku／Opus 4、5 系列；有 lifecycle 時僅接受 active，排除 preview／beta／experimental。預設依 Sonnet、Haiku、Opus 排序；舊的不可用模型會在重新連線時更正，選單不提供手動填入不相容模型。
+- HTTP 500／502／503／504／529 最多額外重試兩次，採遞增延遲並遵守短 Retry-After。429 僅在供應商明確提供 15 秒內 Retry-After 時重試；額度不足、金鑰失效、權限不足、模型不存在不會盲目重試。重試使用同一份雲端請求與 180 秒期限，不重送 MCP 寫入。
+- 已開始的回應串流若中斷，不會自動重播；Claude 未完整完成的工具 JSON 不派送。服務仍忙碌、金鑰無效或額度不足時，程式可顯示原因，不能保證雲端恢復或補足額度。
+- 三版 0.5.2 MSI 分別使用 Revit 2024、2025、2026 API 編譯；Windows 解除安裝名稱與安裝流程見 [Setup 說明](../TYBIM_MCP_Setup/README.md)。API Key／Codex 個人登入檔不會進入 MSI。
+
+參考：[Claude API 錯誤與重試](https://platform.claude.com/docs/en/api/errors)、[Claude 模型生命週期](https://platform.claude.com/docs/en/api/models/list)。
+
+## v0.5.1 Gemini 修正（Revit 2025，2026-10-21）
+
+- Gemini 模型選單只列出 live models API 有回傳的 `gemini-3.8-flash`、`gemini-3.5-flash-lite`（依建議順序）。排除 TTS、影像、Live、preview 及新專案受限的 2.5 系列；舊設定在重新連線時改為清單中的第一個建議模型。模型列出不代表推論權限或配額保證。
+- 等待區顯示目前階段與本回合經過秒數，包含等待 AI、接收串流、執行工具與參數確認。不顯示或假造模型的內部推理。收到第一段實際回答時清除等待提示。
+- Gemini 改為 `thinkingConfig.thinkingLevel=low`，常用工具及與本回合相關的最多八項工具先載入，其餘由本機 `tybim_search_revit_tools` 按需求發現。工具執行仍走原 gateway、文件檢查及確認；所有 258 個工具仍可搜尋。新對話會重設已載入工具。
+- 建立多樓層優先使用 `revit_upstream_create_level` 的批次 data；先讀目前樓層，標高採 mm，350 cm = 3500 mm。是否建立平面圖需核對確認參數。
+- 每次 AI 生成請求仍為 180 秒上限。逾時會顯示供應商、實際模型及已完成工具結果的注意事項，不自動重送寫入。Codex 的 app-server 與 Gemini 的 REST adapter 是不同流程；這些修正處理已確認的請求過大與進度不明問題，不能保證雲端延遲或免費配額。
+
+Google 參考：[模型](https://ai.google.dev/gemini-api/docs/models)、[低思考強度 REST 設定](https://ai.google.dev/gemini-api/docs/generate-content/thinking)。
+
 此版本在 Revit 的「拓源數位 → MCP → AI助手」提供可停駐於右側的對話面板。
 v0.3.0 已整合上游 26 項功能；新增工具以 `revit_upstream_` 開頭，沿用相同 AI 引擎與登入。新增寫入工具顯示完整參數確認卡片，原 TYBIM 放門保留幾何試放預覽。詳見 [上游功能整合說明](upstream-integration.md)。
 
@@ -28,9 +48,9 @@ cd C:\Prj\Revit\TYBIM_MCP
 安裝程式複製到：
 
 ```text
-%APPDATA%\Autodesk\Revit\Addins\2025\
-├─ TYBIM.Mcp.addin
-└─ Tybim.Mcp\
+%APPDATA%\Autodesk\Revit\Addins\
+├─ 2025\TYBIM.Mcp.addin
+└─ TYBIM_MCP\2025\
    ├─ Tybim.Revit.Addin.dll
    ├─ Tybim.Revit.Commands.dll
    ├─ Tybim.Mcp.Contracts.dll
@@ -46,7 +66,7 @@ cd C:\Prj\Revit\TYBIM_MCP
 
 完整套件位於 `artifacts/packages/2025`。不可只複製單一 DLL，對話面板還需要 runtime 與 Node.js。
 Revit 2025 的 DPAPI 支援由 Windows Desktop .NET 8 runtime 提供，安裝包不另外複製該 framework DLL。
-Installer 會更新既有同名 manifest、保留已安裝的 bridge token，並在旁邊建立 `.addin.backup`。
+Installer 會更新既有同名 manifest、保留已安裝的 bridge token 與 chat.config.json，並在旁邊建立 `.addin.backup`。manifest 的 Assembly 為 `..\TYBIM_MCP\2025\Tybim.Revit.Addin.dll`。
 不修改其他外掛或 Codex 全域設定。若以前另外建立過其他名稱的 TYBIM MCP manifest，請移除重複註冊。
 
 如果不使用安裝腳本，可將整個 `Tybim.Mcp` 資料夾放到上述 Addins 目錄，再將既有 `TYBIM.Mcp.addin` 的 Assembly 改為該資料夾內 DLL 的絕對路徑；AddInId／FullClassName 保持原值。

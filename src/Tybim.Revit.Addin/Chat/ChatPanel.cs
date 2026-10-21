@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using Newtonsoft.Json.Linq;
 
 namespace Tybim.Revit.Addin.Chat
@@ -34,6 +35,10 @@ namespace Tybim.Revit.Addin.Chat
         private ChatPreferences preferences;
         private ChatProcessClient client;
         private TextBox currentAnswer;
+        private bool answerPending;
+        private readonly Stopwatch turnWatch = new Stopwatch();
+        private readonly DispatcherTimer progressTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+        private string progressPhase;
         private string connectedProvider;
         private string connectedModel;
         private string approvalId;
@@ -47,6 +52,7 @@ namespace Tybim.Revit.Addin.Chat
 
         public ChatPanel(string configPath)
         {
+            progressTimer.Tick += (_, __) => { if (progressPhase != null) UpdateAnswerProgress(progressPhase); };
             Background = new SolidColorBrush(Color.FromRgb(246, 248, 251));
             FontFamily = new FontFamily("Microsoft JhengHei UI"); FontSize = 13;
             MinWidth = 300;
@@ -111,6 +117,7 @@ namespace Tybim.Revit.Addin.Chat
                 preferences.Provider = Provider;
                 apiKey.Password = preferences.Key(Provider);
                 model.Items.Clear(); model.Text = preferences.Models.TryGetValue(Provider, out var saved) ? saved : "";
+                model.IsEditable = Provider == "codex";
                 apiKey.IsEnabled = Provider != "codex";
                 codexPath.IsEnabled = Provider == "codex";
                 login.Content = Provider == "codex" ? "登入 Codex" : "取得 API Key";
@@ -154,7 +161,8 @@ namespace Tybim.Revit.Addin.Chat
                 var response = await Configure(wanted);
                 model.Items.Clear();
                 foreach (var entry in response["models"] ?? new JArray()) model.Items.Add(entry.Value<string>("id"));
-                model.Text = wanted;
+                model.Text = response.Value<string>("selectedModel") ?? wanted;
+                SavePreferences();
                 status.Text = response.Value<string>("status") + " 請選擇模型後送出。";
             }
             finally { SetBusy(false); }
@@ -163,7 +171,9 @@ namespace Tybim.Revit.Addin.Chat
         {
             if (Provider == "codex" && !File.Exists(codexPath.Text.Trim())) throw new FileNotFoundException("找不到 codex.exe，請在連線設定指定本機 Codex 執行檔。");
             var response = await client.Request("configure", new { provider = Provider, model = selectedModel, apiKey = Provider == "codex" ? "" : apiKey.Password, codexExecutable = codexPath.Text.Trim() }, 90000);
-            connectedProvider = Provider; connectedModel = selectedModel;
+            connectedProvider = Provider; connectedModel = response.Value<string>("selectedModel") ?? selectedModel;
+            model.Text = connectedModel;
+            SavePreferences();
             return response;
         }
         private async Task Login()
@@ -183,26 +193,43 @@ namespace Tybim.Revit.Addin.Chat
             {
                 SavePreferences(); await EnsureClient();
                 if (connectedProvider != Provider || connectedModel != model.Text.Trim()) await Configure(model.Text.Trim());
-                AddMessage("你", text); input.Clear(); currentAnswer = AddMessage("AI", "");
-                status.Text = "處理中…";
+                AddMessage("你", text); input.Clear(); currentAnswer = AddMessage("AI", "等待 AI 回應…尚未收到文字或工具指令。");
+                answerPending = true;
+                turnWatch.Restart(); progressTimer.Start();
+                UpdateAnswerProgress("等待 AI 回應…尚未收到文字或工具指令。");
                 var result = await client.Request("send", new { text }, 660000);
                 status.Text = result.Value<string>("status") == "cancelled" ? "已停止。" : "本回合完成。";
             }
-            finally { currentAnswer = null; SetBusy(false); }
+            finally
+            {
+                progressTimer.Stop(); turnWatch.Stop(); progressPhase = null;
+                if (answerPending && currentAnswer != null) currentAnswer.Text = "此回合已結束，未收到文字回覆；請查看狀態與工具結果。";
+                currentAnswer = null; answerPending = false; SetBusy(false);
+            }
+        }
+        private void UpdateAnswerProgress(string text)
+        {
+            progressPhase = text;
+            var display = turnWatch.IsRunning ? text + "（本回合 " + (int)turnWatch.Elapsed.TotalSeconds + " 秒）" : text;
+            status.Text = display;
+            if (answerPending && currentAnswer != null) currentAnswer.Text = display;
         }
         private void HandleEvent(JObject message)
         {
             switch (message.Value<string>("event"))
             {
                 case "textDelta":
+                    if (string.IsNullOrEmpty(message.Value<string>("text"))) break;
                     if (currentAnswer == null) currentAnswer = AddMessage("AI", "");
+                    if (answerPending) { currentAnswer.Clear(); answerPending = false; }
+                    UpdateAnswerProgress("正在接收 AI 回覆…");
                     currentAnswer.AppendText(message.Value<string>("text")); scroll.ScrollToEnd(); break;
-                case "status": status.Text = message.Value<string>("text"); break;
+                case "status": status.Text = message.Value<string>("text"); UpdateAnswerProgress(status.Text); break;
                 case "loginUrl":
                     loginUrl = message.Value<string>("url");
                     status.Text = "請在瀏覽器完成 Codex 登入，再按連線取得模型。";
                     AddLink("開啟 Codex 登入頁", loginUrl); OpenUrl(loginUrl); break;
-                case "toolStarted": status.Text = "工具執行中：" + message.Value<string>("name"); break;
+                case "toolStarted": status.Text = "工具執行中：" + message.Value<string>("name"); UpdateAnswerProgress(status.Text); break;
                 case "toolCompleted": AddToolResult(message); break;
                 case "approval": ShowApproval(message); break;
                 case "approvalClosed": if (message.Value<string>("id") == approvalId) { approval.Visibility = Visibility.Collapsed; approvalId = null; } break;
@@ -261,6 +288,7 @@ namespace Tybim.Revit.Addin.Chat
             decline.Click += async (_, __) => await Run(async () => { approval.Visibility = Visibility.Collapsed; await client.Request("approve", new { id, accepted = false }); });
             actions.Children.Add(accept); actions.Children.Add(decline); approval.Children.Add(actions); approval.Visibility = Visibility.Visible;
             status.Text = upstream ? "等待你確認操作參數。" : "等待你確認放置預覽。";
+            UpdateAnswerProgress(status.Text);
         }
         private TextBox AddMessage(string role, string text)
         {
@@ -293,6 +321,6 @@ namespace Tybim.Revit.Addin.Chat
             logout.IsEnabled = !value && launch != null;
             stop.IsEnabled = value;
         }
-        public void Dispose() { if (disposed) return; disposed = true; client?.Dispose(); }
+        public void Dispose() { if (disposed) return; disposed = true; progressTimer.Stop(); client?.Dispose(); }
     }
 }

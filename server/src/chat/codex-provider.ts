@@ -51,7 +51,7 @@ export class CodexProvider implements ChatProvider {
       }
     };
     this.rpc.onExit = error => this.finish?.(error);
-    await this.rpc.request("initialize", { clientInfo: { name: "tybim_revit", title: "TYBIM Revit AI", version: "0.5.0" }, capabilities: { experimentalApi: true } });
+    await this.rpc.request("initialize", { clientInfo: { name: "tybim_revit", title: "TYBIM Revit AI", version: "0.5.2" }, capabilities: { experimentalApi: true } });
     this.rpc.notify("initialized");
   }
   async status(): Promise<string> {

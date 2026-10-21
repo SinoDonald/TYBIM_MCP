@@ -27,6 +27,8 @@ $existingBridge = Join-Path $destination 'bridge.config.json'
 $savedBridge = if (Test-Path -LiteralPath $existingBridge) { Get-Content -LiteralPath $existingBridge -Raw } else { $null }
 $legacyBridge = Join-Path $addinDirectory 'Tybim.Mcp/bridge.config.json'
 if (!$savedBridge -and (Test-Path -LiteralPath $legacyBridge)) { $savedBridge = Get-Content -LiteralPath $legacyBridge -Raw }
+$existingChat = Join-Path $destination 'chat.config.json'
+$savedChat = if (Test-Path -LiteralPath $existingChat) { Get-Content -LiteralPath $existingChat -Raw } else { $null }
 # The child runtime never stores AI keys or user conversations in this installation folder.
 $generatedRuntime = [IO.Path]::GetFullPath((Join-Path $destination 'runtime/build'))
 $expectedRuntime = [IO.Path]::GetFullPath((Join-Path (Split-Path $addinDirectory -Parent) "TYBIM_MCP/$RevitVersion/runtime/build"))
@@ -37,6 +39,7 @@ if (Test-Path -LiteralPath $generatedRuntime) {
 }
 Get-ChildItem -LiteralPath $source -Force | Copy-Item -Destination $destination -Recurse -Force
 if ($savedBridge) { [IO.File]::WriteAllText($existingBridge, $savedBridge, [Text.UTF8Encoding]::new($false)) }
+if ($savedChat) { [IO.File]::WriteAllText($existingChat, $savedChat, [Text.UTF8Encoding]::new($false)) }
 foreach ($file in Get-ChildItem -LiteralPath $source -File -Filter '*.dll') {
     if ((Get-FileHash -LiteralPath $file.FullName).Hash -ne (Get-FileHash -LiteralPath (Join-Path $destination $file.Name)).Hash) { throw "Installed DLL verification failed: $($file.Name)" }
 }
@@ -44,7 +47,7 @@ $manifest = @"
 <?xml version="1.0" encoding="utf-8"?>
 <RevitAddIns><AddIn Type="Application">
 <Name>TYBIM MCP</Name>
-<Assembly>$([Security.SecurityElement]::Escape($dll))</Assembly>
+<Assembly>..\TYBIM_MCP\$RevitVersion\Tybim.Revit.Addin.dll</Assembly>
 <AddInId>A405238F-64C6-4FE2-A3C8-B698E159A6C1</AddInId>
 <FullClassName>Tybim.Revit.Addin.Application</FullClassName>
 <VendorId>TYBM</VendorId><VendorDescription>TYBIM Revit AI Chat</VendorDescription>

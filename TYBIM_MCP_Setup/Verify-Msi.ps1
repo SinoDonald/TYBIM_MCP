@@ -1,4 +1,4 @@
-param([ValidateSet('2024','2025')][string[]]$RevitVersion=@('2024','2025'))
+param([ValidateSet('2024','2025','2026')][string[]]$RevitVersion=@('2024','2025','2026'))
 $ErrorActionPreference='Stop'
 $root=Split-Path $PSScriptRoot -Parent
 $version=(Get-Content (Join-Path $root 'server/package.json') -Raw | ConvertFrom-Json).version
@@ -17,12 +17,20 @@ foreach($year in $RevitVersion){
  $properties=@{};foreach($r in (Rows 'SELECT `Property`,`Value` FROM `Property`' @('Name','Value'))){$properties[$r.Name]=$r.Value}
  if($properties.ProductVersion -ne $version){throw 'Wrong product version'}
  if($properties.ALLUSERS -eq '1'){throw 'MSI must install for the current user'}
+ if($properties.ProductName -ne "TYBIM_MCP for Revit $year"){throw 'Incorrect Windows Apps display name'}
+ if($properties.ARPSYSTEMCOMPONENT -or $properties.ARPNOREMOVE){throw 'MSI hides registration or disables uninstall'}
+ if($properties.ARPNOMODIFY -ne '1' -or $properties.MSIINSTALLPERUSER -ne '1'){throw 'MSI uninstall/per-user settings are missing'}
+ $sequence=@(Rows 'SELECT `Action`,`Condition`,`Sequence` FROM `InstallExecuteSequence`' @('Action','Condition','Sequence'))
+ foreach($requiredAction in @('RegisterProduct','PublishProduct','PublishFeatures')){
+  if(!($sequence | Where-Object {$_.Action -eq $requiredAction -and [int]$_.Sequence -gt 0 -and !$_.Condition})){throw "MSI registration action missing or conditional: $requiredAction"}
+ }
  $actions=@(Rows 'SELECT `Source`,`Target` FROM `CustomAction`' @('Source','Target'))
  $payloadRoot="[AppDataFolder]Autodesk\Revit\Addins\TYBIM_MCP"
  $registrationRoot="[AppDataFolder]Autodesk\Revit\Addins\$year"
  if(!($actions | Where-Object {$_.Source -eq 'TARGETDIR' -and $_.Target -eq $payloadRoot})){throw 'Incorrect payload root'}
  if(!($actions | Where-Object {$_.Source -eq 'TYBIMREGISTERDIR' -and $_.Target -eq $registrationRoot})){throw 'Incorrect registration root'}
  $directories=@{};foreach($r in (Rows 'SELECT `Directory`,`Directory_Parent`,`DefaultDir` FROM `Directory`' @('Id','Parent','Name'))){$directories[$r.Id]=$r}
+ foreach($requiredRoot in @('TARGETDIR','TYBIMREGISTERDIR')){if(!$directories.ContainsKey($requiredRoot)){throw "Required MSI directory is missing: $requiredRoot"}}
  $components=@{};foreach($r in (Rows 'SELECT `Component`,`Directory_` FROM `Component`' @('Id','Directory'))){$components[$r.Id]=$r.Directory}
  function RelativeDirectory([string]$id){
   $parts=@();$seen=@{}
@@ -56,6 +64,6 @@ foreach($year in $RevitVersion){
  if($manifest.RevitAddIns.AddIn.Assembly -ne "..\TYBIM_MCP\$year\Tybim.Revit.Addin.dll"){throw 'Incorrect relative Assembly path'}
  if($properties.UpgradeCode -eq $lastUpgrade){throw 'Revit versions must have different upgrade identities'}
  $lastUpgrade=$properties.UpgradeCode
- [pscustomobject]@{RevitVersion=$year;Msi=$msi;FileCount=$files.Count;Version=$properties.ProductVersion;PerUser=$true;EmbeddedCabinet=$true;PathsVerified=$true;NoSharedToken=$true} | ConvertTo-Json
+ [pscustomobject]@{RevitVersion=$year;Msi=$msi;FileCount=$files.Count;Version=$properties.ProductVersion;DisplayName=$properties.ProductName;UninstallEnabled=$true;PerUser=$true;EmbeddedCabinet=$true;PathsVerified=$true;NoSharedToken=$true} | ConvertTo-Json
 }
 

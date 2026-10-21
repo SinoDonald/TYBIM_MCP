@@ -1,5 +1,25 @@
 # 驗證方式
 
+## Claude／API 錯誤處理與三版 MSI v0.5.2（2026-10-21）
+
+- Revit 2024、2025、2026 分版 Release 編譯全部成功，各保留既有 5 項外來程式未使用變數／事件警告。
+- Node 56 項測試、WPF 面板 19 項檢查及 StudyCatalog 初始化 4 項檢查通過。包括 Claude 模型生命週期／分頁、舊模型更正、共用按需工具載入、Claude/Gemini 經 MCP 與確認 gateway 的五層批次建立模擬。
+- 驗證暫時性 HTTP 過載最多額外兩次重試、沿用請求與期限、遵守短 Retry-After、金鑰／權限／額度錯誤不盲目重試，以及取消等待、串流中斷不重播工具。
+- 三版 MSI：2024 為 3761 個檔案；2025／2026 各 3754。獨立 ProductCode／UpgradeCode、每使用者安裝、內嵌 CAB、正確年份 .addin、可移除註冊屬性均納入核對；各 payload 的內建 Node 成功發現 258 個 MCP 工具。
+- 隔離的 2026 MSI 副本實際安裝測試發現 VSI 漏出 TYBIMREGISTERDIR 的 Directory 記錄（2727）；後處理補齊，驗證程式新增根目錄存在性檢查。另以全新產品／元件識別及 artifacts/qa 根目錄重新測試，Windows 產品顯示名稱、版本、解除安裝命令，以及移除後的檔案／註冊清理均通過。
+- 成功隔離測試紀錄：`artifacts/qa/msi-uninstall-558fd0531d0349e0b209e69d519f00aa/result.json`。沒有取代或解除安裝現有正式外掛，沒有讀取或使用真實 Claude／Gemini 金鑰，也沒有呼叫實際 Revit API。
+- 正式顯示名稱為 `TYBIM_MCP for Revit 2024/2025/2026`。舊 0.5.0 本機存在另一筆 `TYBIM MCP Revit 2025` 註冊（不含底線），跨安裝範圍升級前建議先移除舊版。
+
+## Gemini 連線與等待提示 v0.5.1（Revit 2025，2026-10-21）
+
+- Revit 2025 Release 編譯成功：0 錯誤、5 項既有外來程式未使用變數／事件警告。
+- Node 48 項測試、WPF 面板 18 項檢查及 StudyCatalog 初始化 4 項檢查通過。
+- 使用真正的 MCP Client／Server 與參數 schema，模擬 Gemini 串流走完「讀取專案 → 讀取樓層 → 確認五層批次參數 → native bridge 派送 → 回覆」。測試沒有呼叫 Google 推論或實際 Revit API。
+- 全部 258 項工具均可透過本機搜尋載入；樓層案例的工具 inputSchema JSON 從 228221 bytes 降至 11188 bytes，約減少 95.1%，非整個 HTTP 請求或實際 token 數。
+- 已安裝至 `%APPDATA%\Autodesk\Revit\Addins\TYBIM_MCP\2025`。DLL 為 0.5.1.0，核對 52 個 runtime/build 檔案雜湊與來源一致；2025 的 .addin 相對路徑可解析至正確 DLL。
+- 已安裝套件用本身 Node 啟動 MCP 工具清單檢查，發現 258 項（27 upstream、220 study、11 原有工具）。未開啟 Revit、未進行雲端生成或修改模型；實際 Gemini 建立樓層仍需重開 Revit 驗收。
+- 安裝保留既有 bridge.config.json、chat.config.json；未清除或搬移登入及 API Key 資料。本輪沒有重建或替換先前的 0.5.0 MSI。
+
 ## Setup Project／MSI v0.5.0（2026-10-21）
 
 - Revit 2024／2025 外掛分版編譯成功，保留 5 項外來未使用變數／事件警告；Node 41 項測試、C# 命令表初始化 4 項及 WPF 13 項檢查通過。WPF 新增驗證相對 Node 路徑解析。

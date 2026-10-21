@@ -2,7 +2,7 @@ import { mkdir } from "node:fs/promises";
 import { ApiProvider } from "./api-providers.js";
 import { CodexProvider } from "./codex-provider.js";
 import { McpGateway, type Approve } from "./gateway.js";
-import type { ChatProvider, EventSink, ProviderSettings } from "./types.js";
+import type { ChatProvider, EventSink, ModelOption, ProviderSettings } from "./types.js";
 
 export class ChatRuntime {
   private gateway: McpGateway;
@@ -36,9 +36,14 @@ export class ChatRuntime {
       await provider.start();
     } else this.provider = new ApiProvider(settings, this.gateway, this.emit);
     const status = await this.provider.status();
-    let models: unknown[] = [];
+    let models: ModelOption[] = [];
     if ((this.provider instanceof CodexProvider && this.provider.authenticated) || (settings.provider !== "codex" && settings.apiKey)) models = await this.provider.models();
-    return { status, models };
+    if (settings.provider !== "codex" && settings.apiKey) {
+      if (!models.length) throw new Error("此 API Key 的清單未提供建議的文字／工具模型；請確認專案權限。取得清單不代表生成配額足夠。");
+      const requested = settings.model?.replace(/^models\//, "");
+      settings.model = models.some(model => model.id === requested) ? requested : models[0].id;
+    }
+    return { status, models, selectedModel: settings.model };
   }
   async handle(method: string, params: any = {}): Promise<unknown> {
     if (method === "configure") return this.configure(params);

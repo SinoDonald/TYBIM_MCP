@@ -1,15 +1,26 @@
-# TYBIM MCP MSI（0.5.0）
+# TYBIM MCP MSI（0.5.2）
 
-本次正式製作範圍是 **Revit 2024、2025**。2026／2027 僅保留後續開發設定與參考檔，沒有發布 MSI，不能把 2025 DLL 複製過去當作支援。
+本次正式製作範圍是 **Revit 2024、2025、2026**，各自使用對應 Revit API 編譯。2027 不在本次發布範圍，不能把其他年份 DLL 複製過去當作支援。
 
 ## 安裝與路徑
 
 安裝檔在 Release：
 
-- TYBIM_MCP_Revit2024_0.5.0.msi
-- TYBIM_MCP_Revit2025_0.5.0.msi
+- TYBIM_MCP_Revit2024_0.5.2.msi
+- TYBIM_MCP_Revit2025_0.5.2.msi
+- TYBIM_MCP_Revit2026_0.5.2.msi
 
-兩版是獨立的 x64、目前使用者安裝包，具有不同 ProductCode／UpgradeCode，可以並存。升版只取代相同 Revit 年份的 MSI。請先儲存模型並關閉 Revit，再以將實際使用 Revit 的 Windows 帳號執行對應 MSI；不是部署給另一個帳號的全機安裝。
+三版是獨立的 x64、目前使用者安裝包，具有不同 ProductCode／UpgradeCode，可以並存。同一安裝範圍的升版只取代相同 Revit 年份的 MSI。請先儲存模型並關閉 Revit，再以將實際使用 Revit 的 Windows 帳號執行對應 MSI；不是部署給另一個帳號的全機安裝。
+
+## Windows 已安裝的應用程式／解除安裝
+
+安裝後搜尋 `TYBIM_MCP`，顯示名稱為 `TYBIM_MCP for Revit 2024`、`TYBIM_MCP for Revit 2025`、`TYBIM_MCP for Revit 2026`，發行者為「拓源數位」，版本為 0.5.2。可在 Windows「設定 → 應用程式 → 已安裝的應用程式」或控制台「程式和功能」選擇解除安裝。
+
+使用 Windows Installer 標準 RegisterProduct／PublishProduct 註冊，不手動建立另一筆重複的解除安裝資料。建置後確認未設定 ARPSYSTEMCOMPONENT／ARPNOREMOVE，設定 ARPNOMODIFY=1 讓系統提供直接移除入口。套件是目前使用者安裝，請用實際使用 Revit 的帳號一般執行，不要切換成另一個管理員帳號。
+
+本機舊 0.5.0 版已有 Windows Installer 註冊，名稱是 `TYBIM MCP Revit 2025`（沒有底線），因此請用 `TYBIM` 搜尋。若舊版原本以全機方式安裝，升級前請先關閉 Revit、移除舊版，再安裝新版，避免跨安裝範圍留下兩筆。也可重新開啟原 MSI 的維護畫面選擇移除。單純執行開發用 Install-RevitAddin.ps1 只複製外掛，不會另外註冊成 Windows 應用程式。
+
+解除安裝不會清除 `%LOCALAPPDATA%\TYBIM\McpChat\年份` 的個人設定與登入資料，也不會刪除其他 Revit 年份或 TYBIM 外掛。若要清除金鑰或登出，請先在 AI 助手操作「登出／清除金鑰」。
 
 Application Folder 的 DefaultLocation 已改成：
 
@@ -65,7 +76,7 @@ MSI 內含 Node.js 24.19.0 與其授權告示，不依賴使用者另裝 Node �
 - bridge.config.json **不放入 MSI**。Revit 首次啟動會建立該使用者的隨機權杖；若找到原 `Addins\<年份>\Tybim.Mcp\bridge.config.json`，會沿用既有連線設定。
 - 舊手動部署目錄可能仍存在；只有 `Addins\<年份>\TYBIM.Mcp.addin` 指向的新目錄會載入。確認新版本正常後再自行處理舊目錄，不會在安裝時刪除未由 MSI 管理的檔案。
 - 外部 MCP 用戶端改指向新目錄的 `runtime/build/index.js` 與 `bridge.config.json`。內嵌 AI助手會使用新路徑，不必手改。
-- 2024 的主外掛使用 .NET Framework 4.8／Revit 2024 API；2025 使用 .NET 8／Revit 2025 API。通用相依庫可能相同，Revit 外掛 DLL 仍分版建置。
+- 2024 的主外掛使用 .NET Framework 4.8／Revit 2024 API；2025、2026 使用 .NET 8／各自年份的 Revit API。通用相依庫可能相同，Revit 外掛 DLL 仍分版建置。
 
 本包仍是 INTERNAL_PRIVATE 內部使用產物，包含你的自有功能編譯結果；不是可公開發布全部來源的上游專案。
 
@@ -75,7 +86,7 @@ MSI 內含 Node.js 24.19.0 與其授權告示，不依賴使用者另裝 Node �
 2. 從專案根目錄執行：
 
 ```powershell
-./TYBIM_MCP_Setup/Build-Msi.ps1 -RevitVersion 2024,2025
+./TYBIM_MCP_Setup/Build-Msi.ps1 -RevitVersion 2024,2025,2026
 ```
 
 腳本會編譯各版本、產生完整 runtime 套件、準備 payload、產生 .vdproj／隔離的 setup solution，再呼叫 devenv.com 建立 MSI。Microsoft 的 DisableOutOfProcBuild 工具會在 VS 目錄執行，設定目前使用者的 `EnableOutOfProcBuild=0`，避免命令列建置的 8000000A 錯誤。
@@ -83,18 +94,21 @@ MSI 內含 Node.js 24.19.0 與其授權告示，不依賴使用者另裝 Node �
 若 DLL 與 artifacts/packages 套件已是最新，可用 `-SkipBuild`；仍會重新準備 payload、建置及核對 MSI。
 
 - 主方案中的 `TYBIM_MCP_Setup.vdproj` 預設是 **2025**，File System 中可查看全部明確檔案連結。Visual Studio 若顯示檔案已變更，請重新載入。
-- 2024 使用 `generated/2024/TYBIM_MCP_2024.sln`；2025 使用 `generated/2025/TYBIM_MCP_2025.sln`。這些隔離方案只有 Setup Project，避免 MSI 建置時將各年份 DLL 重新編成同一個版本。
+- 2024／2025／2026 分別使用 `generated/年份/TYBIM_MCP_年份.sln`。這些隔離方案只有 Setup Project，避免 MSI 建置時將各年份 DLL 重新編成同一個版本。
 - File SourcePath 連至 `payloads/<年份>`。Prepare-Payload.ps1 從完整套件複製相依檔，不使用容易取錯版本的「Primary output」自動推斷。
 - 原 Setup 範本保存在 Setup.Template.vdproj。UI 共用設定改範本；目錄、檔案連結與版本識別改 Generate-Setup.mjs。生成的 .vdproj 下次執行會重建，不直接編輯生成內容作為永久設定。
 - 修改程式碼後先重建／打包，再產生 payload；不要只重建舊的 .vdproj，就以為已包含最新 DLL。
+- 建議一律使用 Build-Msi.ps1 完成發布。若直接在 Visual Studio 重建 Setup Project，之後仍必須在獨立 PowerShell 程序執行 `Set-MsiRegistration.ps1 -RevitVersion 年份`，再執行 Verify-Msi.ps1。此後處理設定解除安裝屬性，並補齊 VSI 在新 2026 專案中遺漏的 TYBIMREGISTERDIR 目錄記錄；只看 MSI 建置成功或檔案表不足以判定可安裝。
 - MSI 未簽署；如需組織憑證簽署，應在完成建置與驗證後另外處理。
 
 ## 已執行驗證與實機驗收
 
-Verify-Msi.ps1 用 Windows Installer API **唯讀**開啟 MSI，核對檔案表／目錄表、兩個根目錄、依賴檔、版本、獨立升級識別及內嵌 CAB；拒絕 RevitAPI*.dll、共用 bridge.config.json 或 auth.json。從 payload 內建 Node 啟動真正 MCP Client／Server，兩版均列出 258 個工具，不呼叫 AI 推論或修改模型。
+Verify-Msi.ps1 用 Windows Installer API **唯讀**開啟 MSI，核對檔案表／目錄表、兩個根目錄、依賴檔、版本、獨立升級識別、內嵌 CAB、Windows 註冊動作及移除屬性；拒絕 RevitAPI*.dll、共用 bridge.config.json 或 auth.json。從 payload 內建 Node 啟動真正 MCP Client／Server，三版均須列出 258 個工具，不呼叫 AI 推論或修改模型。
 
 ```powershell
-./TYBIM_MCP_Setup/Verify-Msi.ps1 -RevitVersion 2024,2025
+./TYBIM_MCP_Setup/Verify-Msi.ps1 -RevitVersion 2024,2025,2026
 ```
 
-這些驗證沒有在你的目前使用者帳號執行 MSI 安裝／解除安裝，也沒有取代實際 Revit 驗收。建議先安裝所用版本並重開 Revit，確認按鈕、AI 登入與查詢；「相機管理」按鈕現在依 IsShown 切換 Hide／Show，再次點擊即可收合。沿用先前的啟動隱藏邏輯。
+另執行 Test-MsiUninstall.ps1 -RevitVersion 2026：它複製 MSI，換成全新的 ProductCode／UpgradeCode／PackageCode／Component GUID，移除升級關聯並把兩個安裝目錄指向 artifacts/qa，實際安裝及解除安裝。已確認 Windows Installer 顯示名稱、版本、可用解除安裝命令及移除後檔案與註冊記錄消失。正式套件與目前 Revit 外掛未被安裝或移除。
+
+尚未執行三版 Revit 實機建模或真實 Claude 金鑰推論驗收。請安裝所用版本並重開 Revit，確認按鈕、AI 登入與查詢；「相機管理」按鈕依 IsShown 切換 Hide／Show，再次點擊即可收合。沿用先前的啟動隱藏邏輯。

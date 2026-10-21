@@ -99,3 +99,29 @@ test('cancellation before tool dispatch prevents a write', async () => {
   await assert.rejects(provider.send('test', controller.signal));
   assert.equal(fetched, false);
 });
+
+test('Gemini shows request and stream progress before text or tool completion', async () => {
+  const emitted = [];
+  const provider = new ApiProvider({ provider: 'gemini', apiKey: 'test-key', model: 'gemini-3-test' }, {
+    tools: [tool], call: async () => ({ content: [{ type: 'text', text: 'ok' }] })
+  }, event => emitted.push(event), async () => {
+    assert.match(emitted.at(-1).text, /等待 Gemini.*gemini-3-test/);
+    return stream([
+      { candidates: [{ content: { parts: [{ thought: true, text: 'internal reasoning' }] } }] },
+      { candidates: [{ content: { parts: [{ text: '完成' }] }, finishReason: 'STOP' }] }
+    ]);
+  });
+  await provider.send('test', new AbortController().signal);
+  assert.ok(emitted.some(event => event.event === 'status' && /已收到 Gemini 回應串流/.test(event.text)));
+  assert.deepEqual(emitted.filter(event => event.event === 'textDelta').map(event => event.text), ['完成']);
+});
+
+test('Gemini timeout identifies model without retrying or invoking tools', async () => {
+  let requests = 0, calls = 0;
+  const provider = new ApiProvider({ provider: 'gemini', apiKey: 'test-key', model: 'gemini-3-test' }, {
+    tools: [tool], call: async () => { calls++; }
+  }, () => {}, async () => { requests++; throw new DOMException('timeout', 'TimeoutError'); });
+  await assert.rejects(provider.send('test', new AbortController().signal), /gemini-3-test.*180 秒/);
+  assert.equal(requests, 1);
+  assert.equal(calls, 0);
+});

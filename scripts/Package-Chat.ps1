@@ -42,7 +42,7 @@ if (!(Test-Path -LiteralPath $bridge)) {
         $bytes = New-Object byte[] 32
         $random = [Security.Cryptography.RandomNumberGenerator]::Create()
         try { $random.GetBytes($bytes) } finally { $random.Dispose() }
-        @{ port = if ($RevitVersion -eq '2024') { 17824 } else { 17825 }; token = [Convert]::ToBase64String($bytes) } | ConvertTo-Json | Set-Content -LiteralPath $bridge -Encoding utf8
+        @{ port = 15800 + [int]$RevitVersion; token = [Convert]::ToBase64String($bytes) } | ConvertTo-Json | Set-Content -LiteralPath $bridge -Encoding utf8
     }
 }
 $codex = Get-Command codex.exe -ErrorAction SilentlyContinue
@@ -57,7 +57,7 @@ Copy-Item -LiteralPath (Join-Path $root 'docs/embedded-chat.md') -Destination (J
 Copy-Item -LiteralPath (Join-Path $root 'docs/upstream-integration.md') -Destination (Join-Path $bundle 'upstream-integration.md') -Force
 foreach ($name in 'study-integration.md','source-ownership.md') { Copy-Item -LiteralPath (Join-Path $root "docs/$name") -Destination $bundle -Force }
 Copy-Item -LiteralPath (Join-Path $root 'OWNERSHIP.json') -Destination $bundle -Force
-@{ revitVersion = $RevitVersion; product = 'TYBIM Revit AI Chat'; version = '0.5.0'; distribution = 'INTERNAL_PRIVATE'; sourceOwnership = 'See OWNERSHIP.json; this bundle is not a public-source release' } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $bundle 'package.json') -Encoding utf8
+@{ revitVersion = $RevitVersion; product = 'TYBIM Revit AI Chat'; version = (Get-Content -LiteralPath (Join-Path $server 'package.json') -Raw | ConvertFrom-Json).version; distribution = 'INTERNAL_PRIVATE'; sourceOwnership = 'See OWNERSHIP.json; this bundle is not a public-source release' } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $bundle 'package.json') -Encoding utf8
 Write-Host "Chat package ready: $bundle"
 Write-Host "After closing Revit, run: & '$bundle/Install-RevitAddin.ps1' -RevitVersion $RevitVersion"
 

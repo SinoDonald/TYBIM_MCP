@@ -135,6 +135,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_9206F8D96136EBF3762CA204312BFDBC"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_510D8E1AD8679A658D6D3A2CBA5B3693"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -147,6 +153,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_DF867A0EF716CCF8E4D0451CE962F203"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_8B6DDB534B10277D30BFFAC83B385B7D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -154,6 +166,12 @@
         "Entry"
         {
         "MsmKey" = "8:_E84C52C901DCF986BDFEAEC3CB970C27"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_FF1E729503BD441DFD0DFD85065C500D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -22527,7 +22545,7 @@
         "DisplayName" = "8:Debug"
         "IsDebugOnly" = "11:TRUE"
         "IsReleaseOnly" = "11:FALSE"
-        "OutputFilename" = "8:Release\\TYBIM_MCP_Revit2025_0.5.0.msi"
+        "OutputFilename" = "8:Release\\TYBIM_MCP_Revit2025_0.5.2.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -22543,7 +22561,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:Release\\TYBIM_MCP_Revit2025_0.5.0.msi"
+        "OutputFilename" = "8:Release\\TYBIM_MCP_Revit2025_0.5.2.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -22563,7 +22581,7 @@
         "DefaultFeature"
         {
         "Name" = "8:DefaultFeature"
-        "Title" = "8:TYBIM MCP Revit 2025"
+        "Title" = "8:TYBIM_MCP for Revit 2025"
         "Description" = "8:"
         }
         "ExternalPersistence"
@@ -22974,6 +22992,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9206F8D96136EBF3762CA204312BFDBC"
+            {
+            "SourcePath" = "8:payloads\\2025\\runtime\\build\\chat\\api-tools.js"
+            "TargetName" = "8:api-tools.js"
+            "Tag" = "8:"
+            "Folder" = "8:_A2F638E97281088CA01CDE284554F633"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_510D8E1AD8679A658D6D3A2CBA5B3693"
             {
             "SourcePath" = "8:payloads\\2025\\runtime\\build\\chat\\codex-provider.js"
@@ -23014,6 +23052,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DF867A0EF716CCF8E4D0451CE962F203"
+            {
+            "SourcePath" = "8:payloads\\2025\\runtime\\build\\chat\\gemini-tools.js"
+            "TargetName" = "8:gemini-tools.js"
+            "Tag" = "8:"
+            "Folder" = "8:_A2F638E97281088CA01CDE284554F633"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8B6DDB534B10277D30BFFAC83B385B7D"
             {
             "SourcePath" = "8:payloads\\2025\\runtime\\build\\chat\\http.js"
@@ -23038,6 +23096,26 @@
             {
             "SourcePath" = "8:payloads\\2025\\runtime\\build\\chat\\index.js"
             "TargetName" = "8:index.js"
+            "Tag" = "8:"
+            "Folder" = "8:_A2F638E97281088CA01CDE284554F633"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FF1E729503BD441DFD0DFD85065C500D"
+            {
+            "SourcePath" = "8:payloads\\2025\\runtime\\build\\chat\\model-policy.js"
+            "TargetName" = "8:model-policy.js"
             "Tag" = "8:"
             "Folder" = "8:_A2F638E97281088CA01CDE284554F633"
             "Condition" = "8:"
@@ -104294,24 +104372,24 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:TYBIM MCP Revit 2025"
-        "ProductCode" = "8:{CC023FFA-2BCE-6813-388D-F6572834381C}"
-        "PackageCode" = "8:{91037C8F-D62F-47F6-B422-E1A7C0DA8639}"
+        "ProductName" = "8:TYBIM_MCP for Revit 2025"
+        "ProductCode" = "8:{CD11904B-DE6D-52AA-D08E-03DC3C525881}"
+        "PackageCode" = "8:{87F06619-DCFF-4A4A-A5A0-6AD1CA46BCEF}"
         "UpgradeCode" = "8:{068234C8-3FA4-7287-EE43-2A6853B7058D}"
         "AspNetVersion" = "8:"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:0.5.0"
+        "ProductVersion" = "8:0.5.2"
         "Manufacturer" = "8:拓源數位"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
-        "Title" = "8:TYBIM MCP Revit 2025"
+        "Title" = "8:TYBIM_MCP for Revit 2025"
         "Subject" = "8:"
         "ARPCONTACT" = "8:拓源數位"
         "Keywords" = "8:"
-        "ARPCOMMENTS" = "8:TYBIM"
+        "ARPCOMMENTS" = "8:Revit 2025 AI assistant and MCP tools"
         "ARPURLINFOABOUT" = "8:"
         "ARPPRODUCTICON" = "8:"
         "ARPIconIndex" = "3:0"

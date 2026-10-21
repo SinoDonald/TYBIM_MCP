@@ -6,7 +6,7 @@ import { createHash, randomUUID } from 'node:crypto';
 const root = path.resolve(import.meta.dirname, '..');
 const setup = import.meta.dirname;
 const year = process.argv[2] || '2025';
-if (!['2024', '2025'].includes(year)) throw new Error('Release scope is Revit 2024 and 2025 only.');
+if (!['2024', '2025', '2026'].includes(year)) throw new Error('Release scope is Revit 2024 through 2026.');
 const version = JSON.parse(await fs.readFile(path.join(root, 'server/package.json'), 'utf8')).version;
 const templatePath = path.join(setup, 'Setup.Template.vdproj');
 try { await fs.access(templatePath); } catch { await fs.copyFile(path.join(setup, 'TYBIM_MCP_Setup.vdproj'), templatePath); }
@@ -87,7 +87,7 @@ for (const projectDir of [path.join(setup, 'generated', year), ...(year === '202
     lines.splice(start,end-start+1); i=start;
   }
   text = lines.join('\n');
-  const replacements = { ProjectName:projectName,ProductName:'TYBIM MCP Revit ' + year,Title:'TYBIM MCP Revit ' + year,ProductVersion:version,ProductCode:guid('product-' + year + '-' + version),PackageCode:'{' + randomUUID().toUpperCase() + '}',UpgradeCode:guid('upgrade-' + year),RemovePreviousVersions:'TRUE',DetectNewerInstalledVersion:'TRUE',InstallAllUsers:'FALSE',InstallerBootstrapper:'2' };
+  const replacements = { ProjectName:projectName,ProductName:'TYBIM_MCP for Revit ' + year,Title:'TYBIM_MCP for Revit ' + year,ProductVersion:version,ProductCode:guid('product-' + year + '-' + version),PackageCode:'{' + randomUUID().toUpperCase() + '}',UpgradeCode:guid('upgrade-' + year),RemovePreviousVersions:'TRUE',DetectNewerInstalledVersion:'TRUE',InstallAllUsers:'FALSE',InstallerBootstrapper:'2', ARPCOMMENTS:'Revit ' + year + ' AI assistant and MCP tools' };
   for (const [key,value] of Object.entries(replacements)) text = text.replace(new RegExp(`("${key}" = "[0-9]+:)[^"]*"`,'g'), '$1' + value + '"');
   const output = path.relative(projectDir,path.join(setup,'Release',`TYBIM_MCP_Revit${year}_${version}.msi`));
   text = text.replace(/("OutputFilename" = "8:)[^"]*"/g, '$1' + encode(output) + '"');

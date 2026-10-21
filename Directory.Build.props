@@ -10,7 +10,7 @@
     <DefineConstants Condition="'$(RevitVersion)' &gt;= '2026'">$(DefineConstants);REVIT2026_OR_GREATER</DefineConstants>
     <DefineConstants Condition="'$(RevitVersion)' &gt;= '2027'">$(DefineConstants);REVIT2027_OR_GREATER</DefineConstants>
     <LangVersion>latest</LangVersion>
-    <Version>0.5.0</Version>
+    <Version>0.5.2</Version>
     <IncludePrivateFeatures Condition="'$(IncludePrivateFeatures)' == ''">true</IncludePrivateFeatures>
     <PlatformTarget>x64</PlatformTarget>
     <UseWPF>true</UseWPF>

@@ -59,9 +59,29 @@ reader.on('line', line => {
             combos[0].SelectedIndex = 1;
             Assert(controls.OfType<PasswordBox>().Single().IsEnabled, "Claude enables API key field");
             Assert(controls.OfType<PasswordBox>().Single().Password == testKey, "provider switch restores encrypted key");
+            Assert(!combos[1].IsEditable, "Claude model selector only allows the filtered model list");
             combos[0].SelectedIndex = 2;
             Assert(controls.OfType<PasswordBox>().Single().Password == "", "provider keys remain isolated");
+            Assert(!combos[1].IsEditable, "Gemini model selector only allows the filtered model list");
             combos[0].SelectedIndex = 0;
+            var flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
+            var pendingAnswer = (TextBox)typeof(ChatPanel).GetMethod("AddMessage", flags).Invoke(panel, new object[] { "AI", "等待 AI 回應…" });
+            typeof(ChatPanel).GetField("currentAnswer", flags).SetValue(panel, pendingAnswer);
+            typeof(ChatPanel).GetField("answerPending", flags).SetValue(panel, true);
+            var handleEvent = typeof(ChatPanel).GetMethod("HandleEvent", flags);
+            handleEvent.Invoke(panel, new object[] { Newtonsoft.Json.Linq.JObject.FromObject(new { @event = "status", text = "等待 Gemini 回應…" }) });
+            handleEvent.Invoke(panel, new object[] { Newtonsoft.Json.Linq.JObject.FromObject(new { @event = "textDelta", text = "" }) });
+            Assert(pendingAnswer.Text == "等待 Gemini 回應…", "waiting status stays visible until actual answer text arrives");
+            handleEvent.Invoke(panel, new object[] { Newtonsoft.Json.Linq.JObject.FromObject(new { @event = "toolStarted", name = "revit_project_info" }) });
+            Assert(pendingAnswer.Text.Contains("revit_project_info"), "pending answer identifies the running Revit tool");
+            var turnWatch = (System.Diagnostics.Stopwatch)typeof(ChatPanel).GetField("turnWatch", flags).GetValue(panel);
+            turnWatch.Start();
+            handleEvent.Invoke(panel, new object[] { Newtonsoft.Json.Linq.JObject.FromObject(new { @event = "status", text = "等待 Gemini 回應…" }) });
+            Assert(pendingAnswer.Text.Contains("本回合") && pendingAnswer.Text.Contains("秒"), "waiting progress includes elapsed time without inventing model output");
+            turnWatch.Stop();
+            handleEvent.Invoke(panel, new object[] { Newtonsoft.Json.Linq.JObject.FromObject(new { @event = "textDelta", text = "房間共 3 間" }) });
+            handleEvent.Invoke(panel, new object[] { Newtonsoft.Json.Linq.JObject.FromObject(new { @event = "status", text = "後續狀態" }) });
+            Assert(pendingAnswer.Text == "房間共 3 間", "real answer replaces placeholder and subsequent status cannot overwrite it");
             var approvalMessage = Newtonsoft.Json.Linq.JObject.FromObject(new {
                 id = "smoke-approval", preview = new { kind = "upstream", title = "測試專案", tool = "revit_upstream_send_code_to_revit",
                     note = "參數確認，尚未試放", arguments = new { documentId = "doc", code = "return 1;" } }
