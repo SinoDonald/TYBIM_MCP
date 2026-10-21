@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net10.0-windows</TargetFramework><UseWPF>true</UseWPF><OutputType>Exe</OutputType></PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <Compile Include="../../src/Tybim.Revit.Addin/Chat/ChatPanel.cs" Link="ChatPanel.cs" />
+    <Compile Include="../../src/Tybim.Revit.Addin/Chat/ChatSettings.cs" Link="ChatSettings.cs" />
+    <Compile Include="../../src/Tybim.Revit.Addin/Chat/ChatProcessClient.cs" Link="ChatProcessClient.cs" />
+  </ItemGroup>
+</Project>

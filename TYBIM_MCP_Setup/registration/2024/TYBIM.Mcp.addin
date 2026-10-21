@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns><AddIn Type="Application"><Name>TYBIM MCP</Name><Assembly>..\TYBIM_MCP\2024\Tybim.Revit.Addin.dll</Assembly><AddInId>A405238F-64C6-4FE2-A3C8-B698E159A6C1</AddInId><FullClassName>Tybim.Revit.Addin.Application</FullClassName><VendorId>TYBM</VendorId><VendorDescription>TYBIM Revit AI Chat</VendorDescription></AddIn></RevitAddIns>

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><UseWPF>true</UseWPF><EnableDynamicLoading>true</EnableDynamicLoading></PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="../../Pic/AI助手.png" LogicalName="Tybim.Mcp.Images.AiAssistant.png" />
+    <EmbeddedResource Include="../../Pic/原圖/AI助手(原圖).png" LogicalName="Tybim.Mcp.Images.AiAssistant.Original.png" />
+    <EmbeddedResource Include="../../Pic/相機管理.png" LogicalName="Tybim.Mcp.Images.CameraManager.png" />
+    <EmbeddedResource Include="../../Pic/原圖/相機管理(原圖).png" LogicalName="Tybim.Mcp.Images.CameraManager.Original.png" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" Condition="'$(RevitVersion)' != '2024'" />
+    <Reference Include="System.Security" Condition="'$(RevitVersion)' == '2024'" />
+    <ProjectReference Include="../Tybim.Revit.Commands/Tybim.Revit.Commands.csproj" />
+    <Reference Include="RevitAPI"><HintPath>$(RevitApiDirectory)\RevitAPI.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="RevitAPIUI"><HintPath>$(RevitApiDirectory)\RevitAPIUI.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+</Project>
+

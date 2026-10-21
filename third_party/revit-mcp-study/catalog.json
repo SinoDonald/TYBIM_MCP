@@ -1,0 +1,1552 @@
+{
+  "tools": [
+    {
+      "name": "add_pipe_cap",
+      "command": "add_pipe_cap",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "adjust_section_datums",
+      "command": "adjust_section_datums",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "align_titleblocks_on_sheets",
+      "command": "align_titleblocks_on_sheets",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "align_view_cropbox_to_element",
+      "command": "align_view_cropbox_to_element",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "analyze_beam_penetration",
+      "command": "analyze_beam_penetration",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "analyze_corridor_width",
+      "command": "analyze_corridor_width",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "analyze_floor_slopes",
+      "command": "analyze_floor_slopes",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "analyze_smoke_detectors",
+      "command": "analyze_smoke_detectors",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "analyze_tall_partition_rooms",
+      "command": "analyze_tall_partition_rooms",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "apply_panel_pattern",
+      "command": "apply_panel_pattern",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "arrange_viewports_on_sheet",
+      "command": "arrange_viewports_on_sheet",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "assign_existing_material",
+      "command": "assign_existing_material",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "auto_convert_rotated_viewport_patterns",
+      "command": "auto_convert_rotated_viewport_patterns",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "auto_dimension_walls",
+      "command": "auto_dimension_walls",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "auto_renumber_sheets",
+      "command": "auto_renumber_sheets",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "batch_apply_view_template",
+      "command": "batch_apply_view_template",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "batch_create_rc_filled_region",
+      "command": "batch_create_rc_filled_region",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "batch_create_wall_sections",
+      "command": "batch_create_wall_sections",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "batch_set_material",
+      "command": "batch_set_material",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "batch_set_room_height",
+      "command": "batch_set_room_height",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "calculate_exterior_wall_scaffold_perimeter",
+      "command": "calculate_exterior_wall_scaffold_perimeter",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "calculate_grid_bounds",
+      "command": "calculate_grid_bounds",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "calculate_room_scaffold_perimeters",
+      "command": "calculate_room_scaffold_perimeters",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "calculate_selected_detail_line_perimeter",
+      "command": "calculate_selected_detail_line_perimeter",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "camera_version",
+      "command": "camera_version",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "capture_view_image",
+      "command": "capture_view_image",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "change_element_type",
+      "command": "change_element_type",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "check_exterior_wall_openings",
+      "command": "check_exterior_wall_openings",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "check_floor_effective_openings",
+      "command": "check_floor_effective_openings",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "check_sanitary_fixture_requirements",
+      "command": "check_sanitary_fixture_requirements",
+      "implemented": false,
+      "readOnly": true
+    },
+    {
+      "name": "check_smoke_exhaust_windows",
+      "command": "check_smoke_exhaust_windows",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "check_stair_headroom",
+      "command": "check_stair_headroom",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "clear_element_override",
+      "command": "clear_element_override",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "close_document",
+      "command": "close_document",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "colorize_clashes",
+      "command": "colorize_clashes",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "convert_drafting_to_model_pattern",
+      "command": "convert_drafting_to_model_pattern",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "copy_camera_to_level",
+      "command": "copy_camera_to_level",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "copy_detail_items_to_views",
+      "command": "copy_detail_items_to_views",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "copy_sheets_from_file",
+      "command": "copy_sheets_from_file",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_beams_from_dwg",
+      "command": "create_beams_from_dwg",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_camera_sheet",
+      "command": "create_camera_sheet",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_column",
+      "command": "create_column",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_columns_from_dwg",
+      "command": "create_columns_from_dwg",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_corridor_dimension",
+      "command": "create_corridor_dimension",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_curtain_panel_type",
+      "command": "create_curtain_panel_type",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_curtain_wall_elevations",
+      "command": "create_curtain_wall_elevations",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_dependent_views",
+      "command": "create_dependent_views",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_detail_component_type",
+      "command": "create_detail_component_type",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_detail_lines",
+      "command": "create_detail_lines",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_dimension",
+      "command": "create_dimension",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_dimension_by_bounding_box",
+      "command": "create_dimension_by_bounding_box",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_dimension_by_ray",
+      "command": "create_dimension_by_ray",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_door",
+      "command": "create_door",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_duct_system",
+      "command": "create_duct_system",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_facade_from_analysis",
+      "command": "create_facade_from_analysis",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_facade_panel",
+      "command": "create_facade_panel",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_family_instances_from_dwg_blocks",
+      "command": "create_family_instances_from_dwg_blocks",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_filled_region",
+      "command": "create_filled_region",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_finish_legend",
+      "command": "create_finish_legend",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_floor",
+      "command": "create_floor",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_floor_plans_from_template",
+      "command": "create_floor_plans_from_template",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_green_material",
+      "command": "create_green_material",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_legends",
+      "command": "create_legends",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_level",
+      "command": "create_level",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_material",
+      "command": "create_material",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_material_by_domain",
+      "command": "create_material_by_domain",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_multi_layer_type",
+      "command": "create_multi_layer_type",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_parallel_section_view",
+      "command": "create_parallel_section_view",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_rc_filled_region",
+      "command": "create_rc_filled_region",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_room_filled_regions",
+      "command": "create_room_filled_regions",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_section_view",
+      "command": "create_section_view",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_sheets",
+      "command": "create_sheets",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_single_material_type",
+      "command": "create_single_material_type",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_stair_section_view",
+      "command": "create_stair_section_view",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_stair_text_note_with_leader",
+      "command": "create_stair_text_note_with_leader",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_text_note",
+      "command": "create_text_note",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_view_filter",
+      "command": "create_view_filter",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_view_schedule",
+      "command": "create_view_schedule",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_wall",
+      "command": "create_wall",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "create_window",
+      "command": "create_window",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "curate_mep_sizes",
+      "command": "curate_mep_sizes",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "debug_viewport_geometry",
+      "command": "debug_viewport_geometry",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "dedup_detail_elements_in_view",
+      "command": "dedup_detail_elements_in_view",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "delete_element",
+      "command": "delete_element",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "detect_clashes",
+      "command": "detect_clashes",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "diagnose_curtain_wall_elevation_dimensions",
+      "command": "diagnose_curtain_wall_elevation_dimensions",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "diagnose_curtain_wall_elevation_direction",
+      "command": "diagnose_curtain_wall_elevation_direction",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "diagnose_curtain_wall_elevation_directions",
+      "command": "diagnose_curtain_wall_elevation_directions",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "door-window-legend-tools",
+      "command": "door-window-legend-tools",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "duplicate_element_type",
+      "command": "duplicate_element_type",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "duplicate_type_only",
+      "command": "duplicate_type_only",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "duplicate_views_with_detailing",
+      "command": "duplicate_views_with_detailing",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "export_clash_report",
+      "command": "export_clash_report",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "export_families",
+      "command": "export_families",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "export_smoke_review_excel",
+      "command": "export_smoke_review_excel",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "flip_element",
+      "command": "flip_element",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "get_active_schema",
+      "command": "get_active_schema",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_active_view",
+      "command": "get_active_view",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_all_grids",
+      "command": "get_all_grids",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_all_levels",
+      "command": "get_all_levels",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_all_materials",
+      "command": "get_all_materials",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_all_sheets",
+      "command": "get_all_sheets",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_all_views",
+      "command": "get_all_views",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_camera_info",
+      "command": "get_camera_info",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_category_fields",
+      "command": "get_category_fields",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_column_types",
+      "command": "get_column_types",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_connector_info",
+      "command": "get_connector_info",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_curtain_panel_types",
+      "command": "get_curtain_panel_types",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_curtain_wall_info",
+      "command": "get_curtain_wall_info",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_detail_components",
+      "command": "get_detail_components",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_dwg_beam_layers",
+      "command": "get_dwg_beam_layers",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_dwg_block_instances",
+      "command": "get_dwg_block_instances",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_dwg_column_layers",
+      "command": "get_dwg_column_layers",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_element_geometry",
+      "command": "get_element_geometry",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_element_info",
+      "command": "get_element_info",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_field_values",
+      "command": "get_field_values",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_filterable_parameters",
+      "command": "get_filterable_parameters",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_furniture_types",
+      "command": "get_furniture_types",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_line_styles",
+      "command": "get_line_styles",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_link_display_settings",
+      "command": "get_link_display_settings",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_linked_models",
+      "command": "get_linked_models",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_material_graphics",
+      "command": "get_material_graphics",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_mep_segments_and_sizes",
+      "command": "get_mep_segments_and_sizes",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_mep_settings",
+      "command": "get_mep_settings",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_mep_size_usage",
+      "command": "get_mep_size_usage",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_project_info",
+      "command": "get_project_info",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_room_daylight_info",
+      "command": "get_room_daylight_info",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_room_door_counts",
+      "command": "get_room_door_counts",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_room_info",
+      "command": "get_room_info",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_room_surface_areas",
+      "command": "get_room_surface_areas",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_room_window_counts",
+      "command": "get_room_window_counts",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_rooms_by_level",
+      "command": "get_rooms_by_level",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_selected_elements",
+      "command": "get_selected_elements",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_sheet_viewport_details",
+      "command": "get_sheet_viewport_details",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_space_centroid",
+      "command": "get_space_centroid",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_stair_actual_width",
+      "command": "get_stair_actual_width",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_titleblocks",
+      "command": "get_titleblocks",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_types_by_category",
+      "command": "get_types_by_category",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_view_extents",
+      "command": "get_view_extents",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_view_graphics_diagnostics",
+      "command": "get_view_graphics_diagnostics",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_view_range",
+      "command": "get_view_range",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_view_templates",
+      "command": "get_view_templates",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_viewport_map",
+      "command": "get_viewport_map",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_wall_info",
+      "command": "get_wall_info",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "get_wall_types",
+      "command": "get_wall_types",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "grade_toposolid_to_floors",
+      "command": "grade_toposolid_to_floors",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "hide_elements",
+      "command": "hide_elements",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "import_excel_to_drafting_views",
+      "command": "import_excel_to_drafting_views",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "inject_green_material_into_family",
+      "command": "inject_green_material_into_family",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "join_wall_tops",
+      "command": "join_wall_tops",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "link_cad_to_view",
+      "command": "link_cad_to_view",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "link_cads_by_floor",
+      "command": "link_cads_by_floor",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "list_cameras",
+      "command": "list_cameras",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "list_categories",
+      "command": "list_categories",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "list_dimension_types",
+      "command": "list_dimension_types",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "list_family_symbols",
+      "command": "list_family_symbols",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "list_fill_patterns",
+      "command": "list_fill_patterns",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "list_legend_views",
+      "command": "list_legend_views",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "list_open_documents",
+      "command": "list_open_documents",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "list_schedules",
+      "command": "list_schedules",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "list_seeds",
+      "command": "list_seeds",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "load_shared_parameters",
+      "command": "load_shared_parameters",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "measure_distance",
+      "command": "measure_distance",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "modify_element_parameter",
+      "command": "modify_element_parameter",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "move_element",
+      "command": "move_element",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "move_text_notes_in_views",
+      "command": "move_text_notes_in_views",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "move_viewport_titles",
+      "command": "move_viewport_titles",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "open_document",
+      "command": "open_document",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "override_element_graphics",
+      "command": "override_element_graphics",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "place_family_instances",
+      "command": "place_family_instances",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "place_furniture",
+      "command": "place_furniture",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "position_viewports_on_sheet",
+      "command": "position_viewports_on_sheet",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "preview_dwg_beams",
+      "command": "preview_dwg_beams",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "preview_dwg_columns",
+      "command": "preview_dwg_columns",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "preview_family_instances_from_dwg_blocks",
+      "command": "preview_family_instances_from_dwg_blocks",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "query_elements",
+      "command": "query_elements",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "query_elements_with_filter",
+      "command": "query_elements",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "query_linked_elements",
+      "command": "query_linked_elements",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "query_walls_by_location",
+      "command": "query_walls_by_location",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "read_excel_tables",
+      "command": "read_excel_tables",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "read_schedule",
+      "command": "read_schedule",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "read_source_file_sheets",
+      "command": "read_source_file_sheets",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "rejoin_wall_joins",
+      "command": "rejoin_wall_joins",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "reload_links",
+      "command": "reload_links",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "remap_room_finish_codes",
+      "command": "remap_room_finish_codes",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "remove_view_filter",
+      "command": "remove_view_filter",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "rename_view",
+      "command": "rename_view",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "renumber_rooms_by_level",
+      "command": "renumber_rooms_by_level",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "run_camera_keyplan",
+      "command": "run_camera_keyplan",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "run_camera_overview",
+      "command": "run_camera_overview",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "save_document",
+      "command": "save_document",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "scale_drafting_view_height",
+      "command": "scale_drafting_view_height",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "scale_drafting_view_width",
+      "command": "scale_drafting_view_width",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "scan_opening_candidates",
+      "command": "scan_opening_candidates",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "scan_penetrated_beams_in_view",
+      "command": "scan_penetrated_beams_in_view",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "select_element",
+      "command": "select_element",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "set_3d_section_box",
+      "command": "set_3d_section_box",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "set_active_view",
+      "command": "set_active_view",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "set_camera_pose",
+      "command": "set_camera_pose",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "set_category_visibility",
+      "command": "set_category_visibility",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "set_green_material_type_parameters",
+      "command": "set_green_material_type_parameters",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "set_link_display_settings",
+      "command": "set_link_display_settings",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "set_material_graphics",
+      "command": "set_material_graphics",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "set_material_surface_pattern",
+      "command": "set_material_surface_pattern",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "set_project_units",
+      "command": "set_project_units",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "set_scope_box_for_views",
+      "command": "set_scope_box_for_views",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "set_section_box",
+      "command": "set_section_box",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "set_view_range",
+      "command": "set_view_range",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "set_view_template_controls",
+      "command": "set_view_template_controls",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "shift_view_cropbox",
+      "command": "shift_view_cropbox",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "sync_detail_component_numbers",
+      "command": "sync_detail_component_numbers",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "sync_ifc_structural_to_native",
+      "command": "sync_ifc_structural_to_native",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "sync_room_ceiling_finish_from_ceilings",
+      "command": "sync_room_ceiling_finish_from_ceilings",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "sync_sheet_parameters_from_source",
+      "command": "sync_sheet_parameters_from_source",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "trace_stair_geometry",
+      "command": "trace_stair_geometry",
+      "implemented": true,
+      "readOnly": true
+    },
+    {
+      "name": "unhide_elements",
+      "command": "unhide_elements",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "unjoin_column_joins",
+      "command": "unjoin_column_joins",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "unjoin_element_joins",
+      "command": "unjoin_element_joins",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "unjoin_wall_joins",
+      "command": "unjoin_wall_joins",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "visualize_detector_results",
+      "command": "visualize_detector_results",
+      "implemented": true,
+      "readOnly": false
+    },
+    {
+      "name": "zoom_to_element",
+      "command": "zoom_to_element",
+      "implemented": true,
+      "readOnly": true
+    }
+  ],
+  "nativeCommands": [
+    "add_pipe_cap",
+    "adjust_section_datums",
+    "align_titleblocks_on_sheets",
+    "align_view_cropbox_to_element",
+    "analyze_beam_penetration",
+    "analyze_corridor_width",
+    "analyze_floor_slopes",
+    "analyze_smoke_detectors",
+    "analyze_tall_partition_rooms",
+    "apply_panel_pattern",
+    "arrange_viewports_on_sheet",
+    "assign_existing_material",
+    "auto_convert_rotated_viewport_patterns",
+    "auto_dimension_walls",
+    "auto_renumber_sheets",
+    "batch_apply_view_template",
+    "batch_create_rc_filled_region",
+    "batch_create_wall_sections",
+    "batch_set_material",
+    "batch_set_room_height",
+    "calculate_exterior_wall_scaffold_perimeter",
+    "calculate_grid_bounds",
+    "calculate_room_scaffold_perimeters",
+    "calculate_selected_detail_line_perimeter",
+    "camera_version",
+    "capture_view_image",
+    "change_element_type",
+    "check_exterior_wall_openings",
+    "check_floor_effective_openings",
+    "check_smoke_exhaust_windows",
+    "check_stair_headroom",
+    "clear_element_override",
+    "clear_previous_annotations",
+    "close_document",
+    "colorize_clashes",
+    "convert_drafting_to_model_pattern",
+    "copy_camera_to_level",
+    "copy_detail_items_to_views",
+    "copy_sheets_from_file",
+    "create_beams_from_dwg",
+    "create_camera_sheet",
+    "create_column",
+    "create_columns_from_dwg",
+    "create_corridor_dimension",
+    "create_curtain_panel_type",
+    "create_curtain_wall_elevations",
+    "create_dependent_views",
+    "create_detail_component_type",
+    "create_detail_lines",
+    "create_dimension",
+    "create_dimension_by_bounding_box",
+    "create_dimension_by_ray",
+    "create_door",
+    "create_duct_system",
+    "create_facade_from_analysis",
+    "create_facade_panel",
+    "create_family_instances_from_dwg_blocks",
+    "create_filled_region",
+    "create_finish_legend",
+    "create_floor",
+    "create_floor_plans_from_template",
+    "create_green_material",
+    "create_legends",
+    "create_level",
+    "create_material",
+    "create_material_by_domain",
+    "create_multi_layer_type",
+    "create_parallel_section_view",
+    "create_rc_filled_region",
+    "create_room_filled_regions",
+    "create_section_view",
+    "create_sheets",
+    "create_single_material_type",
+    "create_stair_section_view",
+    "create_stair_text_note_with_leader",
+    "create_text_note",
+    "create_view_filter",
+    "create_view_schedule",
+    "create_wall",
+    "create_window",
+    "curate_mep_sizes",
+    "debug_viewport_geometry",
+    "dedup_detail_elements_in_view",
+    "delete_element",
+    "detect_clashes",
+    "diagnose_curtain_wall_elevation_dimensions",
+    "diagnose_curtain_wall_elevation_direction",
+    "diagnose_curtain_wall_elevation_directions",
+    "door-window-legend-tools",
+    "duplicate_element_type",
+    "duplicate_type_only",
+    "duplicate_views_with_detailing",
+    "export_clash_report",
+    "export_families",
+    "export_smoke_review_excel",
+    "flip_element",
+    "get_active_schema",
+    "get_active_view",
+    "get_all_grids",
+    "get_all_levels",
+    "get_all_materials",
+    "get_all_sheets",
+    "get_all_views",
+    "get_camera_info",
+    "get_category_fields",
+    "get_column_types",
+    "get_connector_info",
+    "get_curtain_panel_types",
+    "get_curtain_wall_info",
+    "get_detail_components",
+    "get_dwg_beam_layers",
+    "get_dwg_block_instances",
+    "get_dwg_column_layers",
+    "get_element_geometry",
+    "get_element_info",
+    "get_field_values",
+    "get_filterable_parameters",
+    "get_furniture_types",
+    "get_line_styles",
+    "get_link_display_settings",
+    "get_linked_models",
+    "get_material_graphics",
+    "get_mep_segments_and_sizes",
+    "get_mep_settings",
+    "get_mep_size_usage",
+    "get_project_info",
+    "get_room_daylight_info",
+    "get_room_door_counts",
+    "get_room_info",
+    "get_room_surface_areas",
+    "get_room_window_counts",
+    "get_rooms_by_level",
+    "get_selected_elements",
+    "get_sheet_viewport_details",
+    "get_space_centroid",
+    "get_stair_actual_width",
+    "get_titleblocks",
+    "get_types_by_category",
+    "get_view_extents",
+    "get_view_graphics_diagnostics",
+    "get_view_range",
+    "get_view_templates",
+    "get_viewport_map",
+    "get_wall_info",
+    "get_wall_types",
+    "grade_toposolid_to_floors",
+    "hide_elements",
+    "import_excel_to_drafting_views",
+    "inject_green_material_into_family",
+    "join_wall_tops",
+    "link_cad_to_view",
+    "link_cads_by_floor",
+    "list_cameras",
+    "list_categories",
+    "list_dimension_types",
+    "list_family_symbols",
+    "list_fill_patterns",
+    "list_legend_views",
+    "list_open_documents",
+    "list_schedules",
+    "list_seeds",
+    "load_shared_parameters",
+    "measure_distance",
+    "modify_element_parameter",
+    "move_element",
+    "move_text_notes_in_views",
+    "move_viewport_titles",
+    "open_document",
+    "override_element_graphics",
+    "place_family_instances",
+    "place_furniture",
+    "position_viewports_on_sheet",
+    "preview_dwg_beams",
+    "preview_dwg_columns",
+    "preview_family_instances_from_dwg_blocks",
+    "query_elements",
+    "query_linked_elements",
+    "query_walls_by_location",
+    "read_excel_tables",
+    "read_schedule",
+    "read_source_file_sheets",
+    "rejoin_wall_joins",
+    "reload_links",
+    "remap_room_finish_codes",
+    "remove_view_filter",
+    "rename_view",
+    "renumber_rooms_by_level",
+    "run_camera_keyplan",
+    "run_camera_overview",
+    "save_document",
+    "scale_drafting_view_height",
+    "scale_drafting_view_width",
+    "scan_opening_candidates",
+    "scan_penetrated_beams_in_view",
+    "select_element",
+    "set_3d_section_box",
+    "set_active_view",
+    "set_camera_pose",
+    "set_category_visibility",
+    "set_green_material_type_parameters",
+    "set_link_display_settings",
+    "set_material_graphics",
+    "set_material_surface_pattern",
+    "set_project_units",
+    "set_scope_box_for_views",
+    "set_section_box",
+    "set_view_range",
+    "set_view_template_controls",
+    "shift_view_cropbox",
+    "sync_detail_component_numbers",
+    "sync_ifc_structural_to_native",
+    "sync_room_ceiling_finish_from_ceilings",
+    "sync_sheet_parameters_from_source",
+    "trace_stair_geometry",
+    "unhide_elements",
+    "unjoin_column_joins",
+    "unjoin_element_joins",
+    "unjoin_wall_joins",
+    "visualize_detector_results",
+    "zoom_to_element"
+  ]
+}

@@ -1,0 +1,14 @@
+**/bin/
+**/obj/
+**/node_modules/
+**/build/
+artifacts/
+.local/
+*.user
+*.log
+/private/
+/server/src/private/
+/TYBIM_MCP_Setup/payloads/
+/TYBIM_MCP_Setup/generated/
+/TYBIM_MCP_Setup/Release/
+/TYBIM_MCP_Setup/Debug/

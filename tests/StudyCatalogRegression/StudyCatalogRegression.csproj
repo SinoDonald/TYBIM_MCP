@@ -1,0 +1,4 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net10.0</TargetFramework><UseWPF>false</UseWPF><OutputType>Exe</OutputType><ImplicitUsings>enable</ImplicitUsings></PropertyGroup>
+  <ItemGroup><Compile Include="../../src/Tybim.Revit.Study/StudyCatalog.cs" Link="StudyCatalog.cs" /></ItemGroup>
+</Project>

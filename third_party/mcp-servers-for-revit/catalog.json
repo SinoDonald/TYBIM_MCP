@@ -1,0 +1,94 @@
+[
+  {
+    "name": "ai_element_filter",
+    "type": "RevitMCPCommandSet.Commands.AIElementFilterCommand"
+  },
+  {
+    "name": "analyze_model_statistics",
+    "type": "RevitMCPCommandSet.Commands.DataExtraction.AnalyzeModelStatisticsCommand"
+  },
+  {
+    "name": "color_splash",
+    "type": "RevitMCPCommandSet.Commands.ColorSplashCommand"
+  },
+  {
+    "name": "create_dimensions",
+    "type": "RevitMCPCommandSet.Commands.AnnotationComponents.CreateDimensionCommand"
+  },
+  {
+    "name": "create_grid",
+    "type": "RevitMCPCommandSet.Commands.CreateGridCommand"
+  },
+  {
+    "name": "create_level",
+    "type": "RevitMCPCommandSet.Commands.Architecture.CreateLevelCommand"
+  },
+  {
+    "name": "create_line_based_element",
+    "type": "RevitMCPCommandSet.Commands.CreateLineElementCommand"
+  },
+  {
+    "name": "create_point_based_element",
+    "type": "RevitMCPCommandSet.Commands.CreatePointElementCommand"
+  },
+  {
+    "name": "create_room",
+    "type": "RevitMCPCommandSet.Commands.Architecture.CreateRoomCommand"
+  },
+  {
+    "name": "create_structural_framing_system",
+    "type": "RevitMCPCommandSet.Commands.CreateStructuralFramingSystemCommand"
+  },
+  {
+    "name": "create_surface_based_element",
+    "type": "RevitMCPCommandSet.Commands.CreateSurfaceElementCommand"
+  },
+  {
+    "name": "delete_element",
+    "type": "RevitMCPCommandSet.Commands.Delete.DeleteElementCommand"
+  },
+  {
+    "name": "export_room_data",
+    "type": "RevitMCPCommandSet.Commands.DataExtraction.ExportRoomDataCommand"
+  },
+  {
+    "name": "get_available_family_types",
+    "type": "RevitMCPCommandSet.Commands.Access.GetAvailableFamilyTypesCommand"
+  },
+  {
+    "name": "get_current_view_elements",
+    "type": "RevitMCPCommandSet.Commands.Access.GetCurrentViewElementsCommand"
+  },
+  {
+    "name": "get_current_view_info",
+    "type": "RevitMCPCommandSet.Commands.Access.GetCurrentViewInfoCommand"
+  },
+  {
+    "name": "get_material_quantities",
+    "type": "RevitMCPCommandSet.Commands.DataExtraction.GetMaterialQuantitiesCommand"
+  },
+  {
+    "name": "get_selected_elements",
+    "type": "RevitMCPCommandSet.Commands.Access.GetSelectedElementsCommand"
+  },
+  {
+    "name": "operate_element",
+    "type": "RevitMCPCommandSet.Commands.OperateElementCommand"
+  },
+  {
+    "name": "say_hello",
+    "type": "RevitMCPCommandSet.Commands.Test.SayHelloCommand"
+  },
+  {
+    "name": "send_code_to_revit",
+    "type": "RevitMCPCommandSet.Commands.ExecuteDynamicCode.ExecuteCodeCommand"
+  },
+  {
+    "name": "tag_rooms",
+    "type": "RevitMCPCommandSet.Commands.TagRoomsCommand"
+  },
+  {
+    "name": "tag_walls",
+    "type": "RevitMCPCommandSet.Commands.TagWallsCommand"
+  }
+]

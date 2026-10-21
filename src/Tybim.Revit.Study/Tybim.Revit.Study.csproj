@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);REVIT2022_OR_GREATER;REVIT2023_OR_GREATER;REVIT2024_OR_GREATER</DefineConstants>
+    <DefineConstants Condition="'$(RevitVersion)' == '2025'">$(DefineConstants);REVIT2025_OR_GREATER</DefineConstants>
+    <NoWarn>$(NoWarn);CS0618</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Tybim.Revit.Upstream/Tybim.Revit.Upstream.csproj" />
+    <Using Include="Autodesk.Revit.DB" />
+    <Compile Include="../../integrations/revit-mcp-study/revit/**/*.cs"
+      Exclude="../../integrations/revit-mcp-study/revit/Core/SocketService.cs;../../integrations/revit-mcp-study/revit/Core/ExternalEventManager.cs;../../integrations/revit-mcp-study/revit/Commands/MCPCommands.cs" LinkBase="AdaptedStudy" />
+    <PackageReference Include="ClosedXML" Version="0.102.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <Reference Include="RevitAPI"><HintPath>$(RevitApiDirectory)\RevitAPI.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="RevitAPIUI"><HintPath>$(RevitApiDirectory)\RevitAPIUI.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="System.Net.Http" Condition="'$(RevitVersion)' == '2024'" />
+  </ItemGroup>
+</Project>
+

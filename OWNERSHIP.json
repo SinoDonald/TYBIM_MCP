@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "repositoryVisibilityPolicy": "private",
+  "defaultDistribution": "internal-only",
+  "sources": {
+    "mcp-servers-for-revit": {
+      "original": "third_party/mcp-servers-for-revit/original",
+      "csharpAdaptation": "integrations/mcp-servers-for-revit/revit",
+      "typescriptAdaptation": "server/src/integrations/mcp-servers-for-revit"
+    },
+    "revit-mcp-study": {
+      "original": "third_party/revit-mcp-study/original",
+      "csharpAdaptation": "integrations/revit-mcp-study/revit",
+      "typescriptAdaptation": "server/src/integrations/revit-mcp-study"
+    }
+  },
+  "tybimOwned": [
+    "src",
+    "scripts",
+    "server/src/chat",
+    "server/src/bridge.ts",
+    "server/src/tools.ts",
+    "Pic",
+    "TYBIM_MCP_Setup"
+  ],
+  "ignoredPrivateExtensions": [
+    "private",
+    "server/src/private"
+  ],
+  "shareAllowlist": [
+    "third_party/mcp-servers-for-revit/original",
+    "third_party/revit-mcp-study/original"
+  ],
+  "notes": "Classification and release policy only; upstream notices and licenses remain applicable. The whole TYBIM project and internal binaries are not a public release."
+}

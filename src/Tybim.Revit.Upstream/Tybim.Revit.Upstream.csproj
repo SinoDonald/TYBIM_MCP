@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <DefineConstants>$(DefineConstants);REVIT2022_OR_GREATER;REVIT2023_OR_GREATER;REVIT2024_OR_GREATER</DefineConstants>
+    <NoWarn>$(NoWarn);CS0618</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../integrations/mcp-servers-for-revit/revit/**/*.cs" LinkBase="AdaptedUpstream" />
+    <Using Include="Autodesk.Revit.DB" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <Reference Include="RevitAPI"><HintPath>$(RevitApiDirectory)\RevitAPI.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="RevitAPIUI"><HintPath>$(RevitApiDirectory)\RevitAPIUI.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="System.Net.Http" Condition="'$(RevitVersion)' == '2024'" />
+  </ItemGroup>
+</Project>
+

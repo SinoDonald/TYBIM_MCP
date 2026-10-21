@@ -1,0 +1,1026 @@
+{
+  "name": "mcp-servers-for-revit",
+  "repository": "https://github.com/mcp-servers-for-revit/mcp-servers-for-revit",
+  "commit": "86cf7057785f2423fc0d0892c9a5d9c93deb1aa3",
+  "scopes": [
+    {
+      "directory": "commandset",
+      "extensions": [
+        ".cs",
+        ".csproj"
+      ]
+    },
+    {
+      "directory": "server/src/tools",
+      "extensions": [
+        ".ts"
+      ]
+    },
+    {
+      "directory": "server/src/database",
+      "extensions": [
+        ".ts"
+      ]
+    }
+  ],
+  "importedOn": "2026-10-21",
+  "snapshotRoot": "original",
+  "adaptedRoot": "integrations/mcp-servers-for-revit",
+  "license": "MIT; see LICENSE",
+  "updatePolicy": "Compare against this pinned baseline, then merge adaptations deliberately. Never overwrite TYBIM or private code.",
+  "files": [
+    {
+      "sourcePath": "LICENSE",
+      "snapshotPath": "original/LICENSE",
+      "originalSha256": "73E3E6E3453BE403933B8E9F4D5E08B5C97054586EAD87E98067B57AFD9D7C80"
+    },
+    {
+      "sourcePath": "README.md",
+      "snapshotPath": "original/README.md",
+      "originalSha256": "36F5D846D6FAC336F29ED26700B94214ACC5F9BC9F51B40CE00219564009F7E1"
+    },
+    {
+      "sourcePath": "commandset/Commands/AIElementFilterCommand.cs",
+      "snapshotPath": "original/commandset/Commands/AIElementFilterCommand.cs",
+      "originalSha256": "79260FE466EF563F26E0F6EBC7776DFB8D4041EE85157B508A444290511F802B",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Commands/AIElementFilterCommand.cs",
+      "adaptedSha256": "79260FE466EF563F26E0F6EBC7776DFB8D4041EE85157B508A444290511F802B"
+    },
+    {
+      "sourcePath": "commandset/Commands/Access/GetAvailableFamilyTypesCommand.cs",
+      "snapshotPath": "original/commandset/Commands/Access/GetAvailableFamilyTypesCommand.cs",
+      "originalSha256": "1E5658B76DE1BA83FAE28C1EA11DEA01ADF2F2D5E54D95C9F6732417142588CC",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Commands/Access/GetAvailableFamilyTypesCommand.cs",
+      "adaptedSha256": "1E5658B76DE1BA83FAE28C1EA11DEA01ADF2F2D5E54D95C9F6732417142588CC"
+    },
+    {
+      "sourcePath": "commandset/Commands/Access/GetCurrentViewElementsCommand.cs",
+      "snapshotPath": "original/commandset/Commands/Access/GetCurrentViewElementsCommand.cs",
+      "originalSha256": "A0B38AABE4ED5A70CF898CC6712A729014A269B229DA39F6018FD8D154E50528",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Commands/Access/GetCurrentViewElementsCommand.cs",
+      "adaptedSha256": "A0B38AABE4ED5A70CF898CC6712A729014A269B229DA39F6018FD8D154E50528"
+    },
+    {
+      "sourcePath": "commandset/Commands/Access/GetCurrentViewInfoCommand.cs",
+      "snapshotPath": "original/commandset/Commands/Access/GetCurrentViewInfoCommand.cs",
+      "originalSha256": "CC6A12B6B4076F7472414C6724B3D2B7E287CF69845A458D5F948EC8238C9964",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Commands/Access/GetCurrentViewInfoCommand.cs",
+      "adaptedSha256": "CC6A12B6B4076F7472414C6724B3D2B7E287CF69845A458D5F948EC8238C9964"
+    },
+    {
+      "sourcePath": "commandset/Commands/Access/GetSelectedElementsCommand.cs",
+      "snapshotPath": "original/commandset/Commands/Access/GetSelectedElementsCommand.cs",
+      "originalSha256": "462EAC71095AB7A03B9B15261EE959FF9CF99377C6EB00B5D1B5DDDC520D80A9",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Commands/Access/GetSelectedElementsCommand.cs",
+      "adaptedSha256": "462EAC71095AB7A03B9B15261EE959FF9CF99377C6EB00B5D1B5DDDC520D80A9"
+    },
+    {
+      "sourcePath": "commandset/Commands/AnnotationComponents/CreateDimensionCommand.cs",
+      "snapshotPath": "original/commandset/Commands/AnnotationComponents/CreateDimensionCommand.cs",
+      "originalSha256": "FAED2188C72238E28727403E033448C63EDB3549F3A0C653D587FFD626DD1315",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Commands/AnnotationComponents/CreateDimensionCommand.cs",
+      "adaptedSha256": "FAED2188C72238E28727403E033448C63EDB3549F3A0C653D587FFD626DD1315"
+    },
+    {
+      "sourcePath": "commandset/Commands/Architecture/CreateLevelCommand.cs",
+      "snapshotPath": "original/commandset/Commands/Architecture/CreateLevelCommand.cs",
+      "originalSha256": "B0CFB4DD5EE466AA0D1FE9022DB63B728ABAD2A8948D114A6985B8B7BA930326",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Commands/Architecture/CreateLevelCommand.cs",
+      "adaptedSha256": "B0CFB4DD5EE466AA0D1FE9022DB63B728ABAD2A8948D114A6985B8B7BA930326"
+    },
+    {
+      "sourcePath": "commandset/Commands/Architecture/CreateRoomCommand.cs",
+      "snapshotPath": "original/commandset/Commands/Architecture/CreateRoomCommand.cs",
+      "originalSha256": "2C531E2A4E1800041E392C18D5BF6E4F86671895C61CE15EC7F3C7B3344C52B8",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Commands/Architecture/CreateRoomCommand.cs",
+      "adaptedSha256": "2C531E2A4E1800041E392C18D5BF6E4F86671895C61CE15EC7F3C7B3344C52B8"
+    },
+    {
+      "sourcePath": "commandset/Commands/ColorSplashCommand.cs",
+      "snapshotPath": "original/commandset/Commands/ColorSplashCommand.cs",
+      "originalSha256": "274971004BFF91FF0FA2AEAF55F2F0DCB4EEC94DF55692B2AC4FEBB0E18ACE57",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Commands/ColorSplashCommand.cs",
+      "adaptedSha256": "274971004BFF91FF0FA2AEAF55F2F0DCB4EEC94DF55692B2AC4FEBB0E18ACE57"
+    },
+    {
+      "sourcePath": "commandset/Commands/CreateGridCommand.cs",
+      "snapshotPath": "original/commandset/Commands/CreateGridCommand.cs",
+      "originalSha256": "370BBCCCEB6FEB9F85034FE4E64D9B13507AD9862198E226FB96BD665E2EF2F1",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Commands/CreateGridCommand.cs",
+      "adaptedSha256": "370BBCCCEB6FEB9F85034FE4E64D9B13507AD9862198E226FB96BD665E2EF2F1"
+    },
+    {
+      "sourcePath": "commandset/Commands/CreateLineElementCommand.cs",
+      "snapshotPath": "original/commandset/Commands/CreateLineElementCommand.cs",
+      "originalSha256": "60454EE48A0331EBFC1AA65464D9664D799F55ED7806881BB8BE9E71AF120306",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Commands/CreateLineElementCommand.cs",
+      "adaptedSha256": "60454EE48A0331EBFC1AA65464D9664D799F55ED7806881BB8BE9E71AF120306"
+    },
+    {
+      "sourcePath": "commandset/Commands/CreatePointElementCommand.cs",
+      "snapshotPath": "original/commandset/Commands/CreatePointElementCommand.cs",
+      "originalSha256": "5143062D2574A52095AB47FBC93A5D2C0A3CB2F297DA036360C32597FA8A8468",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Commands/CreatePointElementCommand.cs",
+      "adaptedSha256": "5143062D2574A52095AB47FBC93A5D2C0A3CB2F297DA036360C32597FA8A8468"
+    },
+    {
+      "sourcePath": "commandset/Commands/CreateStructuralFramingSystemCommand.cs",
+      "snapshotPath": "original/commandset/Commands/CreateStructuralFramingSystemCommand.cs",
+      "originalSha256": "894CC6F4BF3DFD123144B159520C64992E215B693FED7504F9733CA0F5F84AFF",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Commands/CreateStructuralFramingSystemCommand.cs",
+      "adaptedSha256": "894CC6F4BF3DFD123144B159520C64992E215B693FED7504F9733CA0F5F84AFF"
+    },
+    {
+      "sourcePath": "commandset/Commands/CreateSurfaceElementCommand.cs",
+      "snapshotPath": "original/commandset/Commands/CreateSurfaceElementCommand.cs",
+      "originalSha256": "A388F581C500871D9CD003A020BE82C3CAD3587D12FC2CBD860FE690A3A32545",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Commands/CreateSurfaceElementCommand.cs",
+      "adaptedSha256": "A388F581C500871D9CD003A020BE82C3CAD3587D12FC2CBD860FE690A3A32545"
+    },
+    {
+      "sourcePath": "commandset/Commands/DataExtraction/AnalyzeModelStatisticsCommand.cs",
+      "snapshotPath": "original/commandset/Commands/DataExtraction/AnalyzeModelStatisticsCommand.cs",
+      "originalSha256": "83E051892ABA8EFECD24EEB9702BE8B4E43D2BB96304C665C6165821E66E7A26",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Commands/DataExtraction/AnalyzeModelStatisticsCommand.cs",
+      "adaptedSha256": "83E051892ABA8EFECD24EEB9702BE8B4E43D2BB96304C665C6165821E66E7A26"
+    },
+    {
+      "sourcePath": "commandset/Commands/DataExtraction/ExportRoomDataCommand.cs",
+      "snapshotPath": "original/commandset/Commands/DataExtraction/ExportRoomDataCommand.cs",
+      "originalSha256": "20A209FF6BE5B26DE1D3157F05C472D2D3F93DB943BB480398F0DD949B53E9FD",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Commands/DataExtraction/ExportRoomDataCommand.cs",
+      "adaptedSha256": "20A209FF6BE5B26DE1D3157F05C472D2D3F93DB943BB480398F0DD949B53E9FD"
+    },
+    {
+      "sourcePath": "commandset/Commands/DataExtraction/GetMaterialQuantitiesCommand.cs",
+      "snapshotPath": "original/commandset/Commands/DataExtraction/GetMaterialQuantitiesCommand.cs",
+      "originalSha256": "FBBE05B207D48A1DCF70E1FEB0B1CF294B1C586EFC5FB8D0E7F5E67F36412CF9",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Commands/DataExtraction/GetMaterialQuantitiesCommand.cs",
+      "adaptedSha256": "FBBE05B207D48A1DCF70E1FEB0B1CF294B1C586EFC5FB8D0E7F5E67F36412CF9"
+    },
+    {
+      "sourcePath": "commandset/Commands/Delete/DeleteElementCommand.cs",
+      "snapshotPath": "original/commandset/Commands/Delete/DeleteElementCommand.cs",
+      "originalSha256": "22097201C030E91D6A307AD90B8D73666F4A49BA828F2E2E73B68CBA07B4579C",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Commands/Delete/DeleteElementCommand.cs",
+      "adaptedSha256": "22097201C030E91D6A307AD90B8D73666F4A49BA828F2E2E73B68CBA07B4579C"
+    },
+    {
+      "sourcePath": "commandset/Commands/ExecuteDynamicCode/ExecuteCodeCommand.cs",
+      "snapshotPath": "original/commandset/Commands/ExecuteDynamicCode/ExecuteCodeCommand.cs",
+      "originalSha256": "5454474117CECC1D963EE1497F0FED8D80893A142AA19AD67938B8516BCD711B",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Commands/ExecuteDynamicCode/ExecuteCodeCommand.cs",
+      "adaptedSha256": "5454474117CECC1D963EE1497F0FED8D80893A142AA19AD67938B8516BCD711B"
+    },
+    {
+      "sourcePath": "commandset/Commands/ExecuteDynamicCode/ExecuteCodeEventHandler.cs",
+      "snapshotPath": "original/commandset/Commands/ExecuteDynamicCode/ExecuteCodeEventHandler.cs",
+      "originalSha256": "05DA125CE5A5337C2E74C9599780C843F8D589A13F1E0A7536ACA6625D4A1C44",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Commands/ExecuteDynamicCode/ExecuteCodeEventHandler.cs",
+      "adaptedSha256": "05DA125CE5A5337C2E74C9599780C843F8D589A13F1E0A7536ACA6625D4A1C44"
+    },
+    {
+      "sourcePath": "commandset/Commands/OperateElementCommand.cs",
+      "snapshotPath": "original/commandset/Commands/OperateElementCommand.cs",
+      "originalSha256": "C9E52F9569C0F2E3A26798EF4C45BD17AD654CB74BDEFA5C5E7D3C545DF9DB57",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Commands/OperateElementCommand.cs",
+      "adaptedSha256": "C9E52F9569C0F2E3A26798EF4C45BD17AD654CB74BDEFA5C5E7D3C545DF9DB57"
+    },
+    {
+      "sourcePath": "commandset/Commands/TagRoomsCommand.cs",
+      "snapshotPath": "original/commandset/Commands/TagRoomsCommand.cs",
+      "originalSha256": "219483284BFD5012E01D597F7940D420C108B465F16670B9AD9202CE9FB0F12D",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Commands/TagRoomsCommand.cs",
+      "adaptedSha256": "219483284BFD5012E01D597F7940D420C108B465F16670B9AD9202CE9FB0F12D"
+    },
+    {
+      "sourcePath": "commandset/Commands/TagWallsCommand.cs",
+      "snapshotPath": "original/commandset/Commands/TagWallsCommand.cs",
+      "originalSha256": "44CDD36C22BCD87D85CC7E22A6BAA0BA4C9EB37B6A4110BB61E9FCFB6D95FB46",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Commands/TagWallsCommand.cs",
+      "adaptedSha256": "44CDD36C22BCD87D85CC7E22A6BAA0BA4C9EB37B6A4110BB61E9FCFB6D95FB46"
+    },
+    {
+      "sourcePath": "commandset/Commands/Test/SayHelloCommand.cs",
+      "snapshotPath": "original/commandset/Commands/Test/SayHelloCommand.cs",
+      "originalSha256": "AC7A5AF180858A3490AA864ADBF3A8BB93C8F96695BE4AF67319F6DC9111CC6C",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Commands/Test/SayHelloCommand.cs",
+      "adaptedSha256": "AC7A5AF180858A3490AA864ADBF3A8BB93C8F96695BE4AF67319F6DC9111CC6C"
+    },
+    {
+      "sourcePath": "commandset/Models/Annotation/DimensionCreationInfo.cs",
+      "snapshotPath": "original/commandset/Models/Annotation/DimensionCreationInfo.cs",
+      "originalSha256": "55ACEA8A945543C32013C9DE1307C847F21FA38ADDA9A5E78B7F11D6F0DA1A0B",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Annotation/DimensionCreationInfo.cs",
+      "adaptedSha256": "55ACEA8A945543C32013C9DE1307C847F21FA38ADDA9A5E78B7F11D6F0DA1A0B"
+    },
+    {
+      "sourcePath": "commandset/Models/Annotation/TagCreationInfo.cs",
+      "snapshotPath": "original/commandset/Models/Annotation/TagCreationInfo.cs",
+      "originalSha256": "D65F1354B36D07D9F682C0C24152E20B6CD92BB87E1B6639819C43A0C86C86DF",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Annotation/TagCreationInfo.cs",
+      "adaptedSha256": "D65F1354B36D07D9F682C0C24152E20B6CD92BB87E1B6639819C43A0C86C86DF"
+    },
+    {
+      "sourcePath": "commandset/Models/Annotation/TextNoteCreationInfo.cs",
+      "snapshotPath": "original/commandset/Models/Annotation/TextNoteCreationInfo.cs",
+      "originalSha256": "1D3F89A3B5668A6A622C256234A2DA8FA5FB26A92B3E3652972FBF7A2CEFADEA",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Annotation/TextNoteCreationInfo.cs",
+      "adaptedSha256": "1D3F89A3B5668A6A622C256234A2DA8FA5FB26A92B3E3652972FBF7A2CEFADEA"
+    },
+    {
+      "sourcePath": "commandset/Models/Architecture/AreaCreationInfo.cs",
+      "snapshotPath": "original/commandset/Models/Architecture/AreaCreationInfo.cs",
+      "originalSha256": "4454339AAD0EC6BEB58D75FD08F7338AF86375EFB8BAD4E7FAAB50E17DB54A16",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Architecture/AreaCreationInfo.cs",
+      "adaptedSha256": "4454339AAD0EC6BEB58D75FD08F7338AF86375EFB8BAD4E7FAAB50E17DB54A16"
+    },
+    {
+      "sourcePath": "commandset/Models/Architecture/BalconyInfo.cs",
+      "snapshotPath": "original/commandset/Models/Architecture/BalconyInfo.cs",
+      "originalSha256": "38BC9D1870045915A1F7637C29861840AD58EE620092F45CB22A2EBAD457E4E3",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Architecture/BalconyInfo.cs",
+      "adaptedSha256": "38BC9D1870045915A1F7637C29861840AD58EE620092F45CB22A2EBAD457E4E3"
+    },
+    {
+      "sourcePath": "commandset/Models/Architecture/BeamInfo.cs",
+      "snapshotPath": "original/commandset/Models/Architecture/BeamInfo.cs",
+      "originalSha256": "1954BCD5E857131CFC5DD0CEAD4D9B570ACD0A99474B8485864DA5DBA36F6FDA",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Architecture/BeamInfo.cs",
+      "adaptedSha256": "1954BCD5E857131CFC5DD0CEAD4D9B570ACD0A99474B8485864DA5DBA36F6FDA"
+    },
+    {
+      "sourcePath": "commandset/Models/Architecture/BuildingInfo.cs",
+      "snapshotPath": "original/commandset/Models/Architecture/BuildingInfo.cs",
+      "originalSha256": "931F2EEA05EFD4EB9C34A4C497B630DB221A439C2C6EAEE7F806B62421372522",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Architecture/BuildingInfo.cs",
+      "adaptedSha256": "931F2EEA05EFD4EB9C34A4C497B630DB221A439C2C6EAEE7F806B62421372522"
+    },
+    {
+      "sourcePath": "commandset/Models/Architecture/CeilingCreationInfo.cs",
+      "snapshotPath": "original/commandset/Models/Architecture/CeilingCreationInfo.cs",
+      "originalSha256": "DA3AF4A9AD90D116996127672EC296D42E06E467E40E38329FAE59468DBFCA09",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Architecture/CeilingCreationInfo.cs",
+      "adaptedSha256": "DA3AF4A9AD90D116996127672EC296D42E06E467E40E38329FAE59468DBFCA09"
+    },
+    {
+      "sourcePath": "commandset/Models/Architecture/ColumnInfo.cs",
+      "snapshotPath": "original/commandset/Models/Architecture/ColumnInfo.cs",
+      "originalSha256": "5CD83A0EB47079E5062AC762A2AD2E74A02BFAC1DFD4B391DD1A36FB011442C7",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Architecture/ColumnInfo.cs",
+      "adaptedSha256": "5CD83A0EB47079E5062AC762A2AD2E74A02BFAC1DFD4B391DD1A36FB011442C7"
+    },
+    {
+      "sourcePath": "commandset/Models/Architecture/DoorInfo.cs",
+      "snapshotPath": "original/commandset/Models/Architecture/DoorInfo.cs",
+      "originalSha256": "B4E7E236896694D0606E78B429FDC253C34AAB00EBECF49272338CB3B6F302AF",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Architecture/DoorInfo.cs",
+      "adaptedSha256": "B4E7E236896694D0606E78B429FDC253C34AAB00EBECF49272338CB3B6F302AF"
+    },
+    {
+      "sourcePath": "commandset/Models/Architecture/FloorInfo.cs",
+      "snapshotPath": "original/commandset/Models/Architecture/FloorInfo.cs",
+      "originalSha256": "54B56762DD159A50417526419C94C47E6C07B8F456ECD67C30E71E17F45C7384",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Architecture/FloorInfo.cs",
+      "adaptedSha256": "54B56762DD159A50417526419C94C47E6C07B8F456ECD67C30E71E17F45C7384"
+    },
+    {
+      "sourcePath": "commandset/Models/Architecture/FoundationInfo.cs",
+      "snapshotPath": "original/commandset/Models/Architecture/FoundationInfo.cs",
+      "originalSha256": "BF8939FFF923771ABCAC33695B90B21B3CC16B9A523A3B941B543590A22C12D2",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Architecture/FoundationInfo.cs",
+      "adaptedSha256": "BF8939FFF923771ABCAC33695B90B21B3CC16B9A523A3B941B543590A22C12D2"
+    },
+    {
+      "sourcePath": "commandset/Models/Architecture/GridCreationInfo.cs",
+      "snapshotPath": "original/commandset/Models/Architecture/GridCreationInfo.cs",
+      "originalSha256": "62A3D036AADBA359F54E17E33A2529A8978B5FBB541E8B949C2F15B8083CBB39",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Architecture/GridCreationInfo.cs",
+      "adaptedSha256": "62A3D036AADBA359F54E17E33A2529A8978B5FBB541E8B949C2F15B8083CBB39"
+    },
+    {
+      "sourcePath": "commandset/Models/Architecture/GridInfo.cs",
+      "snapshotPath": "original/commandset/Models/Architecture/GridInfo.cs",
+      "originalSha256": "A843D81C924A14A0E36B7E39A846023D4030FFA0AF88B0996DF2939FC310765E",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Architecture/GridInfo.cs",
+      "adaptedSha256": "A843D81C924A14A0E36B7E39A846023D4030FFA0AF88B0996DF2939FC310765E"
+    },
+    {
+      "sourcePath": "commandset/Models/Architecture/GroupCreationInfo.cs",
+      "snapshotPath": "original/commandset/Models/Architecture/GroupCreationInfo.cs",
+      "originalSha256": "BCF9AE123CFABE72ACF8FB7BB60F84E6E2472ADC3BA837676A9AC90F064A1658",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Architecture/GroupCreationInfo.cs",
+      "adaptedSha256": "BCF9AE123CFABE72ACF8FB7BB60F84E6E2472ADC3BA837676A9AC90F064A1658"
+    },
+    {
+      "sourcePath": "commandset/Models/Architecture/LevelInfo.cs",
+      "snapshotPath": "original/commandset/Models/Architecture/LevelInfo.cs",
+      "originalSha256": "7B0AB29F39D8FC28302EE147C2CF15496BD5300D8DB6E43243EEA7A7D4EBEF0B",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Architecture/LevelInfo.cs",
+      "adaptedSha256": "7B0AB29F39D8FC28302EE147C2CF15496BD5300D8DB6E43243EEA7A7D4EBEF0B"
+    },
+    {
+      "sourcePath": "commandset/Models/Architecture/ModelCurveCreationInfo.cs",
+      "snapshotPath": "original/commandset/Models/Architecture/ModelCurveCreationInfo.cs",
+      "originalSha256": "95E79D316DAA60D437420F1B6474CB7FBF969B1EF4850619193D3CDD83AB8390",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Architecture/ModelCurveCreationInfo.cs",
+      "adaptedSha256": "95E79D316DAA60D437420F1B6474CB7FBF969B1EF4850619193D3CDD83AB8390"
+    },
+    {
+      "sourcePath": "commandset/Models/Architecture/OpeningCreationInfo.cs",
+      "snapshotPath": "original/commandset/Models/Architecture/OpeningCreationInfo.cs",
+      "originalSha256": "701C20805EC6EB0218BD3789A65D717F59488C8D3099E6190EAEBDA477D27F4A",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Architecture/OpeningCreationInfo.cs",
+      "adaptedSha256": "701C20805EC6EB0218BD3789A65D717F59488C8D3099E6190EAEBDA477D27F4A"
+    },
+    {
+      "sourcePath": "commandset/Models/Architecture/RailingCreationInfo.cs",
+      "snapshotPath": "original/commandset/Models/Architecture/RailingCreationInfo.cs",
+      "originalSha256": "35B88B25CFF857DB317682BA7DB1826A680B4E4BA29A5307E1B00C742017F9EB",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Architecture/RailingCreationInfo.cs",
+      "adaptedSha256": "35B88B25CFF857DB317682BA7DB1826A680B4E4BA29A5307E1B00C742017F9EB"
+    },
+    {
+      "sourcePath": "commandset/Models/Architecture/RampCreationInfo.cs",
+      "snapshotPath": "original/commandset/Models/Architecture/RampCreationInfo.cs",
+      "originalSha256": "8E994354DB5943F7C11826D10D6717C67F7E7AFFEC75E2C460C67F3799716459",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Architecture/RampCreationInfo.cs",
+      "adaptedSha256": "8E994354DB5943F7C11826D10D6717C67F7E7AFFEC75E2C460C67F3799716459"
+    },
+    {
+      "sourcePath": "commandset/Models/Architecture/ReferencePlaneCreationInfo.cs",
+      "snapshotPath": "original/commandset/Models/Architecture/ReferencePlaneCreationInfo.cs",
+      "originalSha256": "EDB5E48B9883B4C174C950B05FFE6CA67EA54C688B4C9A2ECF82B1151BAA2E89",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Architecture/ReferencePlaneCreationInfo.cs",
+      "adaptedSha256": "EDB5E48B9883B4C174C950B05FFE6CA67EA54C688B4C9A2ECF82B1151BAA2E89"
+    },
+    {
+      "sourcePath": "commandset/Models/Architecture/RoofInfo.cs",
+      "snapshotPath": "original/commandset/Models/Architecture/RoofInfo.cs",
+      "originalSha256": "5C124EABF449EA9332288722E4465900483887DEAB8EE8B1820149E9954B9D34",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Architecture/RoofInfo.cs",
+      "adaptedSha256": "5C124EABF449EA9332288722E4465900483887DEAB8EE8B1820149E9954B9D34"
+    },
+    {
+      "sourcePath": "commandset/Models/Architecture/RoomCreationInfo.cs",
+      "snapshotPath": "original/commandset/Models/Architecture/RoomCreationInfo.cs",
+      "originalSha256": "A5D6EBD6ABDA4E47C91D8C79DDC1A8F4D659765751FBEA630B7E8037623DA3C9",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Architecture/RoomCreationInfo.cs",
+      "adaptedSha256": "A5D6EBD6ABDA4E47C91D8C79DDC1A8F4D659765751FBEA630B7E8037623DA3C9"
+    },
+    {
+      "sourcePath": "commandset/Models/Architecture/ShaftCreationInfo.cs",
+      "snapshotPath": "original/commandset/Models/Architecture/ShaftCreationInfo.cs",
+      "originalSha256": "F86F55E09C7648B48B4BBC2C4BF678B130F1FC151014963DBAB3BD7A9A19F9EC",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Architecture/ShaftCreationInfo.cs",
+      "adaptedSha256": "F86F55E09C7648B48B4BBC2C4BF678B130F1FC151014963DBAB3BD7A9A19F9EC"
+    },
+    {
+      "sourcePath": "commandset/Models/Architecture/StairCreationInfo.cs",
+      "snapshotPath": "original/commandset/Models/Architecture/StairCreationInfo.cs",
+      "originalSha256": "34A749760546E013D8DF3E5B18A23C5A8D426D93CA6A540C72953C06F6EFDF35",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Architecture/StairCreationInfo.cs",
+      "adaptedSha256": "34A749760546E013D8DF3E5B18A23C5A8D426D93CA6A540C72953C06F6EFDF35"
+    },
+    {
+      "sourcePath": "commandset/Models/Architecture/WallCreationInfo.cs",
+      "snapshotPath": "original/commandset/Models/Architecture/WallCreationInfo.cs",
+      "originalSha256": "6F2FAB452A0AB33F5C1FCA76DF20F6B584565DD95CF39A4DA670773028534493",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Architecture/WallCreationInfo.cs",
+      "adaptedSha256": "6F2FAB452A0AB33F5C1FCA76DF20F6B584565DD95CF39A4DA670773028534493"
+    },
+    {
+      "sourcePath": "commandset/Models/Architecture/WindowInfo.cs",
+      "snapshotPath": "original/commandset/Models/Architecture/WindowInfo.cs",
+      "originalSha256": "6E4D3EF2F005CBC5D213D8C23C4AC8592A4D7AD751528F8C661E65644ABFEF8B",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Architecture/WindowInfo.cs",
+      "adaptedSha256": "6E4D3EF2F005CBC5D213D8C23C4AC8592A4D7AD751528F8C661E65644ABFEF8B"
+    },
+    {
+      "sourcePath": "commandset/Models/Architecture/ZoneCreationInfo.cs",
+      "snapshotPath": "original/commandset/Models/Architecture/ZoneCreationInfo.cs",
+      "originalSha256": "E21F7EE8C2405C8559837302C031B8270D6DD2EA7E24B846DAC74261A8E1FAAF",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Architecture/ZoneCreationInfo.cs",
+      "adaptedSha256": "E21F7EE8C2405C8559837302C031B8270D6DD2EA7E24B846DAC74261A8E1FAAF"
+    },
+    {
+      "sourcePath": "commandset/Models/Common/AIResult.cs",
+      "snapshotPath": "original/commandset/Models/Common/AIResult.cs",
+      "originalSha256": "B8DDC079A0EB0ABFA298B763A1CC59AF21958EB98B30CA2E1C23D32ACD4881FC",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Common/AIResult.cs",
+      "adaptedSha256": "B8DDC079A0EB0ABFA298B763A1CC59AF21958EB98B30CA2E1C23D32ACD4881FC"
+    },
+    {
+      "sourcePath": "commandset/Models/Common/ElementInfo.cs",
+      "snapshotPath": "original/commandset/Models/Common/ElementInfo.cs",
+      "originalSha256": "6B1BAC92749F4E4065A25696F1A0FC13E1CEEB136730150CB7E6B1DAC3F34448",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Common/ElementInfo.cs",
+      "adaptedSha256": "6B1BAC92749F4E4065A25696F1A0FC13E1CEEB136730150CB7E6B1DAC3F34448"
+    },
+    {
+      "sourcePath": "commandset/Models/Common/FamilyTypeInfo.cs",
+      "snapshotPath": "original/commandset/Models/Common/FamilyTypeInfo.cs",
+      "originalSha256": "8B48A43985B651FB77906E9B52203314E4DA995EA31AA864194F4452C6943526",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Common/FamilyTypeInfo.cs",
+      "adaptedSha256": "8B48A43985B651FB77906E9B52203314E4DA995EA31AA864194F4452C6943526"
+    },
+    {
+      "sourcePath": "commandset/Models/Common/FilterSetting.cs",
+      "snapshotPath": "original/commandset/Models/Common/FilterSetting.cs",
+      "originalSha256": "F9AA18C6B0085E90D78D4732A0EF33D88BC4636617B8F04498530CD2D71A0CA3",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Common/FilterSetting.cs",
+      "adaptedSha256": "F9AA18C6B0085E90D78D4732A0EF33D88BC4636617B8F04498530CD2D71A0CA3"
+    },
+    {
+      "sourcePath": "commandset/Models/Common/JZFace.cs",
+      "snapshotPath": "original/commandset/Models/Common/JZFace.cs",
+      "originalSha256": "B611531C9245FCFD8A7C0A0D82C3F485016E75C775EC159E382F67F708262310",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Common/JZFace.cs",
+      "adaptedSha256": "B611531C9245FCFD8A7C0A0D82C3F485016E75C775EC159E382F67F708262310"
+    },
+    {
+      "sourcePath": "commandset/Models/Common/JZLine.cs",
+      "snapshotPath": "original/commandset/Models/Common/JZLine.cs",
+      "originalSha256": "2C499070D56C01BF1A1DC07F2D5F5BD5BABB1BE161ED797543D430B05417FBF5",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Common/JZLine.cs",
+      "adaptedSha256": "2C499070D56C01BF1A1DC07F2D5F5BD5BABB1BE161ED797543D430B05417FBF5"
+    },
+    {
+      "sourcePath": "commandset/Models/Common/JZPoint.cs",
+      "snapshotPath": "original/commandset/Models/Common/JZPoint.cs",
+      "originalSha256": "182E7869765E934BC737931D7893CF332D5A7247029B473AE3DC27A946873C82",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Common/JZPoint.cs",
+      "adaptedSha256": "182E7869765E934BC737931D7893CF332D5A7247029B473AE3DC27A946873C82"
+    },
+    {
+      "sourcePath": "commandset/Models/Common/LineElement.cs",
+      "snapshotPath": "original/commandset/Models/Common/LineElement.cs",
+      "originalSha256": "6A8DAEAB0038810555558CC3D8A3F7E0F2A2CD5B18351FA0CF7BDA7F332FC145",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Common/LineElement.cs",
+      "adaptedSha256": "6A8DAEAB0038810555558CC3D8A3F7E0F2A2CD5B18351FA0CF7BDA7F332FC145"
+    },
+    {
+      "sourcePath": "commandset/Models/Common/OperationSetting.cs",
+      "snapshotPath": "original/commandset/Models/Common/OperationSetting.cs",
+      "originalSha256": "9C7F21BB017FB374F611056430CB4FD11B33358EB457B44A925EB08E6AE2510D",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Common/OperationSetting.cs",
+      "adaptedSha256": "9C7F21BB017FB374F611056430CB4FD11B33358EB457B44A925EB08E6AE2510D"
+    },
+    {
+      "sourcePath": "commandset/Models/Common/PointElement.cs",
+      "snapshotPath": "original/commandset/Models/Common/PointElement.cs",
+      "originalSha256": "0172E66CA3F40DE339B0F52078D45E6068CE5F92D45C257E7CF4425C504FFE1C",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Common/PointElement.cs",
+      "adaptedSha256": "0172E66CA3F40DE339B0F52078D45E6068CE5F92D45C257E7CF4425C504FFE1C"
+    },
+    {
+      "sourcePath": "commandset/Models/Common/SurfaceElement.cs",
+      "snapshotPath": "original/commandset/Models/Common/SurfaceElement.cs",
+      "originalSha256": "AF91222D9FFF6EA8153112E00D56B459DF816BD54CD36C780D7C4780DA484B33",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Common/SurfaceElement.cs",
+      "adaptedSha256": "AF91222D9FFF6EA8153112E00D56B459DF816BD54CD36C780D7C4780DA484B33"
+    },
+    {
+      "sourcePath": "commandset/Models/Common/ViewElementsResult.cs",
+      "snapshotPath": "original/commandset/Models/Common/ViewElementsResult.cs",
+      "originalSha256": "1AAC6267600B7849DD54876C5A5EBAA111C5E24E9D150C50A2899249B90F2F2A",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Common/ViewElementsResult.cs",
+      "adaptedSha256": "1AAC6267600B7849DD54876C5A5EBAA111C5E24E9D150C50A2899249B90F2F2A"
+    },
+    {
+      "sourcePath": "commandset/Models/Common/ViewInfo.cs",
+      "snapshotPath": "original/commandset/Models/Common/ViewInfo.cs",
+      "originalSha256": "FB4638A2FC6ADBB1031C3DDA21E8E96A72082B361E32E7667A6DB8C5127E6D8C",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Common/ViewInfo.cs",
+      "adaptedSha256": "FB4638A2FC6ADBB1031C3DDA21E8E96A72082B361E32E7667A6DB8C5127E6D8C"
+    },
+    {
+      "sourcePath": "commandset/Models/DataExtraction/MaterialQuantityModel.cs",
+      "snapshotPath": "original/commandset/Models/DataExtraction/MaterialQuantityModel.cs",
+      "originalSha256": "21EF926D5DD0608F72C06BB3F630ABF476355A0433737C4C73DC9695028ECCB2",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/DataExtraction/MaterialQuantityModel.cs",
+      "adaptedSha256": "21EF926D5DD0608F72C06BB3F630ABF476355A0433737C4C73DC9695028ECCB2"
+    },
+    {
+      "sourcePath": "commandset/Models/DataExtraction/ModelStatisticsModel.cs",
+      "snapshotPath": "original/commandset/Models/DataExtraction/ModelStatisticsModel.cs",
+      "originalSha256": "2A450F3B9C9F79DCFF82547A33207F3C0BE95A528734ABD733ECD282EE696F3B",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/DataExtraction/ModelStatisticsModel.cs",
+      "adaptedSha256": "2A450F3B9C9F79DCFF82547A33207F3C0BE95A528734ABD733ECD282EE696F3B"
+    },
+    {
+      "sourcePath": "commandset/Models/DataExtraction/RoomDataModel.cs",
+      "snapshotPath": "original/commandset/Models/DataExtraction/RoomDataModel.cs",
+      "originalSha256": "5F1C200CF96FD9358F8D39DD3AFF5C4185F5D61A2E56C917F4BD8F56C85658C4",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/DataExtraction/RoomDataModel.cs",
+      "adaptedSha256": "5F1C200CF96FD9358F8D39DD3AFF5C4185F5D61A2E56C917F4BD8F56C85658C4"
+    },
+    {
+      "sourcePath": "commandset/Models/MEP/ConduitCreationInfo.cs",
+      "snapshotPath": "original/commandset/Models/MEP/ConduitCreationInfo.cs",
+      "originalSha256": "96BB6E0A432C96F37031A3F881F17B01BC2A4C6D375A21797142313FB875A73F",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/MEP/ConduitCreationInfo.cs",
+      "adaptedSha256": "96BB6E0A432C96F37031A3F881F17B01BC2A4C6D375A21797142313FB875A73F"
+    },
+    {
+      "sourcePath": "commandset/Models/MEP/DuctCreationInfo.cs",
+      "snapshotPath": "original/commandset/Models/MEP/DuctCreationInfo.cs",
+      "originalSha256": "5A1D00CA9E5CE71E12F5643683887DA06C15130E64A444E36ACBF10432AF5998",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/MEP/DuctCreationInfo.cs",
+      "adaptedSha256": "5A1D00CA9E5CE71E12F5643683887DA06C15130E64A444E36ACBF10432AF5998"
+    },
+    {
+      "sourcePath": "commandset/Models/MEP/EquipmentCreationInfo.cs",
+      "snapshotPath": "original/commandset/Models/MEP/EquipmentCreationInfo.cs",
+      "originalSha256": "0E991C486621984AAAF3E5BBF7C9C548DC5D67CBF6001B00B506A7F558A89C67",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/MEP/EquipmentCreationInfo.cs",
+      "adaptedSha256": "0E991C486621984AAAF3E5BBF7C9C548DC5D67CBF6001B00B506A7F558A89C67"
+    },
+    {
+      "sourcePath": "commandset/Models/MEP/PipeCreationInfo.cs",
+      "snapshotPath": "original/commandset/Models/MEP/PipeCreationInfo.cs",
+      "originalSha256": "FB3D6FA7C9F8FAFB6FFD5FA3AD43F08E77F0B2CBBB55935C75339B7EAC3BA2BE",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/MEP/PipeCreationInfo.cs",
+      "adaptedSha256": "FB3D6FA7C9F8FAFB6FFD5FA3AD43F08E77F0B2CBBB55935C75339B7EAC3BA2BE"
+    },
+    {
+      "sourcePath": "commandset/Models/Structure/StructuralFramingSystemCreationInfo.cs",
+      "snapshotPath": "original/commandset/Models/Structure/StructuralFramingSystemCreationInfo.cs",
+      "originalSha256": "D3C625C76A42196821539CD4096DE8C7C8022C9D65A7E72B97929ACE94BF6CDA",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Structure/StructuralFramingSystemCreationInfo.cs",
+      "adaptedSha256": "D3C625C76A42196821539CD4096DE8C7C8022C9D65A7E72B97929ACE94BF6CDA"
+    },
+    {
+      "sourcePath": "commandset/Models/Views/ScheduleCreationInfo.cs",
+      "snapshotPath": "original/commandset/Models/Views/ScheduleCreationInfo.cs",
+      "originalSha256": "8E52CB2C7B23798520DC7E22BAA9E9D451095C162BA70D21888E6C94A274B78E",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Views/ScheduleCreationInfo.cs",
+      "adaptedSha256": "8E52CB2C7B23798520DC7E22BAA9E9D451095C162BA70D21888E6C94A274B78E"
+    },
+    {
+      "sourcePath": "commandset/Models/Views/SheetCreationInfo.cs",
+      "snapshotPath": "original/commandset/Models/Views/SheetCreationInfo.cs",
+      "originalSha256": "B290015811B6EE46CC8CB94A382F32C259822C8A141C255E4E6DE7A846BC856B",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Views/SheetCreationInfo.cs",
+      "adaptedSha256": "B290015811B6EE46CC8CB94A382F32C259822C8A141C255E4E6DE7A846BC856B"
+    },
+    {
+      "sourcePath": "commandset/Models/Views/SheetInfo.cs",
+      "snapshotPath": "original/commandset/Models/Views/SheetInfo.cs",
+      "originalSha256": "09F0AE4394EEEA32B6736EE230166CBD7498E0D94B52BADE5021EE04B678A1AF",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Views/SheetInfo.cs",
+      "adaptedSha256": "09F0AE4394EEEA32B6736EE230166CBD7498E0D94B52BADE5021EE04B678A1AF"
+    },
+    {
+      "sourcePath": "commandset/Models/Views/ViewCreationInfo.cs",
+      "snapshotPath": "original/commandset/Models/Views/ViewCreationInfo.cs",
+      "originalSha256": "17557F2B7ADAA5643D1081FFD89A2D522D359135E6FF5E06425E30D5C1AB3661",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Views/ViewCreationInfo.cs",
+      "adaptedSha256": "17557F2B7ADAA5643D1081FFD89A2D522D359135E6FF5E06425E30D5C1AB3661"
+    },
+    {
+      "sourcePath": "commandset/Models/Views/ViewportCreationInfo.cs",
+      "snapshotPath": "original/commandset/Models/Views/ViewportCreationInfo.cs",
+      "originalSha256": "9A7A9509C7AC59DAE4334A773EADD47B4FAE310DFCE9E1A46798DD4513125912",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Models/Views/ViewportCreationInfo.cs",
+      "adaptedSha256": "9A7A9509C7AC59DAE4334A773EADD47B4FAE310DFCE9E1A46798DD4513125912"
+    },
+    {
+      "sourcePath": "commandset/RevitMCPCommandSet.csproj",
+      "snapshotPath": "original/commandset/RevitMCPCommandSet.csproj",
+      "originalSha256": "1DB0BFB28C0A5F3FF876F89651AAAA4D3A4451A05D4D4534877320954C758C2D"
+    },
+    {
+      "sourcePath": "commandset/Services/AIElementFilterEventHandler.cs",
+      "snapshotPath": "original/commandset/Services/AIElementFilterEventHandler.cs",
+      "originalSha256": "10E43A5EBE0A5D69BB3E6344E0A28A1356A4024BF92A585062122AD13FE9559A",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Services/AIElementFilterEventHandler.cs",
+      "adaptedSha256": "10E43A5EBE0A5D69BB3E6344E0A28A1356A4024BF92A585062122AD13FE9559A"
+    },
+    {
+      "sourcePath": "commandset/Services/AnnotationComponents/CreateDimensionEventHandler.cs",
+      "snapshotPath": "original/commandset/Services/AnnotationComponents/CreateDimensionEventHandler.cs",
+      "originalSha256": "AC8FAF724F2D37C2882E000D907144E4E6F44A365DC4EB5DD752CE12A96C7DA0",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Services/AnnotationComponents/CreateDimensionEventHandler.cs",
+      "adaptedSha256": "A130AA16815065E95E233B8E17606EE626BD48627E33B2BD87893823BE976EF5"
+    },
+    {
+      "sourcePath": "commandset/Services/Architecture/CreateLevelEventHandler.cs",
+      "snapshotPath": "original/commandset/Services/Architecture/CreateLevelEventHandler.cs",
+      "originalSha256": "334760D3F8009D404592FE4D19D7345255F037D7DAED6C3ACB3F925AF2E4A919",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Services/Architecture/CreateLevelEventHandler.cs",
+      "adaptedSha256": "334760D3F8009D404592FE4D19D7345255F037D7DAED6C3ACB3F925AF2E4A919"
+    },
+    {
+      "sourcePath": "commandset/Services/Architecture/CreateRoomEventHandler.cs",
+      "snapshotPath": "original/commandset/Services/Architecture/CreateRoomEventHandler.cs",
+      "originalSha256": "8EBE496305A8BA592EB7963281EFACED05DE7F46C32076510F232DD6DF917C40",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Services/Architecture/CreateRoomEventHandler.cs",
+      "adaptedSha256": "91D60384D3FB3EAA52B95A6FA70C1690D3F8B81D3BE25F4BC9DD64A272ABA059"
+    },
+    {
+      "sourcePath": "commandset/Services/ColorSplashEventHandler.cs",
+      "snapshotPath": "original/commandset/Services/ColorSplashEventHandler.cs",
+      "originalSha256": "A63E22933E74927D9FB9E61604B069B30EDF2EBDC1161582DA35D271648FFE00",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Services/ColorSplashEventHandler.cs",
+      "adaptedSha256": "A63E22933E74927D9FB9E61604B069B30EDF2EBDC1161582DA35D271648FFE00"
+    },
+    {
+      "sourcePath": "commandset/Services/CreateGridEventHandler.cs",
+      "snapshotPath": "original/commandset/Services/CreateGridEventHandler.cs",
+      "originalSha256": "CB4B827A15D145D826D3A473FC84508D90200886D2532A18604C947578B9D711",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Services/CreateGridEventHandler.cs",
+      "adaptedSha256": "F7A04D2A66F716038DC9028FE806A43E5C510BEA3451EF995E8A9551ED568F75"
+    },
+    {
+      "sourcePath": "commandset/Services/CreateLineElementEventHandler.cs",
+      "snapshotPath": "original/commandset/Services/CreateLineElementEventHandler.cs",
+      "originalSha256": "6014A3743454CF0FE2BC2D97A0658C27B8DF88A6D4DCF9D4BCCCCFFF959DB4B9",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Services/CreateLineElementEventHandler.cs",
+      "adaptedSha256": "CB7BD0CB55A8BCD5532CDD694D678F5A0C77647F33CDCC46A260D757B80944BA"
+    },
+    {
+      "sourcePath": "commandset/Services/CreatePointElementEventHandler.cs",
+      "snapshotPath": "original/commandset/Services/CreatePointElementEventHandler.cs",
+      "originalSha256": "6D7D6966367AB9B6980C7189B2E5451CB4431A1072E7C76238CBF49FACC5F33F",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Services/CreatePointElementEventHandler.cs",
+      "adaptedSha256": "38814B53E86D10026C74DC47AEA409B7F72E5853AF6275CA90D3A9971879810E"
+    },
+    {
+      "sourcePath": "commandset/Services/CreateStructuralFramingSystemEventHandler.cs",
+      "snapshotPath": "original/commandset/Services/CreateStructuralFramingSystemEventHandler.cs",
+      "originalSha256": "60AE05B9CBCC0029E4D27378AC79169E3C37E8EEBDAD340071075F52A3345D4E",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Services/CreateStructuralFramingSystemEventHandler.cs",
+      "adaptedSha256": "0720233CB37C0713DBACF4C7E747DBEE3D14731DC48164DF586F28D2D4BD5575"
+    },
+    {
+      "sourcePath": "commandset/Services/CreateSurfaceElementEventHandler.cs",
+      "snapshotPath": "original/commandset/Services/CreateSurfaceElementEventHandler.cs",
+      "originalSha256": "32638DDC971362CE4690DFF6D36B59FFEB58E6DA16B8858DE5E3F86C4EC2B613",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Services/CreateSurfaceElementEventHandler.cs",
+      "adaptedSha256": "B1AC00394D6C89260CFC2004FFADCB399EE95CFD7092DA1BE4A9CA4A1E50BDAE"
+    },
+    {
+      "sourcePath": "commandset/Services/DataExtraction/AnalyzeModelStatisticsEventHandler.cs",
+      "snapshotPath": "original/commandset/Services/DataExtraction/AnalyzeModelStatisticsEventHandler.cs",
+      "originalSha256": "0826DB09CB621E59A72AADD12621939C6F51260CD28638258E2B07905EC74DDC",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Services/DataExtraction/AnalyzeModelStatisticsEventHandler.cs",
+      "adaptedSha256": "0826DB09CB621E59A72AADD12621939C6F51260CD28638258E2B07905EC74DDC"
+    },
+    {
+      "sourcePath": "commandset/Services/DataExtraction/ExportRoomDataEventHandler.cs",
+      "snapshotPath": "original/commandset/Services/DataExtraction/ExportRoomDataEventHandler.cs",
+      "originalSha256": "286B575E98246C10023AED5D1D5F85F8F7B17494C72FBB4C1793F44309956ACB",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Services/DataExtraction/ExportRoomDataEventHandler.cs",
+      "adaptedSha256": "286B575E98246C10023AED5D1D5F85F8F7B17494C72FBB4C1793F44309956ACB"
+    },
+    {
+      "sourcePath": "commandset/Services/DataExtraction/GetMaterialQuantitiesEventHandler.cs",
+      "snapshotPath": "original/commandset/Services/DataExtraction/GetMaterialQuantitiesEventHandler.cs",
+      "originalSha256": "235C04230874EC9E9179248BE0755F80E49798B6EC8DC252E3B8DB866D65227E",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Services/DataExtraction/GetMaterialQuantitiesEventHandler.cs",
+      "adaptedSha256": "235C04230874EC9E9179248BE0755F80E49798B6EC8DC252E3B8DB866D65227E"
+    },
+    {
+      "sourcePath": "commandset/Services/DeleteElementEventHandler.cs",
+      "snapshotPath": "original/commandset/Services/DeleteElementEventHandler.cs",
+      "originalSha256": "1065C45CEEB8C7A23C214C995487372DFFC02AC1BF2E7AA680FD5BC118322BDA",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Services/DeleteElementEventHandler.cs",
+      "adaptedSha256": "117EDA94C88BBEB1E3512F8F10544918EE20F543145AB6F6F5559FF9B25F73CD"
+    },
+    {
+      "sourcePath": "commandset/Services/GetAvailableFamilyTypesEventHandler.cs",
+      "snapshotPath": "original/commandset/Services/GetAvailableFamilyTypesEventHandler.cs",
+      "originalSha256": "05269B07A6F4AB8C8F636843850227A0940E739ED633543CC7403D1EB6B6CC02",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Services/GetAvailableFamilyTypesEventHandler.cs",
+      "adaptedSha256": "BD6CAAC316FFB015BAB089F6292C0E09E0F98A73AF5F37FAD4401BB699D2B731"
+    },
+    {
+      "sourcePath": "commandset/Services/GetCurrentViewElementsEventHandler.cs",
+      "snapshotPath": "original/commandset/Services/GetCurrentViewElementsEventHandler.cs",
+      "originalSha256": "433C5CB5231433AE525B0E843017D20C1063AE824086CB3323FC1E730DCC853A",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Services/GetCurrentViewElementsEventHandler.cs",
+      "adaptedSha256": "4B3B444DF74C43B59A7EBFC6289D9235A91F1035A5995914B7DB6DF6F34E36CD"
+    },
+    {
+      "sourcePath": "commandset/Services/GetCurrentViewInfoEventHandler.cs",
+      "snapshotPath": "original/commandset/Services/GetCurrentViewInfoEventHandler.cs",
+      "originalSha256": "9F576F0F7E918263C1EB91CD83639E662F32391761804D22C400DEABC93DD414",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Services/GetCurrentViewInfoEventHandler.cs",
+      "adaptedSha256": "E8C5BC4248F144724DE8317916A14CF04435334C1AF7121951575337120356D3"
+    },
+    {
+      "sourcePath": "commandset/Services/GetSelectedElementsEventHandler.cs",
+      "snapshotPath": "original/commandset/Services/GetSelectedElementsEventHandler.cs",
+      "originalSha256": "14647FF423BD7433B84662E32BE15888CF1B1EF95E8CD351A9D719A3A957735B",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Services/GetSelectedElementsEventHandler.cs",
+      "adaptedSha256": "9A74AF0C86D6CCB40B9BB65AF74A259332C23FB5707FC2F75FE5AEBA40D13D3E"
+    },
+    {
+      "sourcePath": "commandset/Services/OperateElementEventHandler.cs",
+      "snapshotPath": "original/commandset/Services/OperateElementEventHandler.cs",
+      "originalSha256": "B3417944B46D7016A0E7EBA84B3F6E4AEB571EA339FD0A49006E483FCB36747A",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Services/OperateElementEventHandler.cs",
+      "adaptedSha256": "B3417944B46D7016A0E7EBA84B3F6E4AEB571EA339FD0A49006E483FCB36747A"
+    },
+    {
+      "sourcePath": "commandset/Services/SayHelloEventHandler.cs",
+      "snapshotPath": "original/commandset/Services/SayHelloEventHandler.cs",
+      "originalSha256": "A926A89430F85332B072D87F8350C24DCA4826AA0AC1C99B7C20B6885EABACAC",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Services/SayHelloEventHandler.cs",
+      "adaptedSha256": "A926A89430F85332B072D87F8350C24DCA4826AA0AC1C99B7C20B6885EABACAC"
+    },
+    {
+      "sourcePath": "commandset/Services/TagRoomsEventHandler.cs",
+      "snapshotPath": "original/commandset/Services/TagRoomsEventHandler.cs",
+      "originalSha256": "86779752FA4D9C3CB9330F6256A98AADE0516C4AB0850861DAEC20233EF2EBF0",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Services/TagRoomsEventHandler.cs",
+      "adaptedSha256": "87EAD959D57559E736D2C377972B21C61F425EF02287D6555B19372AE2B8B8CE"
+    },
+    {
+      "sourcePath": "commandset/Services/TagWallsEventHandler.cs",
+      "snapshotPath": "original/commandset/Services/TagWallsEventHandler.cs",
+      "originalSha256": "9C997039118FD560045126D1822BA09F0D641A2C9882CADCA79BED9B2C2E3336",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Services/TagWallsEventHandler.cs",
+      "adaptedSha256": "6852A97BA30F52691E894456DA29B05DE35321A472647CCA66167ED94EEC42B8"
+    },
+    {
+      "sourcePath": "commandset/Utils/DeleteWarningSuperUtils.cs",
+      "snapshotPath": "original/commandset/Utils/DeleteWarningSuperUtils.cs",
+      "originalSha256": "7609D828E70122A1DC5E6BA67995704AA67C9893A7416DCF436AA53596D3B803",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Utils/DeleteWarningSuperUtils.cs",
+      "adaptedSha256": "7609D828E70122A1DC5E6BA67995704AA67C9893A7416DCF436AA53596D3B803"
+    },
+    {
+      "sourcePath": "commandset/Utils/ElementIdExtensions.cs",
+      "snapshotPath": "original/commandset/Utils/ElementIdExtensions.cs",
+      "originalSha256": "C2DF14C7F80C4FE695CA0570DD97AFAA821E05C94FF8894BE64DB2363281C025",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Utils/ElementIdExtensions.cs",
+      "adaptedSha256": "C2DF14C7F80C4FE695CA0570DD97AFAA821E05C94FF8894BE64DB2363281C025"
+    },
+    {
+      "sourcePath": "commandset/Utils/GeometryUtils.cs",
+      "snapshotPath": "original/commandset/Utils/GeometryUtils.cs",
+      "originalSha256": "17F946006BD1483538C72EFE7B31F850096AA897C022E86E2C88806057E3C8C3",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Utils/GeometryUtils.cs",
+      "adaptedSha256": "17F946006BD1483538C72EFE7B31F850096AA897C022E86E2C88806057E3C8C3"
+    },
+    {
+      "sourcePath": "commandset/Utils/HandleDuplicateTypeUtils.cs",
+      "snapshotPath": "original/commandset/Utils/HandleDuplicateTypeUtils.cs",
+      "originalSha256": "231F129096AF9FF3311DABC8E62626DE1AC30CAEE147CBF4680D6A5D3AB3DAFB",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Utils/HandleDuplicateTypeUtils.cs",
+      "adaptedSha256": "231F129096AF9FF3311DABC8E62626DE1AC30CAEE147CBF4680D6A5D3AB3DAFB"
+    },
+    {
+      "sourcePath": "commandset/Utils/JsonSchemaGenerator.cs",
+      "snapshotPath": "original/commandset/Utils/JsonSchemaGenerator.cs",
+      "originalSha256": "6890DBE1EE91F1DC6C612AFFEBA385B8F8FF20DE581F80B163F21C73EAEB3E67",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Utils/JsonSchemaGenerator.cs",
+      "adaptedSha256": "6890DBE1EE91F1DC6C612AFFEBA385B8F8FF20DE581F80B163F21C73EAEB3E67"
+    },
+    {
+      "sourcePath": "commandset/Utils/ProjectUtils.cs",
+      "snapshotPath": "original/commandset/Utils/ProjectUtils.cs",
+      "originalSha256": "48D685D5B08FF6BE202F747A3C5D51FCF710C8E5FCEC8F729740FAAE831E075F",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Utils/ProjectUtils.cs",
+      "adaptedSha256": "6C65044820488FAC25CF1540DB4130583E92632109FCACEC6662629B14ED9394"
+    },
+    {
+      "sourcePath": "commandset/Utils/TransactionUtils.cs",
+      "snapshotPath": "original/commandset/Utils/TransactionUtils.cs",
+      "originalSha256": "9C681C50239A22C0DAD0E4C1B9BF8B8C69501438F3E4F0CE0C70FE52622CB456",
+      "adaptedPath": "integrations/mcp-servers-for-revit/revit/Utils/TransactionUtils.cs",
+      "adaptedSha256": "9C681C50239A22C0DAD0E4C1B9BF8B8C69501438F3E4F0CE0C70FE52622CB456"
+    },
+    {
+      "sourcePath": "server/package.json",
+      "snapshotPath": "original/server/package.json",
+      "originalSha256": "434ADC3863A20816160AA95C475DA957DC7AD4E1008F7CD3C91423A7A7409CE8"
+    },
+    {
+      "sourcePath": "server/src/database/db.ts",
+      "snapshotPath": "original/server/src/database/db.ts",
+      "originalSha256": "225B8C76A2C7B277017BDBE1D17DFC8F95757CBBCDF2565F733F8D5AB985CEBC",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/database/db.ts",
+      "adaptedSha256": "6AAC1D05C254E604D2B4715D310B43E59872708BFD52C1BFC4CA511538A58FC7"
+    },
+    {
+      "sourcePath": "server/src/database/service.ts",
+      "snapshotPath": "original/server/src/database/service.ts",
+      "originalSha256": "1F0D2A8C238C743CECA4CED14E8E38920C96B0A130F83F8627ED3B39749199CF",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/database/service.ts",
+      "adaptedSha256": "1F0D2A8C238C743CECA4CED14E8E38920C96B0A130F83F8627ED3B39749199CF"
+    },
+    {
+      "sourcePath": "server/src/tools/ai_element_filter.ts",
+      "snapshotPath": "original/server/src/tools/ai_element_filter.ts",
+      "originalSha256": "BC5C1F6CBB516A99B23857EF60DD13F69CDD55B99303E22758660BB1E647D0F0",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/ai_element_filter.ts",
+      "adaptedSha256": "BC5C1F6CBB516A99B23857EF60DD13F69CDD55B99303E22758660BB1E647D0F0"
+    },
+    {
+      "sourcePath": "server/src/tools/analyze_model_statistics.ts",
+      "snapshotPath": "original/server/src/tools/analyze_model_statistics.ts",
+      "originalSha256": "296DCB7EFE4C4CD9CA7FA508DED79800217BFFDA50A4EF51BC13266D22898517",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/analyze_model_statistics.ts",
+      "adaptedSha256": "296DCB7EFE4C4CD9CA7FA508DED79800217BFFDA50A4EF51BC13266D22898517"
+    },
+    {
+      "sourcePath": "server/src/tools/color_elements.ts",
+      "snapshotPath": "original/server/src/tools/color_elements.ts",
+      "originalSha256": "1E83BB60884EA8BC0A142C024B9D5FD420468E0F190BDCD8A02052BA0B8ABC6D",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/color_elements.ts",
+      "adaptedSha256": "1E83BB60884EA8BC0A142C024B9D5FD420468E0F190BDCD8A02052BA0B8ABC6D"
+    },
+    {
+      "sourcePath": "server/src/tools/create_dimensions.ts",
+      "snapshotPath": "original/server/src/tools/create_dimensions.ts",
+      "originalSha256": "094FEE241410BC0A65856482B049182D666907E5B38440D583BA06D52526A7B4",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/create_dimensions.ts",
+      "adaptedSha256": "094FEE241410BC0A65856482B049182D666907E5B38440D583BA06D52526A7B4"
+    },
+    {
+      "sourcePath": "server/src/tools/create_grid.ts",
+      "snapshotPath": "original/server/src/tools/create_grid.ts",
+      "originalSha256": "C8B6CF5640ABE15BCFDC68294BD240D9741CCDAA7635DCD44BE57267264F8AB9",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/create_grid.ts",
+      "adaptedSha256": "C8B6CF5640ABE15BCFDC68294BD240D9741CCDAA7635DCD44BE57267264F8AB9"
+    },
+    {
+      "sourcePath": "server/src/tools/create_level.ts",
+      "snapshotPath": "original/server/src/tools/create_level.ts",
+      "originalSha256": "755FDF7CE883D67EE7DFC8470ED5035B8993D56C6E977B125A4CE08958F5D436",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/create_level.ts",
+      "adaptedSha256": "755FDF7CE883D67EE7DFC8470ED5035B8993D56C6E977B125A4CE08958F5D436"
+    },
+    {
+      "sourcePath": "server/src/tools/create_line_based_element.ts",
+      "snapshotPath": "original/server/src/tools/create_line_based_element.ts",
+      "originalSha256": "5760A6E89CC40D602425959503B54EA7779EDAD6A2B6191060B0B82E5A6F77E1",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/create_line_based_element.ts",
+      "adaptedSha256": "5760A6E89CC40D602425959503B54EA7779EDAD6A2B6191060B0B82E5A6F77E1"
+    },
+    {
+      "sourcePath": "server/src/tools/create_point_based_element.ts",
+      "snapshotPath": "original/server/src/tools/create_point_based_element.ts",
+      "originalSha256": "0233A0B5945B67B73CDCC3E04FCDED6FDBB87E2BA964395BFA92E65473697B8E",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/create_point_based_element.ts",
+      "adaptedSha256": "0233A0B5945B67B73CDCC3E04FCDED6FDBB87E2BA964395BFA92E65473697B8E"
+    },
+    {
+      "sourcePath": "server/src/tools/create_room.ts",
+      "snapshotPath": "original/server/src/tools/create_room.ts",
+      "originalSha256": "6C7C9AD809C85579F7C60BDE702B3DA35330539926FB5B8C5DA1B70A66D64B5E",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/create_room.ts",
+      "adaptedSha256": "6C7C9AD809C85579F7C60BDE702B3DA35330539926FB5B8C5DA1B70A66D64B5E"
+    },
+    {
+      "sourcePath": "server/src/tools/create_structural_framing_system.ts",
+      "snapshotPath": "original/server/src/tools/create_structural_framing_system.ts",
+      "originalSha256": "830B896BFF15E58FCA50B0910FBD0ED57AECE5392C141474281E23D213E35AF1",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/create_structural_framing_system.ts",
+      "adaptedSha256": "830B896BFF15E58FCA50B0910FBD0ED57AECE5392C141474281E23D213E35AF1"
+    },
+    {
+      "sourcePath": "server/src/tools/create_surface_based_element.ts",
+      "snapshotPath": "original/server/src/tools/create_surface_based_element.ts",
+      "originalSha256": "650BBE43A5D05D8CF2BACD5EDA4C413DF1D902F2C63C59CE7F974833F08FE9FD",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/create_surface_based_element.ts",
+      "adaptedSha256": "650BBE43A5D05D8CF2BACD5EDA4C413DF1D902F2C63C59CE7F974833F08FE9FD"
+    },
+    {
+      "sourcePath": "server/src/tools/delete_element.ts",
+      "snapshotPath": "original/server/src/tools/delete_element.ts",
+      "originalSha256": "D38C4779B9954AD2355FDCB3C37E3C8EDF1B2F1CF83EF51EFD0854CC33F5D807",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/delete_element.ts",
+      "adaptedSha256": "D38C4779B9954AD2355FDCB3C37E3C8EDF1B2F1CF83EF51EFD0854CC33F5D807"
+    },
+    {
+      "sourcePath": "server/src/tools/export_room_data.ts",
+      "snapshotPath": "original/server/src/tools/export_room_data.ts",
+      "originalSha256": "BD42C1F9636B874465C6D868D3DC35DA26DB1AB08B90A3843F78A7CB9DBAE208",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/export_room_data.ts",
+      "adaptedSha256": "BD42C1F9636B874465C6D868D3DC35DA26DB1AB08B90A3843F78A7CB9DBAE208"
+    },
+    {
+      "sourcePath": "server/src/tools/get_available_family_types.ts",
+      "snapshotPath": "original/server/src/tools/get_available_family_types.ts",
+      "originalSha256": "A6A86046ACAB6169465472D1D3FCD07D7559B6E8879C8D275EF007FD89AA4FEA",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/get_available_family_types.ts",
+      "adaptedSha256": "A6A86046ACAB6169465472D1D3FCD07D7559B6E8879C8D275EF007FD89AA4FEA"
+    },
+    {
+      "sourcePath": "server/src/tools/get_current_view_elements.ts",
+      "snapshotPath": "original/server/src/tools/get_current_view_elements.ts",
+      "originalSha256": "B07BC3FFEB66A97FC913FD796409F25FB9870BE276549CCB08B3B5BFD11E5BAD",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/get_current_view_elements.ts",
+      "adaptedSha256": "B07BC3FFEB66A97FC913FD796409F25FB9870BE276549CCB08B3B5BFD11E5BAD"
+    },
+    {
+      "sourcePath": "server/src/tools/get_current_view_info.ts",
+      "snapshotPath": "original/server/src/tools/get_current_view_info.ts",
+      "originalSha256": "2A4FC6E6D745511B3FE66A5D6E74724DFF0D446E275A79ED7422B93C46A86A9A",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/get_current_view_info.ts",
+      "adaptedSha256": "2A4FC6E6D745511B3FE66A5D6E74724DFF0D446E275A79ED7422B93C46A86A9A"
+    },
+    {
+      "sourcePath": "server/src/tools/get_material_quantities.ts",
+      "snapshotPath": "original/server/src/tools/get_material_quantities.ts",
+      "originalSha256": "1EAC17AA1F139511E292FFA960382916B3FEB1CF3933EC7A74A6A83CC3454C6C",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/get_material_quantities.ts",
+      "adaptedSha256": "1EAC17AA1F139511E292FFA960382916B3FEB1CF3933EC7A74A6A83CC3454C6C"
+    },
+    {
+      "sourcePath": "server/src/tools/get_selected_elements.ts",
+      "snapshotPath": "original/server/src/tools/get_selected_elements.ts",
+      "originalSha256": "BFD4925D5C262180CC23D9FE173909F8231FCFC52582BD6FB4B720D613F3965F",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/get_selected_elements.ts",
+      "adaptedSha256": "BFD4925D5C262180CC23D9FE173909F8231FCFC52582BD6FB4B720D613F3965F"
+    },
+    {
+      "sourcePath": "server/src/tools/modify_element.ts",
+      "snapshotPath": "original/server/src/tools/modify_element.ts",
+      "originalSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/modify_element.ts",
+      "adaptedSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "sourcePath": "server/src/tools/operate_element.ts",
+      "snapshotPath": "original/server/src/tools/operate_element.ts",
+      "originalSha256": "33D6324775AD52835C07306717E85AA0A0F5CDE879968B44321569449BE8BC4E",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/operate_element.ts",
+      "adaptedSha256": "33D6324775AD52835C07306717E85AA0A0F5CDE879968B44321569449BE8BC4E"
+    },
+    {
+      "sourcePath": "server/src/tools/query_stored_data.ts",
+      "snapshotPath": "original/server/src/tools/query_stored_data.ts",
+      "originalSha256": "88F3737EA4EFDC9BD440A0FA958C6255F8626A47BB80CE1CA5A65611435D7C96",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/query_stored_data.ts",
+      "adaptedSha256": "88F3737EA4EFDC9BD440A0FA958C6255F8626A47BB80CE1CA5A65611435D7C96"
+    },
+    {
+      "sourcePath": "server/src/tools/register.ts",
+      "snapshotPath": "original/server/src/tools/register.ts",
+      "originalSha256": "5370C94DFD373A9D71248EE2B20BD98FE143BBCEC7E13D30446FD26A5B85B396",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/register.ts",
+      "adaptedSha256": "5370C94DFD373A9D71248EE2B20BD98FE143BBCEC7E13D30446FD26A5B85B396"
+    },
+    {
+      "sourcePath": "server/src/tools/say_hello.ts",
+      "snapshotPath": "original/server/src/tools/say_hello.ts",
+      "originalSha256": "B68BE418C75804365D5BF667EFCFBB08F69081B3CFDB8A39A2C1444D65251DC7",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/say_hello.ts",
+      "adaptedSha256": "B68BE418C75804365D5BF667EFCFBB08F69081B3CFDB8A39A2C1444D65251DC7"
+    },
+    {
+      "sourcePath": "server/src/tools/search_modules.ts",
+      "snapshotPath": "original/server/src/tools/search_modules.ts",
+      "originalSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/search_modules.ts",
+      "adaptedSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+      "sourcePath": "server/src/tools/send_code_to_revit.ts",
+      "snapshotPath": "original/server/src/tools/send_code_to_revit.ts",
+      "originalSha256": "C2FA6DB37FA9ACF0A13FF3F4144567EF03C17A8B3CFA63F660A237CB95155C0A",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/send_code_to_revit.ts",
+      "adaptedSha256": "C2FA6DB37FA9ACF0A13FF3F4144567EF03C17A8B3CFA63F660A237CB95155C0A"
+    },
+    {
+      "sourcePath": "server/src/tools/store_project_data.ts",
+      "snapshotPath": "original/server/src/tools/store_project_data.ts",
+      "originalSha256": "D4BC92A7B946A43EE3B57E4D4A8C246C8AC35F3D849A95FCCA6463D68F75590E",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/store_project_data.ts",
+      "adaptedSha256": "D4BC92A7B946A43EE3B57E4D4A8C246C8AC35F3D849A95FCCA6463D68F75590E"
+    },
+    {
+      "sourcePath": "server/src/tools/store_room_data.ts",
+      "snapshotPath": "original/server/src/tools/store_room_data.ts",
+      "originalSha256": "B7B7818BD0237CBD4F6CF632CC0AB56E3A16159D2687E87FA34DB2BDA17A4623",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/store_room_data.ts",
+      "adaptedSha256": "B7B7818BD0237CBD4F6CF632CC0AB56E3A16159D2687E87FA34DB2BDA17A4623"
+    },
+    {
+      "sourcePath": "server/src/tools/tag_all_rooms.ts",
+      "snapshotPath": "original/server/src/tools/tag_all_rooms.ts",
+      "originalSha256": "933FF06CC24566C95DAD157CC58595470CA4285738ABA2AEE90944EFE3A63EBD",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/tag_all_rooms.ts",
+      "adaptedSha256": "933FF06CC24566C95DAD157CC58595470CA4285738ABA2AEE90944EFE3A63EBD"
+    },
+    {
+      "sourcePath": "server/src/tools/tag_all_walls.ts",
+      "snapshotPath": "original/server/src/tools/tag_all_walls.ts",
+      "originalSha256": "5895D0D9888EE82503F616BB7C11E0FEF91499E03C8221A5B58A1F35A6EEBDDC",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/tag_all_walls.ts",
+      "adaptedSha256": "5895D0D9888EE82503F616BB7C11E0FEF91499E03C8221A5B58A1F35A6EEBDDC"
+    },
+    {
+      "sourcePath": "server/src/tools/use_module.ts",
+      "snapshotPath": "original/server/src/tools/use_module.ts",
+      "originalSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "adaptedPath": "server/src/integrations/mcp-servers-for-revit/tools/use_module.ts",
+      "adaptedSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+<Project>
+  <!-- Revit supplies these assemblies and their dependency graph at runtime. -->
+  <ItemGroup>
+    <Reference Update="RevitAPI;RevitAPIUI"><ExternallyResolved>true</ExternallyResolved></Reference>
+  </ItemGroup>
+</Project>
