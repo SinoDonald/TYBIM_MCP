@@ -51,19 +51,42 @@ foreach($year in $RevitVersion){
   $relative=(@($dir.relative,$name) | Where-Object {$_}) -join '/'
   if($dir.root -eq 'TYBIMREGISTERDIR'){
    if($relative -ne 'TYBIM.Mcp.addin'){throw 'Unexpected registration file'}
-  }else{$actual[$relative]=$true}
+  }else{$actual[$relative]=$file.Id}
  }
  if($files.Count -ne $index.files.Count+1){throw 'MSI file count differs from reviewed payload'}
  foreach($file in $index.files){if(!$actual.ContainsKey("$year/$($file.relative)")){throw "MSI missing payload file: $($file.relative)"}}
- foreach($required in @('Tybim.Revit.Addin.dll','Tybim.Revit.Commands.dll','Tybim.Revit.Study.dll','Tybim.Revit.Upstream.dll','runtime/node/node.exe','runtime/build/chat/index.js')){
+ foreach($required in @('Tybim.Mcp.Contracts.dll','Tybim.Revit.Addin.dll','Tybim.Revit.Commands.dll','Tybim.Revit.Study.dll','Tybim.Revit.Upstream.dll','runtime/node/node.exe','runtime/build/chat/index.js')){
   if(!$actual.ContainsKey("$year/$required")){throw "Missing runtime dependency: $required"}
  }
  $media=@(Rows 'SELECT `Cabinet` FROM `Media`' @('Cabinet'))
  if($media | Where-Object { !$_.Cabinet.StartsWith('#') }){throw 'MSI requires external cabinet files'}
+ # Verify the bytes actually inside the MSI, rather than just its File table
+ # or the staging folder. This does not install/register the product.
+ $qa=Join-Path $root ("artifacts/qa/msi-content-$year-"+[Guid]::NewGuid().ToString('N'))
+ $expanded=Join-Path $qa 'cabinet'
+ $verified=Join-Path $qa 'verified-dlls'
+ New-Item -ItemType Directory -Path $expanded,$verified -Force | Out-Null
+ $cabNumber=0
+ foreach($cab in $media){
+  $cabPath=Join-Path $qa ((++$cabNumber).ToString()+'.cab')
+  & (Join-Path $PSScriptRoot 'Export-MsiCabinet.ps1') -Msi $msi -Stream $cab.Cabinet.Substring(1) -Destination $cabPath
+  & "$env:SystemRoot/System32/expand.exe" '-F:*' $cabPath $expanded *> (Join-Path $qa "expand-$cabNumber.log")
+  if($LASTEXITCODE -ne 0){throw 'Cannot extract embedded MSI cabinet'}
+ }
+ foreach($file in $index.files){
+  $stored=Join-Path $expanded $actual["$year/$($file.relative)"]
+  if(!(Test-Path -LiteralPath $stored) -or (Get-FileHash -LiteralPath $stored -Algorithm SHA256).Hash -ne $file.sha256){throw "MSI content mismatch: $($file.relative)"}
+  if($file.relative -match '^[^/]+\.dll$'){Copy-Item -LiteralPath $stored -Destination (Join-Path $verified $file.relative)}
+ }
  [xml]$manifest=Get-Content (Join-Path $PSScriptRoot "registration/$year/TYBIM.Mcp.addin") -Raw
+ $manifestFile=$files | Where-Object {($_.Name.Split('|') | Select-Object -Last 1) -eq 'TYBIM.Mcp.addin'}
+ if(@($manifestFile).Count -ne 1){throw 'Expected one add-in manifest'}
+ $manifestSource=Join-Path $PSScriptRoot "registration/$year/TYBIM.Mcp.addin"
+ if((Get-FileHash -LiteralPath (Join-Path $expanded $manifestFile.Id)).Hash -ne (Get-FileHash -LiteralPath $manifestSource).Hash){throw 'Embedded add-in manifest differs from reviewed registration'}
  if($manifest.RevitAddIns.AddIn.Assembly -ne "..\TYBIM_MCP\$year\Tybim.Revit.Addin.dll"){throw 'Incorrect relative Assembly path'}
  if($properties.UpgradeCode -eq $lastUpgrade){throw 'Revit versions must have different upgrade identities'}
  $lastUpgrade=$properties.UpgradeCode
+ & (Join-Path $PSScriptRoot 'Test-PayloadAssembly.ps1') -RevitVersion $year -PayloadPath $verified
  [pscustomobject]@{RevitVersion=$year;Msi=$msi;FileCount=$files.Count;Version=$properties.ProductVersion;DisplayName=$properties.ProductName;UninstallEnabled=$true;PerUser=$true;EmbeddedCabinet=$true;PathsVerified=$true;NoSharedToken=$true} | ConvertTo-Json
 }
 

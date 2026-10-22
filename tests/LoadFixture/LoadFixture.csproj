@@ -1,0 +1,4 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><UseWPF>false</UseWPF></PropertyGroup>
+  <ItemGroup><ProjectReference Include="../../src/Tybim.Mcp.Contracts/Tybim.Mcp.Contracts.csproj" /></ItemGroup>
+</Project>

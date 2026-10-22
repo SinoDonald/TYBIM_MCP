@@ -1,5 +1,27 @@
 # 驗證方式
 
+## 登入按鈕重複累加修正 v0.5.4（2026-10-22）
+
+原 `ChatPanel.HandleEvent(loginUrl)` 每次呼叫 `AddLink`，直接將新按鈕加入 `messages.Children`。改為連線區唯一 `reopenLogin` 控制項，更新其網址與可見狀態。相同網址事件不重開瀏覽器，待登入時重按登入只重開現有網址，啟動過程使用 `loginStarting` 防止重入。登入與重新開啟 Click 均設定 Handled，避免路由到宿主。
+
+`CodexProvider` 轉送結構化 `loginCompleted` 事件，面板在成功／失敗、登出、切換供應商、重新 configure 或斷線時清除登入連結。原登入與 API Key 儲存方式不變。
+
+WPF `ChatPanelSmoke` 改為依 RevitVersion 使用實際目標框架，.NET Framework 4.8 與 .NET 8 各 27 項檢查通過：20 次重複網址事件、40 次登入／重開 Click，不新增對話按鈕，重開使用最新網址、Click 不向外冒泡、登入完成／切換供應商／斷線清除連結。測試以瀏覽器替身運作，不實際登入。2024 測試須先編譯再直接執行 net48/ChatPanelSmoke.exe；此環境透過 dotnet run 啟動 net48 時，Node 測試背景程序會提前結束，直接執行通過。
+
+三版 Release 編譯成功（各保留原有外來程式 5 項警告），Node 56 項測試通過。登入按鈕問題仍需在實際 Revit 宿主確認；獨立 WPF 測試不等同登入真實帳號或驗收完整 Revit。
+
+0.5.4 三版 MSI 均完成重建：2024 共 3761 檔、2025/2026 各 3754 檔；內嵌 CAB 全檔 SHA-256、註冊檔相對路徑、Contracts 等五個 DLL 版本／框架／Revit API 年份、LoadFile/LoadFrom 正反測試與 Windows 解除安裝設定檢查全部通過。Setup 產生器亦改為暫存檔寫完後原子替換 .vdproj，避開已開啟專案的記憶體對應檔覆寫錯誤。
+
+## 啟動相依 DLL 修正 v0.5.3（2026-10-22）
+
+Revit 2024 回報 `Tybim.Mcp.Contracts, Version=0.5.2.0` 找不到。原封裝含正確 Contracts DLL，但入口直接依賴 Contracts/Study，且沒有同目錄相依解析。新增不含上述外部相依型別欄位的 `Application` bootstrap，以禁止內嵌的方法延後建立 `RevitApplication`，先啟用相依解析再啟動。
+
+新增 `tests/AddinLoadRegression` 無專案相依的獨立 host 與 `tests/LoadFixture`，從 host app base 以外的目錄 LoadFile 載入。未安裝 resolver 時必須重現找不到 Contracts；安裝正式 resolver 後必須成功建立使用 Newtonsoft.Json 的 BridgeRequest。另驗證 LoadFrom、五個 TYBIM DLL 身分版本與不接管其他 host 的要求。測試不會初始化 Revit API；不能替代在 Revit 中的完整 OnStartup/Ribbon/模型操作測試。
+
+MSI 驗證從實際內嵌 CAB 解出內容，逐檔比對 payload-index 的 SHA-256，再用解出的 DLL 執行上述測試。三個年份各自編譯與封裝，原 per-user 安裝路徑、升級識別及 Windows 解除安裝註冊檢查保留。
+
+本次結果：三版 Release 編譯成功（既有外來程式 5 項未使用警告）；Node 56 項測試通過。MSI 解出內容全檔雜湊核對成功（2024：3761 檔，2025/2026：各 3754 檔，含註冊檔）；三版均通過負向重現、正式解析器 LoadFile/LoadFrom、.NET 目標與 Revit API 年份檢查。2024 測試副本實際安裝至隔離根目錄，確認相依 DLL 存在及載入、Windows 註冊、解除安裝成功，紀錄在 `artifacts/qa/msi-uninstall-5ddacbf0385c4a54a8b7df18c288c36b/result.json`。未在各版 Revit 執行實際 UI 啟動驗收。
+
 ## Claude／API 錯誤處理與三版 MSI v0.5.2（2026-10-21）
 
 - Revit 2024、2025、2026 分版 Release 編譯全部成功，各保留既有 5 項外來程式未使用變數／事件警告。

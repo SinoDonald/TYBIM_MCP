@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup><TargetFramework>net10.0-windows</TargetFramework><UseWPF>true</UseWPF><OutputType>Exe</OutputType></PropertyGroup>
+  <PropertyGroup><UseWPF>true</UseWPF><OutputType>Exe</OutputType></PropertyGroup>
   <ItemGroup>
+    <Reference Include="System.Security" Condition="'$(TargetFramework)' == 'net48'" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <Compile Include="../../src/Tybim.Revit.Addin/Chat/ChatPanel.cs" Link="ChatPanel.cs" />
     <Compile Include="../../src/Tybim.Revit.Addin/Chat/ChatSettings.cs" Link="ChatSettings.cs" />

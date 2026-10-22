@@ -92,7 +92,13 @@ for (const projectDir of [path.join(setup, 'generated', year), ...(year === '202
   const output = path.relative(projectDir,path.join(setup,'Release',`TYBIM_MCP_Revit${year}_${version}.msi`));
   text = text.replace(/("OutputFilename" = "8:)[^"]*"/g, '$1' + encode(output) + '"');
   const projectFile = path.join(projectDir,projectName + '.vdproj');
-  await fs.writeFile(projectFile,'\uFEFF' + text.replaceAll('\n','\r\n'));
+  // Visual Studio may memory-map the open setup project. Replacing a fully
+  // written sibling file avoids truncating that mapped file during generation.
+  const temporaryProject = projectFile + '.' + randomUUID() + '.tmp';
+  try {
+    await fs.writeFile(temporaryProject,'\uFEFF' + text.replaceAll('\n','\r\n'));
+    await fs.rename(temporaryProject, projectFile);
+  } finally { await fs.rm(temporaryProject, { force: true }); }
   if (projectDir !== setup) {
     const projectGuid = guid('setup-project-' + year);
     const solution = `Microsoft Visual Studio Solution File, Format Version 12.00\n# Visual Studio Version 17\nProject("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "${projectName}", "${projectName}.vdproj", "${projectGuid}"\nEndProject\nGlobal\n GlobalSection(SolutionConfigurationPlatforms) = preSolution\n  Release|Any CPU = Release|Any CPU\n EndGlobalSection\n GlobalSection(ProjectConfigurationPlatforms) = postSolution\n  ${projectGuid}.Release|Any CPU.ActiveCfg = Release\n  ${projectGuid}.Release|Any CPU.Build.0 = Release\n EndGlobalSection\nEndGlobal\n`;

@@ -14,6 +14,15 @@ internal static class Program
     [STAThread]
     private static void Main(string[] args)
     {
+        try { RunChecks(args); }
+        catch (Exception error)
+        {
+            Console.Error.WriteLine(error.GetType().FullName + ": " + error.Message);
+            Environment.ExitCode = 1;
+        }
+    }
+    private static void RunChecks(string[] args)
+    {
         var root = Path.GetFullPath(args.Length > 0 ? args[0] : Environment.CurrentDirectory);
         var state = Path.Combine(root, "artifacts", "qa", "chat-panel-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(state);
@@ -28,7 +37,12 @@ internal static class Program
         var config = Path.Combine(state, "chat.config.json");
         File.WriteAllText(config, JsonConvert.SerializeObject(new ChatLaunchSettings
         {
-            NodeExecutable = Path.GetRelativePath(state, @"C:\Program Files\nodejs\node.exe"), RuntimeScript = "runtime.js", StateDirectory = state
+#if REVIT2024
+            NodeExecutable = Uri.UnescapeDataString(new Uri(state + Path.DirectorySeparatorChar).MakeRelativeUri(new Uri(@"C:\Program Files\nodejs\node.exe")).ToString()),
+#else
+            NodeExecutable = Path.GetRelativePath(state, @"C:\Program Files\nodejs\node.exe"),
+#endif
+            RuntimeScript = "runtime.js", StateDirectory = state
         }));
         Assert(ChatLaunchSettings.Load(config).NodeExecutable == @"C:\Program Files\nodejs\node.exe", "portable Node path resolves relative to installed chat.config.json");
         File.WriteAllText(Path.Combine(state, "runtime.js"), @"
@@ -48,7 +62,8 @@ reader.on('line', line => {
             var reply = transport.Request("echo", new { text = unicode }).GetAwaiter().GetResult();
             Assert(reply.Value<string>("received") == unicode, "C# to Node JSONL preserves UTF-8 including Traditional Chinese");
         }
-        using (var panel = new ChatPanel(config))
+        var openedUrls = new List<string>();
+        using (var panel = new ChatPanel(config, url => openedUrls.Add(url)))
         {
             var size = new Size(440, 960);
             panel.Measure(size); panel.Arrange(new Rect(size)); panel.UpdateLayout();
@@ -69,6 +84,42 @@ reader.on('line', line => {
             typeof(ChatPanel).GetField("currentAnswer", flags).SetValue(panel, pendingAnswer);
             typeof(ChatPanel).GetField("answerPending", flags).SetValue(panel, true);
             var handleEvent = typeof(ChatPanel).GetMethod("HandleEvent", flags);
+            var loginButton = (Button)typeof(ChatPanel).GetField("login", flags).GetValue(panel);
+            var reopenButton = (Button)typeof(ChatPanel).GetField("reopenLogin", flags).GetValue(panel);
+            var messageList = (StackPanel)typeof(ChatPanel).GetField("messages", flags).GetValue(panel);
+            int originalMessages = messageList.Children.Count;
+            var loginEvent = Newtonsoft.Json.Linq.JObject.FromObject(new { @event = "loginUrl", url = "https://auth.openai.com/test-login?state=ui-test" });
+            for (int repeat = 0; repeat < 20; repeat++) handleEvent.Invoke(panel, new object[] { loginEvent });
+            Assert(openedUrls.Count == 1, "duplicate login URL events open the browser only once");
+            Assert(messageList.Children.Count == originalMessages && reopenButton.Visibility == Visibility.Visible,
+                "login URL uses one fixed button without appending conversation entries");
+            int bubbledClicks = 0;
+            panel.AddHandler(Button.ClickEvent, new RoutedEventHandler((_, __) => bubbledClicks++));
+            for (int repeat = 0; repeat < 20; repeat++)
+            {
+                loginButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                reopenButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            }
+            Assert(openedUrls.Count == 41 && messageList.Children.Count == originalMessages,
+                "repeated login and reopen clicks reuse the current login URL without new buttons or runtime requests");
+            Assert(bubbledClicks == 0, "login clicks are handled inside the panel and do not bubble to Revit");
+            handleEvent.Invoke(panel, new object[] { Newtonsoft.Json.Linq.JObject.FromObject(new { @event = "loginUrl", url = "https://auth.openai.com/new-login?state=ui-test" }) });
+            reopenButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Assert(openedUrls.Last().Contains("new-login") && messageList.Children.Count == originalMessages,
+                "a new login session replaces the URL on the same button");
+            handleEvent.Invoke(panel, new object[] { Newtonsoft.Json.Linq.JObject.FromObject(new { @event = "loginCompleted", success = true }) });
+            Assert(reopenButton.Visibility == Visibility.Collapsed && typeof(ChatPanel).GetField("loginUrl", flags).GetValue(panel) == null,
+                "completed login removes the stale login link");
+            handleEvent.Invoke(panel, new object[] { loginEvent });
+            combos[0].SelectedIndex = 1;
+            int browserCount = openedUrls.Count;
+            handleEvent.Invoke(panel, new object[] { loginEvent });
+            Assert(reopenButton.Visibility == Visibility.Collapsed && openedUrls.Count == browserCount,
+                "provider switch clears Codex login and ignores late login URLs");
+            combos[0].SelectedIndex = 0;
+            handleEvent.Invoke(panel, new object[] { loginEvent });
+            handleEvent.Invoke(panel, new object[] { Newtonsoft.Json.Linq.JObject.FromObject(new { @event = "disconnected", text = "UI test disconnect" }) });
+            Assert(reopenButton.Visibility == Visibility.Collapsed, "runtime disconnect removes the stale login link");
             handleEvent.Invoke(panel, new object[] { Newtonsoft.Json.Linq.JObject.FromObject(new { @event = "status", text = "等待 Gemini 回應…" }) });
             handleEvent.Invoke(panel, new object[] { Newtonsoft.Json.Linq.JObject.FromObject(new { @event = "textDelta", text = "" }) });
             Assert(pendingAnswer.Text == "等待 Gemini 回應…", "waiting status stays visible until actual answer text arrives");

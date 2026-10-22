@@ -14,7 +14,7 @@ export class McpGateway implements ToolGateway {
   private inFlight = new Set<Promise<ToolResult>>();
   private tail: Promise<unknown> = Promise.resolve();
   constructor(private readonly emit: EventSink, private readonly approve: Approve,
-    private readonly client: Pick<Client, "connect" | "listTools" | "callTool" | "close"> = new Client({ name: "tybim-revit-chat", version: "0.5.2" })) { }
+    private readonly client: Pick<Client, "connect" | "listTools" | "callTool" | "close"> = new Client({ name: "tybim-revit-chat", version: "0.5.4" })) { }
   async connect(bridgeConfig: string): Promise<void> {
     await this.client.connect(new StdioClientTransport({ command: process.execPath, args: [fileURLToPath(new URL("../index.js", import.meta.url))], env: { ...process.env as Record<string, string>, TYBIM_MCP_CONFIG: bridgeConfig }, stderr: "pipe" }));
     this.tools = (await this.client.listTools()).tools;

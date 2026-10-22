@@ -1,4 +1,19 @@
-# TYBIM MCP MSI（0.5.2）
+# TYBIM MCP MSI（0.5.4）
+
+## 0.5.4 登入按鈕重複累加修正（2026-10-22）
+
+- 「開啟 Codex 登入頁」改為連線設定下方的固定單一按鈕，不再附加到對話紀錄。重複登入網址事件只更新同一個按鈕，相同網址不會自動重複開瀏覽器。
+- 登入待完成時，再按「登入 Codex」重開現有登入頁，不重建登入請求；登入啟動中的重複點擊會被忽略。兩個登入按鈕會處理 Click 路由事件，避免傳到 Revit 外層。
+- 登入成功或失敗、登出、切換引擎、重新設定連線與背景引擎斷線時，清除過期的登入頁按鈕及網址；若需重新啟動登入，請重新連線後再登入。
+- WPF 回歸檢查模擬 20 次重複網址通知、40 次登入／重新開啟點擊、新網址替換、完成登入、切換引擎及斷線，瀏覽器使用測試替身，不會實際登入帳號。
+
+## 0.5.3 啟動相依 DLL 修正（2026-10-22）
+
+- 新增 `src/Tybim.Revit.Addin/Bootstrap.cs`，保留 `.addin` 入口 `Tybim.Revit.Addin.Application`；原啟動實作在 `Application.cs` 的 `RevitApplication`。
+- `DependencyResolver.cs` 在載入 Contracts、JSON、Study 等程式碼前註冊同目錄相依解析。2024 使用 .NET Framework AssemblyResolve，2025/2026 同時支援獨立的 .NET 8 AssemblyLoadContext。拒絕其他外掛來源、Revit API、不同身分版本與跨年份目錄。
+- 舊套件包含正確版本 Contracts；隔離 LoadFile 測試在未啟用解析時重現 FileNotFoundException，啟用正式解析器後通過。使用者截圖電腦的安裝內容尚未取得，仍須在該電腦重新安裝並啟動確認。
+- `Verify-Msi.ps1` 解出內嵌 CAB，核對所有 payload 檔案 SHA-256，並針對 MSI 中的 DLL 執行正反載入測試；新增 Contracts 為明確必備項目。
+- 測試不會啟動 Revit 或修改模型；實際 Ribbon、聊天面板及功能操作仍須在各版 Revit 驗證。
 
 本次正式製作範圍是 **Revit 2024、2025、2026**，各自使用對應 Revit API 編譯。2027 不在本次發布範圍，不能把其他年份 DLL 複製過去當作支援。
 
@@ -6,15 +21,15 @@
 
 安裝檔在 Release：
 
-- TYBIM_MCP_Revit2024_0.5.2.msi
-- TYBIM_MCP_Revit2025_0.5.2.msi
-- TYBIM_MCP_Revit2026_0.5.2.msi
+- TYBIM_MCP_Revit2024_0.5.4.msi
+- TYBIM_MCP_Revit2025_0.5.4.msi
+- TYBIM_MCP_Revit2026_0.5.4.msi
 
 三版是獨立的 x64、目前使用者安裝包，具有不同 ProductCode／UpgradeCode，可以並存。同一安裝範圍的升版只取代相同 Revit 年份的 MSI。請先儲存模型並關閉 Revit，再以將實際使用 Revit 的 Windows 帳號執行對應 MSI；不是部署給另一個帳號的全機安裝。
 
 ## Windows 已安裝的應用程式／解除安裝
 
-安裝後搜尋 `TYBIM_MCP`，顯示名稱為 `TYBIM_MCP for Revit 2024`、`TYBIM_MCP for Revit 2025`、`TYBIM_MCP for Revit 2026`，發行者為「拓源數位」，版本為 0.5.2。可在 Windows「設定 → 應用程式 → 已安裝的應用程式」或控制台「程式和功能」選擇解除安裝。
+安裝後搜尋 `TYBIM_MCP`，顯示名稱為 `TYBIM_MCP for Revit 2024`、`TYBIM_MCP for Revit 2025`、`TYBIM_MCP for Revit 2026`，發行者為「拓源數位」，版本為 0.5.4。可在 Windows「設定 → 應用程式 → 已安裝的應用程式」或控制台「程式和功能」選擇解除安裝。
 
 使用 Windows Installer 標準 RegisterProduct／PublishProduct 註冊，不手動建立另一筆重複的解除安裝資料。建置後確認未設定 ARPSYSTEMCOMPONENT／ARPNOREMOVE，設定 ARPNOMODIFY=1 讓系統提供直接移除入口。套件是目前使用者安裝，請用實際使用 Revit 的帳號一般執行，不要切換成另一個管理員帳號。
 

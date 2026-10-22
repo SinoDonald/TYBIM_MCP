@@ -27,6 +27,9 @@ namespace Tybim.Revit.Addin.Chat
         private readonly StackPanel approval = new StackPanel { Visibility = Visibility.Collapsed, Background = new SolidColorBrush(Color.FromRgb(255, 247, 222)), Margin = new Thickness(0, 6, 0, 6) };
         private readonly Button connect = Button("連線／取得模型");
         private readonly Button login = Button("登入 Codex");
+        private readonly Button reopenLogin = Button("開啟 Codex 登入頁");
+        private readonly Action<string> launchUrl;
+        private bool loginStarting;
         private readonly Button logout = Button("登出／清除金鑰");
         private readonly Button send = Button("送出");
         private readonly Button stop = Button("停止");
@@ -50,8 +53,10 @@ namespace Tybim.Revit.Addin.Chat
         private static Button Button(string caption) => new Button { Content = caption, Padding = new Thickness(9, 5, 9, 5), Margin = new Thickness(0, 0, 6, 4), MinHeight = 30 };
         private static TextBlock Label(string text) => new TextBlock { Text = text, Margin = new Thickness(0, 6, 0, 4), Foreground = Brushes.DimGray };
 
-        public ChatPanel(string configPath)
+        public ChatPanel(string configPath) : this(configPath, OpenUrl) { }
+        internal ChatPanel(string configPath, Action<string> launchUrl)
         {
+            this.launchUrl = launchUrl;
             progressTimer.Tick += (_, __) => { if (progressPhase != null) UpdateAnswerProgress(progressPhase); };
             Background = new SolidColorBrush(Color.FromRgb(246, 248, 251));
             FontFamily = new FontFamily("Microsoft JhengHei UI"); FontSize = 13;
@@ -73,6 +78,14 @@ namespace Tybim.Revit.Addin.Chat
             header.Children.Add(new Expander { Header = "連線設定", IsExpanded = true, Content = settings, Margin = new Thickness(0, 6, 0, 6) });
             var controls = new WrapPanel(); controls.Children.Add(connect); controls.Children.Add(login); controls.Children.Add(logout); controls.Children.Add(reset); header.Children.Add(controls);
             header.Children.Add(authHint); header.Children.Add(status);
+            reopenLogin.Visibility = Visibility.Collapsed;
+            header.Children.Add(reopenLogin);
+            reopenLogin.Click += (_, e) =>
+            {
+                e.Handled = true;
+                try { if (loginUrl != null) this.launchUrl(loginUrl); }
+                catch (Exception ex) { status.Text = ex.Message; }
+            };
             scroll = new ScrollViewer { Content = messages, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled, Margin = new Thickness(0, 8, 0, 8) };
             Grid.SetRow(scroll, 1); root.Children.Add(scroll);
             Grid.SetRow(approval, 2); root.Children.Add(approval);
@@ -81,12 +94,13 @@ namespace Tybim.Revit.Addin.Chat
             var sendButtons = new WrapPanel { Margin = new Thickness(0, 6, 0, 0) }; sendButtons.Children.Add(send); sendButtons.Children.Add(stop); footer.Children.Add(sendButtons);
             footer.Children.Add(new TextBlock { Text = "Enter 送出 · Shift+Enter 換行｜修改前顯示預覽，完成後請自行儲存模型。", FontSize = 11, TextWrapping = TextWrapping.Wrap, Foreground = Brushes.Gray });
             connect.Click += async (_, __) => await Run(Connect);
-            login.Click += async (_, __) => await Run(Login);
+            login.Click += async (_, e) => { e.Handled = true; await Run(Login); };
             logout.Click += async (_, __) => await Run(async () =>
             {
                 if (busy || launch == null) return;
                 if (Provider == "codex" && (client == null || connectedProvider != Provider)) await Connect();
                 if (client != null && connectedProvider == Provider) await client.Request("logout");
+                ClearLoginLink();
                 apiKey.Password = ""; preferences.SetKey(Provider, ""); preferences.Save(launch.StateDirectory);
                 model.Items.Clear(); connectedProvider = null;
                 status.Text = Provider == "codex" ? "已登出此面板的 Codex 帳號。" : "已清除此面板儲存的 API Key。";
@@ -113,6 +127,7 @@ namespace Tybim.Revit.Addin.Chat
             changing = true;
             try
             {
+                ClearLoginLink();
                 if (connectedProvider != null) { AddMessage("系統", "已切換 AI 引擎；下次送出會開始新的對話。"); connectedProvider = null; }
                 preferences.Provider = Provider;
                 apiKey.Password = preferences.Key(Provider);
@@ -169,6 +184,7 @@ namespace Tybim.Revit.Addin.Chat
         }
         private async Task<JToken> Configure(string selectedModel)
         {
+            ClearLoginLink(); // Reconfiguration replaces the old Codex login session.
             if (Provider == "codex" && !File.Exists(codexPath.Text.Trim())) throw new FileNotFoundException("找不到 codex.exe，請在連線設定指定本機 Codex 執行檔。");
             var response = await client.Request("configure", new { provider = Provider, model = selectedModel, apiKey = Provider == "codex" ? "" : apiKey.Password, codexExecutable = codexPath.Text.Trim() }, 90000);
             connectedProvider = Provider; connectedModel = response.Value<string>("selectedModel") ?? selectedModel;
@@ -178,10 +194,16 @@ namespace Tybim.Revit.Addin.Chat
         }
         private async Task Login()
         {
-            if (busy || launch == null) return;
-            if (Provider != "codex") { OpenUrl(Provider == "claude" ? "https://console.anthropic.com/settings/keys" : "https://aistudio.google.com/apikey"); return; }
-            if (client == null || connectedProvider != Provider) await Connect();
-            if (client != null) await client.Request("login");
+            if (busy || loginStarting || launch == null) return;
+            if (Provider != "codex") { launchUrl(Provider == "claude" ? "https://console.anthropic.com/settings/keys" : "https://aistudio.google.com/apikey"); return; }
+            if (loginUrl != null) { launchUrl(loginUrl); return; }
+            loginStarting = true;
+            try
+            {
+                if (client == null || connectedProvider != Provider) await Connect();
+                if (client != null) await client.Request("login");
+            }
+            finally { loginStarting = false; }
         }
         private async Task Send()
         {
@@ -226,14 +248,22 @@ namespace Tybim.Revit.Addin.Chat
                     currentAnswer.AppendText(message.Value<string>("text")); scroll.ScrollToEnd(); break;
                 case "status": status.Text = message.Value<string>("text"); UpdateAnswerProgress(status.Text); break;
                 case "loginUrl":
-                    loginUrl = message.Value<string>("url");
+                    if (Provider != "codex") break;
+                    var nextUrl = message.Value<string>("url");
+                    if (string.IsNullOrWhiteSpace(nextUrl)) break;
+                    bool changedUrl = nextUrl != loginUrl;
+                    loginUrl = nextUrl;
+                    reopenLogin.Visibility = Visibility.Visible;
                     status.Text = "請在瀏覽器完成 Codex 登入，再按連線取得模型。";
-                    AddLink("開啟 Codex 登入頁", loginUrl); OpenUrl(loginUrl); break;
+                    if (changedUrl) launchUrl(loginUrl);
+                    break;
+                case "loginCompleted": ClearLoginLink(); break;
                 case "toolStarted": status.Text = "工具執行中：" + message.Value<string>("name"); UpdateAnswerProgress(status.Text); break;
                 case "toolCompleted": AddToolResult(message); break;
                 case "approval": ShowApproval(message); break;
                 case "approvalClosed": if (message.Value<string>("id") == approvalId) { approval.Visibility = Visibility.Collapsed; approvalId = null; } break;
                 case "fatal": case "disconnected":
+                    ClearLoginLink();
                     status.Text = message.Value<string>("text"); connectedProvider = null;
                     var old = client; client = null; old?.Dispose(); break;
             }
@@ -297,9 +327,10 @@ namespace Tybim.Revit.Addin.Chat
             var body = new TextBox { Text = text, IsReadOnly = true, TextWrapping = TextWrapping.Wrap, BorderThickness = new Thickness(0), Background = Brushes.Transparent, Padding = new Thickness(0, 3, 0, 0) };
             stack.Children.Add(body); messages.Children.Add(stack); scroll.ScrollToEnd(); return body;
         }
-        private void AddLink(string caption, string url)
+        private void ClearLoginLink()
         {
-            var button = Button(caption); button.Click += (_, __) => { try { OpenUrl(url); } catch (Exception ex) { status.Text = ex.Message; } }; messages.Children.Add(button);
+            loginUrl = null;
+            reopenLogin.Visibility = Visibility.Collapsed;
         }
         private static void OpenUrl(string url)
         {

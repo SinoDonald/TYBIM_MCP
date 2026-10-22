@@ -10,7 +10,7 @@ using Tybim.Revit.Addin.Chat;
 
 namespace Tybim.Revit.Addin
 {
-    public sealed class Application : IExternalApplication
+    internal sealed class RevitApplication : IExternalApplication
     {
         private Dispatcher dispatcher;
         private BridgeListener listener;

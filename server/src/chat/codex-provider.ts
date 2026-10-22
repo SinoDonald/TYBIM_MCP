@@ -40,7 +40,10 @@ export class CodexProvider implements ChatProvider {
       throw new Error("此面板僅開放已註冊的 Revit 工具，請直接向使用者提問。");
     };
     this.rpc.onNotification = (method, p) => {
-      if (method === "account/login/completed") this.emit({ event: "status", text: p.success ? "Codex 登入完成，請按重新連線／取得模型。" : "Codex 登入失敗：" + (p.error ?? "未知錯誤") });
+      if (method === "account/login/completed") {
+        this.emit({ event: "loginCompleted", success: p.success === true });
+        this.emit({ event: "status", text: p.success ? "Codex 登入完成，請按重新連線／取得模型。" : "Codex 登入失敗：" + (p.error ?? "未知錯誤") });
+      }
       if (p.threadId && p.threadId !== this.threadId) return;
       if (method === "turn/started") this.turnId = p.turn?.id;
       if (method === "item/agentMessage/delta") { this.streamedItems.add(p.itemId); this.emit({ event: "textDelta", text: p.delta }); }
@@ -51,7 +54,7 @@ export class CodexProvider implements ChatProvider {
       }
     };
     this.rpc.onExit = error => this.finish?.(error);
-    await this.rpc.request("initialize", { clientInfo: { name: "tybim_revit", title: "TYBIM Revit AI", version: "0.5.2" }, capabilities: { experimentalApi: true } });
+    await this.rpc.request("initialize", { clientInfo: { name: "tybim_revit", title: "TYBIM Revit AI", version: "0.5.4" }, capabilities: { experimentalApi: true } });
     this.rpc.notify("initialized");
   }
   async status(): Promise<string> {

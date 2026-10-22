@@ -59,6 +59,10 @@ try {
  if($registration.DisplayName -ne $displayName -or $registration.DisplayVersion -ne $version -or $registration.SystemComponent){throw 'Windows Apps registration is absent/hidden/incorrect'}
  if($registration.UninstallString -notmatch '(?i)msiexec' -or $registration.UninstallString -notmatch [regex]::Escape($productCode)){throw 'Uninstall command does not target test product'}
  if(!(Test-Path -LiteralPath (Join-Path $payloadRoot "$RevitVersion/Tybim.Revit.Addin.dll")) -or !(Test-Path -LiteralPath (Join-Path $registrationRoot 'TYBIM.Mcp.addin'))){throw 'QA package was not installed into isolated roots'}
+ foreach($name in @('Tybim.Mcp.Contracts.dll','Tybim.Revit.Commands.dll','Tybim.Revit.Study.dll','Tybim.Revit.Upstream.dll')){
+  if(!(Test-Path -LiteralPath (Join-Path $payloadRoot "$RevitVersion/$name"))){throw "QA install omitted dependency: $name"}
+ }
+ & (Join-Path $PSScriptRoot 'Test-PayloadAssembly.ps1') -RevitVersion $RevitVersion -PayloadPath (Join-Path $payloadRoot $RevitVersion)
  $registered=$true
 } finally {
  if($attempted){
