@@ -1,4 +1,12 @@
-# TYBIM MCP MSI（0.5.4）
+# TYBIM MCP MSI（0.5.5）
+
+## 0.5.5 確認按鈕與窄面板版面修正（2026-10-22）
+
+- 設定、對話與完整確認參數共用上方可捲動區，避免多個自動高度區塊把下方按鈕推出面板。
+- 「執行此計畫／取消」移至下方操作區，顯示確認時優先保留操作空間。確認結束時，同時隱藏內容與操作按鈕。
+- 下方區域在面板過矮時可另外捲動，讓送出／停止仍能到達；取消固定 300 最小寬度，標籤可換行。
+- .NET Framework 4.8 與 .NET 8 各 46 項 WPF 檢查通過，涵蓋 300 個元素 ID、300x820、300x600、260x400、300x240，以及 150%／200% 等比例縮放。確認按鈕與送出／停止按鈕皆檢查完整落在對應可見區域。
+- 此次未變更工具參數、確認規則、登入與金鑰儲存方式。請關閉 Revit 後安裝對應 0.5.5 MSI，再於實際宿主驗證。
 
 ## 0.5.4 登入按鈕重複累加修正（2026-10-22）
 
@@ -21,15 +29,15 @@
 
 安裝檔在 Release：
 
-- TYBIM_MCP_Revit2024_0.5.4.msi
-- TYBIM_MCP_Revit2025_0.5.4.msi
-- TYBIM_MCP_Revit2026_0.5.4.msi
+- TYBIM_MCP_Revit2024_0.5.5.msi
+- TYBIM_MCP_Revit2025_0.5.5.msi
+- TYBIM_MCP_Revit2026_0.5.5.msi
 
 三版是獨立的 x64、目前使用者安裝包，具有不同 ProductCode／UpgradeCode，可以並存。同一安裝範圍的升版只取代相同 Revit 年份的 MSI。請先儲存模型並關閉 Revit，再以將實際使用 Revit 的 Windows 帳號執行對應 MSI；不是部署給另一個帳號的全機安裝。
 
 ## Windows 已安裝的應用程式／解除安裝
 
-安裝後搜尋 `TYBIM_MCP`，顯示名稱為 `TYBIM_MCP for Revit 2024`、`TYBIM_MCP for Revit 2025`、`TYBIM_MCP for Revit 2026`，發行者為「拓源數位」，版本為 0.5.4。可在 Windows「設定 → 應用程式 → 已安裝的應用程式」或控制台「程式和功能」選擇解除安裝。
+安裝後搜尋 `TYBIM_MCP`，顯示名稱為 `TYBIM_MCP for Revit 2024`、`TYBIM_MCP for Revit 2025`、`TYBIM_MCP for Revit 2026`，發行者為「拓源數位」，版本為 0.5.5。可在 Windows「設定 → 應用程式 → 已安裝的應用程式」或控制台「程式和功能」選擇解除安裝。
 
 使用 Windows Installer 標準 RegisterProduct／PublishProduct 註冊，不手動建立另一筆重複的解除安裝資料。建置後確認未設定 ARPSYSTEMCOMPONENT／ARPNOREMOVE，設定 ARPNOMODIFY=1 讓系統提供直接移除入口。套件是目前使用者安裝，請用實際使用 Revit 的帳號一般執行，不要切換成另一個管理員帳號。
 

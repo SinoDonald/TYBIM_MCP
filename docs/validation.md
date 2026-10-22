@@ -1,5 +1,15 @@
 # 驗證方式
 
+## 確認按鈕裁切修正 v0.5.5（2026-10-22）
+
+原 Grid 使用三個 Auto 列顯示設定、確認區與輸入區；高度總和超過 dockable pane 時，對話 Star 列縮成零仍無法容納，確認與送出按鈕被裁切。新版使用上方 Star 列的 ScrollViewer 顯示設定／紀錄／完整參數，將 approvalActions 放進下方操作區；下方 ScrollViewer 依實際高度限制在可用高度一半內。取消 300 DIP 最小寬度並讓設定標籤換行。確認完成及取消會一併隱藏參數與操作區。
+
+`ChatPanelSmoke` 新增 300 個元素 ID 確認案例，在 300x820、300x600、260x400、300x240 及 150%／200% 等比例縮放檢查執行／取消按鈕完整落在主視窗及 footer viewport；捲動 footer 後送出／停止亦完整可見。確認所有參數保留、上方內容可捲動、關閉確認會隱藏操作區。離屏渲染沒有 PresentationSource，因此可見性檢查採元素到祖先的 Visibility 鏈，另用 TransformBounds 驗證實際幾何位置。
+
+.NET Framework 4.8 與 .NET 8 各 46 項檢查全部通過。`artifacts/chat-panel-confirmation-300x820.png` 已人工檢視，四個按鈕皆完整顯示。三版 Release 編譯成功，仍保留外來程式既有 5 項警告。此次不涉及 Node 行為變更，僅更新版本並重新編譯 runtime；未重跑與版面無關的 Node 測試。實際 Revit 宿主仍須使用者安裝後驗證。
+
+0.5.5 三版 MSI 已完成並通過內嵌 CAB 全檔 SHA-256、註冊檔相對路徑、DLL 版本／目標框架／Revit API 年份、LoadFile/LoadFrom 載入與解除安裝設定檢查；2024 共 3761 檔，2025/2026 各 3754 檔。Release 已更新安裝說明及 checksums-0.5.5.sha256。
+
 ## 登入按鈕重複累加修正 v0.5.4（2026-10-22）
 
 原 `ChatPanel.HandleEvent(loginUrl)` 每次呼叫 `AddLink`，直接將新按鈕加入 `messages.Children`。改為連線區唯一 `reopenLogin` 控制項，更新其網址與可見狀態。相同網址事件不重開瀏覽器，待登入時重按登入只重開現有網址，啟動過程使用 `loginStarting` 防止重入。登入與重新開啟 Click 均設定 Handled，避免路由到宿主。

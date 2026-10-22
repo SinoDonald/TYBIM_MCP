@@ -158,6 +158,47 @@ reader.on('line', line => {
             panel.Measure(size); panel.Arrange(new Rect(size)); panel.UpdateLayout();
             Assert(Descendants(imageResult).OfType<Image>().Any(imageControl => imageControl.Source != null), "Study image result renders as WPF image");
             Assert(!Descendants(imageResult).OfType<TextBox>().Any(box => box.Text.Contains(base64)), "image base64 is not dumped into result text");
+            var longApproval = Newtonsoft.Json.Linq.JObject.FromObject(new {
+                id = "long-approval", preview = new { kind = "upstream", title = "確認版面測試", tool = "revit_study_select_element",
+                    note = "以下為本次操作參數，尚未執行。請核對元素 ID、尺寸、範圍或完整程式碼後確認。",
+                    arguments = new { documentId = "layout-test-only", elementIds = Enumerable.Range(669574, 300).ToArray() } }
+            });
+            typeof(ChatPanel).GetMethod("ShowApproval", flags).Invoke(panel, new object[] { longApproval });
+            var host = new Border { Child = panel };
+            var approveButton = Descendants(panel).OfType<Button>().Single(button => (string)button.Content == "執行此計畫");
+            var declineButton = Descendants(panel).OfType<Button>().Single(button => (string)button.Content == "取消");
+            var sendButton = (Button)typeof(ChatPanel).GetField("send", flags).GetValue(panel);
+            var stopButton = (Button)typeof(ChatPanel).GetField("stop", flags).GetValue(panel);
+            var footerScroll = Ancestor<ScrollViewer>(sendButton);
+            var bodyScroll = (ScrollViewer)typeof(ChatPanel).GetField("scroll", flags).GetValue(panel);
+            foreach (var scenario in new[] {
+                new[] {300.0, 820, 1}, new[] {300.0, 600, 1}, new[] {260.0, 400, 1},
+                new[] {300.0, 240, 1}, new[] {450.0, 900, 1.5}, new[] {600.0, 1000, 2}
+            })
+            {
+                var viewport = new Size(scenario[0], scenario[1]);
+                panel.LayoutTransform = new ScaleTransform(scenario[2], scenario[2]);
+                host.Measure(viewport); host.Arrange(new Rect(viewport)); host.UpdateLayout();
+                bodyScroll.ScrollToEnd(); footerScroll.ScrollToTop(); host.UpdateLayout();
+                var label = scenario[0] + "x" + scenario[1] + " scale=" + scenario[2];
+                Assert(Within(approveButton, host) && Within(declineButton, host) && Within(approveButton, footerScroll) && Within(declineButton, footerScroll),
+                    "approval execute/cancel fully inside the visible viewport: " + label);
+                Assert(bodyScroll.ScrollableHeight > 0 && Descendants(panel).OfType<TextBox>().Any(box => box.Text.Contains("669873")),
+                    "all 300 element IDs remain available in scrollable details: " + label);
+                if (scenario[0] == 300 && scenario[1] == 820)
+                {
+                    var preview = new RenderTargetBitmap(300, 820, 96, 96, PixelFormats.Pbgra32); preview.Render(host);
+                    var png = new PngBitmapEncoder(); png.Frames.Add(BitmapFrame.Create(preview));
+                    using (var stream = File.Create(Path.Combine(root, "artifacts", "chat-panel-confirmation-300x820.png"))) png.Save(stream);
+                }
+                footerScroll.ScrollToEnd(); host.UpdateLayout();
+                Assert(Within(sendButton, host) && Within(stopButton, host) && Within(sendButton, footerScroll) && Within(stopButton, footerScroll),
+                    "send/stop remain reachable by scrolling the short footer: " + label);
+            }
+            handleEvent.Invoke(panel, new object[] { Newtonsoft.Json.Linq.JObject.FromObject(new { @event = "approvalClosed", id = "long-approval" }) });
+            Assert(!LayoutVisible(approveButton) && !LayoutVisible(declineButton), "closing approval hides both the details and fixed actions");
+            host.Child = null; panel.LayoutTransform = null;
+            panel.Measure(size); panel.Arrange(new Rect(size)); panel.UpdateLayout();
             var bitmap = new RenderTargetBitmap(440, 960, 96, 96, PixelFormats.Pbgra32);
             bitmap.Render(panel);
             var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
@@ -168,6 +209,28 @@ reader.on('line', line => {
     }
     private static void Assert(bool condition, string description)
     { if (!condition) throw new InvalidOperationException(description); Console.WriteLine("PASS: " + description); }
+    private static T Ancestor<T>(DependencyObject element) where T : DependencyObject
+    {
+        for (var current = VisualTreeHelper.GetParent(element); current != null; current = VisualTreeHelper.GetParent(current))
+            if (current is T match) return match;
+        throw new InvalidOperationException("Missing layout ancestor " + typeof(T).Name);
+    }
+    private static bool Within(FrameworkElement element, FrameworkElement viewport)
+    {
+        var bounds = element.TransformToAncestor(viewport).TransformBounds(new Rect(element.RenderSize));
+        bool inside = LayoutVisible(element) && bounds.Width > 0 && bounds.Height > 0 && bounds.Left >= -1 && bounds.Top >= -1
+            && bounds.Right <= viewport.ActualWidth + 1 && bounds.Bottom <= viewport.ActualHeight + 1;
+        if (!inside) Console.WriteLine("LAYOUT: " + (element as Button)?.Content + " visible=" + element.IsVisible + " bounds=" + bounds + " viewport=" + viewport.RenderSize);
+        return inside;
+    }
+    private static bool LayoutVisible(DependencyObject element)
+    {
+        // Offscreen render tests have no PresentationSource, so IsVisible is
+        // false even for arranged controls. Check the actual visibility chain.
+        for (var current = element; current != null; current = VisualTreeHelper.GetParent(current))
+            if (current is UIElement ui && ui.Visibility != Visibility.Visible) return false;
+        return true;
+    }
     private static IEnumerable<DependencyObject> Descendants(DependencyObject item)
     {
         for (int i = 0; i < VisualTreeHelper.GetChildrenCount(item); i++)
