@@ -16,9 +16,9 @@ namespace Tybim.Revit.Addin.Chat
     public sealed class ChatPanel : UserControl, IDisposable
     {
         private readonly ComboBox provider = new ComboBox { MinHeight = 30 };
-        private readonly ComboBox model = new ComboBox { IsEditable = true, MinHeight = 30 };
+        private readonly ComboBox model = new ComboBox { IsEditable = false, MinHeight = 30 };
         private readonly PasswordBox apiKey = new PasswordBox { MinHeight = 30 };
-        private readonly TextBox codexPath = new TextBox { MinHeight = 28 };
+        private readonly ComboBox codexPath = new ComboBox { IsEditable = false, MinHeight = 28 };
         private readonly TextBlock status = new TextBlock { TextWrapping = TextWrapping.Wrap, Foreground = Brushes.DimGray };
         private readonly TextBlock authHint = new TextBlock { TextWrapping = TextWrapping.Wrap };
         private readonly TextBox input = new TextBox { AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, MinHeight = 72, MaxHeight = 160, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
@@ -50,7 +50,10 @@ namespace Tybim.Revit.Addin.Chat
         private bool busy;
         private bool changing;
         private bool disposed;
+        private bool serviceAvailable = true;
         private string Provider => new[] { "codex", "claude", "gemini" }[Math.Max(0, provider.SelectedIndex)];
+        private string SelectedModel => model.SelectedItem as string ?? "";
+        private string SelectedCodex => codexPath.SelectedItem as string ?? "";
         private static Button Button(string caption) => new Button { Content = caption, Padding = new Thickness(9, 5, 9, 5), Margin = new Thickness(0, 0, 6, 4), MinHeight = 30 };
         private static TextBlock Label(string text) => new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 6, 0, 4), Foreground = Brushes.DimGray };
 
@@ -73,9 +76,9 @@ namespace Tybim.Revit.Addin.Chat
             provider.Items.Add("Codex · ChatGPT 登入"); provider.Items.Add("Claude · API Key"); provider.Items.Add("Gemini · API Key");
             header.Children.Add(provider);
             var settings = new StackPanel();
-            settings.Children.Add(Label("模型（連線後取得，也可輸入模型 ID）")); settings.Children.Add(model);
+            settings.Children.Add(Label("模型（連線後取得，請從清單選擇）")); settings.Children.Add(model);
             settings.Children.Add(Label("Claude／Gemini API Key（本機加密儲存）")); settings.Children.Add(apiKey);
-            settings.Children.Add(Label("Codex 執行檔（codex.exe）")); settings.Children.Add(codexPath);
+            settings.Children.Add(Label("Codex 執行檔（自動偵測，請從清單選擇）")); settings.Children.Add(codexPath);
             header.Children.Add(new Expander { Header = "連線設定", IsExpanded = true, Content = settings, Margin = new Thickness(0, 6, 0, 6) });
             var controls = new WrapPanel(); controls.Children.Add(connect); controls.Children.Add(login); controls.Children.Add(logout); controls.Children.Add(reset); header.Children.Add(controls);
             header.Children.Add(authHint); header.Children.Add(status);
@@ -121,7 +124,8 @@ namespace Tybim.Revit.Addin.Chat
             {
                 launch = ChatLaunchSettings.Load(configPath);
                 preferences = ChatPreferences.Load(launch.StateDirectory);
-                codexPath.Text = launch.FindCodex(preferences.CodexExecutable);
+                foreach (var path in launch.FindCodexCandidates(preferences.CodexExecutable)) codexPath.Items.Add(path);
+                if (codexPath.Items.Count > 0) codexPath.SelectedIndex = 0;
                 provider.SelectedIndex = Math.Max(0, Array.IndexOf(new[] { "codex", "claude", "gemini" }, preferences.Provider));
                 status.Text = "請連線並選擇模型。Codex 首次使用須另完成官方登入。";
             }
@@ -138,8 +142,7 @@ namespace Tybim.Revit.Addin.Chat
                 if (connectedProvider != null) { AddMessage("系統", "已切換 AI 引擎；下次送出會開始新的對話。"); connectedProvider = null; }
                 preferences.Provider = Provider;
                 apiKey.Password = preferences.Key(Provider);
-                model.Items.Clear(); model.Text = preferences.Models.TryGetValue(Provider, out var saved) ? saved : "";
-                model.IsEditable = Provider == "codex";
+                model.Items.Clear(); SelectModel(preferences.Models.TryGetValue(Provider, out var saved) ? saved : "", true);
                 apiKey.IsEnabled = Provider != "codex";
                 codexPath.IsEnabled = Provider == "codex";
                 login.Content = Provider == "codex" ? "登入 Codex" : "取得 API Key";
@@ -150,10 +153,15 @@ namespace Tybim.Revit.Addin.Chat
         }
         private void SavePreferences()
         {
-            preferences.Provider = Provider; preferences.CodexExecutable = codexPath.Text.Trim();
-            preferences.Models[Provider] = model.Text.Trim();
+            preferences.Provider = Provider; preferences.CodexExecutable = SelectedCodex;
+            preferences.Models[Provider] = SelectedModel;
             if (Provider != "codex") preferences.SetKey(Provider, apiKey.Password);
             preferences.Save(launch.StateDirectory);
+        }
+        private void SelectModel(string id, bool saved)
+        {
+            if (saved && !string.IsNullOrWhiteSpace(id) && !model.Items.Contains(id)) model.Items.Add(id);
+            model.SelectedItem = model.Items.Contains(id ?? "") ? id : model.Items.Cast<object>().FirstOrDefault();
         }
         private async Task EnsureClient()
         {
@@ -179,11 +187,8 @@ namespace Tybim.Revit.Addin.Chat
             {
                 SavePreferences(); await EnsureClient();
                 status.Text = "連線中…";
-                var wanted = model.Text.Trim();
+                var wanted = SelectedModel;
                 var response = await Configure(wanted);
-                model.Items.Clear();
-                foreach (var entry in response["models"] ?? new JArray()) model.Items.Add(entry.Value<string>("id"));
-                model.Text = response.Value<string>("selectedModel") ?? wanted;
                 SavePreferences();
                 status.Text = response.Value<string>("status") + " 請選擇模型後送出。";
             }
@@ -192,10 +197,16 @@ namespace Tybim.Revit.Addin.Chat
         private async Task<JToken> Configure(string selectedModel)
         {
             ClearLoginLink(); // Reconfiguration replaces the old Codex login session.
-            if (Provider == "codex" && !File.Exists(codexPath.Text.Trim())) throw new FileNotFoundException("找不到 codex.exe，請在連線設定指定本機 Codex 執行檔。");
-            var response = await client.Request("configure", new { provider = Provider, model = selectedModel, apiKey = Provider == "codex" ? "" : apiKey.Password, codexExecutable = codexPath.Text.Trim() }, 90000);
-            connectedProvider = Provider; connectedModel = response.Value<string>("selectedModel") ?? selectedModel;
-            model.Text = connectedModel;
+            if (Provider == "codex" && !File.Exists(SelectedCodex)) throw new FileNotFoundException("找不到 codex.exe，請先安裝 Codex，再重新開啟 Revit 以偵測執行檔；或改用 Claude／Gemini。");
+            var response = await client.Request("configure", new { provider = Provider, model = selectedModel, apiKey = Provider == "codex" ? "" : apiKey.Password, codexExecutable = SelectedCodex }, 90000);
+            model.Items.Clear();
+            foreach (var entry in response["models"] ?? new JArray())
+            {
+                var id = entry.Value<string>("id");
+                if (!string.IsNullOrWhiteSpace(id) && !model.Items.Contains(id)) model.Items.Add(id);
+            }
+            SelectModel(response.Value<string>("selectedModel") ?? selectedModel, false);
+            connectedProvider = Provider; connectedModel = SelectedModel;
             SavePreferences();
             return response;
         }
@@ -215,13 +226,13 @@ namespace Tybim.Revit.Addin.Chat
         private async Task Send()
         {
             if (busy || launch == null || string.IsNullOrWhiteSpace(input.Text)) return;
-            if (string.IsNullOrWhiteSpace(model.Text)) { status.Text = "請先連線並選擇模型。"; return; }
+            if (string.IsNullOrWhiteSpace(SelectedModel)) { status.Text = "請先連線並選擇模型。"; return; }
             var text = input.Text.Trim();
             SetBusy(true);
             try
             {
                 SavePreferences(); await EnsureClient();
-                if (connectedProvider != Provider || connectedModel != model.Text.Trim()) await Configure(model.Text.Trim());
+                if (connectedProvider != Provider || connectedModel != SelectedModel) await Configure(SelectedModel);
                 AddMessage("你", text); input.Clear(); currentAnswer = AddMessage("AI", "等待 AI 回應…尚未收到文字或工具指令。");
                 answerPending = true;
                 turnWatch.Restart(); progressTimer.Start();
@@ -358,11 +369,19 @@ namespace Tybim.Revit.Addin.Chat
             try { await action(); }
             catch (Exception ex) { status.Text = ex.Message; AddMessage("系統", ex.Message); }
         }
+        internal void NotifyServiceState(bool available, string error = null)
+        {
+            if (disposed) return;
+            serviceAvailable = available;
+            status.Text = error ?? (available ? "MCP 服務已啟用，請連線或繼續對話。" : "AI助手已收合，MCP 服務已停止；重新開啟後啟用。");
+            if (!available && busy && client != null) _ = Run(async () => await client.Request("cancel"));
+            SetBusy(busy);
+        }
         private void SetBusy(bool value)
         {
             busy = value; provider.IsEnabled = !value; model.IsEnabled = !value; apiKey.IsEnabled = !value && Provider != "codex";
-            codexPath.IsEnabled = !value && Provider == "codex"; connect.IsEnabled = !value && launch != null;
-            login.IsEnabled = !value && launch != null; send.IsEnabled = !value && launch != null; reset.IsEnabled = !value && launch != null;
+            codexPath.IsEnabled = !value && Provider == "codex"; connect.IsEnabled = !value && serviceAvailable && launch != null;
+            login.IsEnabled = !value && serviceAvailable && launch != null; send.IsEnabled = !value && serviceAvailable && launch != null; reset.IsEnabled = !value && serviceAvailable && launch != null;
             logout.IsEnabled = !value && launch != null;
             stop.IsEnabled = value;
         }

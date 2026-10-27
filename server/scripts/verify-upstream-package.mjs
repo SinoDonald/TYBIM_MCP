@@ -12,12 +12,12 @@ try {
     args: [join(install, 'runtime/build/index.js')],
     env: { ...process.env, TYBIM_MCP_CONFIG: process.env.TYBIM_VERIFY_CONFIG || join(install, 'bridge.config.json') }, stderr: 'pipe' }));
   const tools = (await client.listTools()).tools;
-  assert.equal(tools.length, 258);
+  assert.equal(tools.filter(tool => !tool.name.startsWith('revit_private_')).length, 258);
   assert.equal(tools.filter(t => t.name.startsWith('revit_study_')).length, 220);
   assert.equal(tools.filter(t => t.name.startsWith('revit_upstream_')).length, 27);
   assert.ok(tools.some(t => t.name === 'revit_upstream_send_code_to_revit'));
   assert.ok(tools.some(t => t.name === 'revit_execute_doors_along_walls'));
-  console.log(JSON.stringify({ passed: true, toolCount: tools.length, upstreamToolsIncludingStatus: 27, studyTools: 220, inferenceRequested: false, modelModified: false }));
+  console.log(JSON.stringify({ passed: true, toolCount: tools.length, privateTools: tools.filter(t => t.name.startsWith('revit_private_')).length, upstreamToolsIncludingStatus: 27, studyTools: 220, inferenceRequested: false, modelModified: false }));
 } finally { await client.close(); }
 
 

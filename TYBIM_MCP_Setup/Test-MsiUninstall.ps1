@@ -1,4 +1,4 @@
-param([ValidateSet('2024','2025','2026')][string]$RevitVersion='2026')
+param([ValidateSet('2024','2025','2026')][string]$RevitVersion='2026',[switch]$TestUpgrade)
 $ErrorActionPreference='Stop'
 $root=[IO.Path]::GetFullPath((Split-Path $PSScriptRoot -Parent))
 $version=(Get-Content (Join-Path $root 'server/package.json') -Raw | ConvertFrom-Json).version
@@ -38,7 +38,7 @@ $summary=$database.SummaryInformation(1)
 [void][Runtime.InteropServices.Marshal]::FinalReleaseComObject($installer)
 [GC]::Collect();[GC]::WaitForPendingFinalizers()
 @{testOnly=$true;productCode=$productCode;path=$qa;payloadRoot=$payloadRoot;registrationRoot=$registrationRoot} | ConvertTo-Json | Set-Content (Join-Path $qa 'test-plan.json')
-$attempted=$false;$uninstalled=$false;$registered=$false;$registrationPaths=@()
+$attempted=$false;$uninstalled=$false;$registered=$false;$registrationPaths=@();$productsToRemove=@($productCode);$upgradeVerified=$false
 function ProductRegistryPaths([string]$code){
  $hex=$code.Trim('{}').Replace('-','')
  $packed=''
@@ -64,14 +64,50 @@ try {
  }
  & (Join-Path $PSScriptRoot 'Test-PayloadAssembly.ps1') -RevitVersion $RevitVersion -PayloadPath (Join-Path $payloadRoot $RevitVersion)
  $registered=$true
+ # Runtime-created files are not MSI File-table entries. They must be removed
+ # from owned Addins folders without touching other add-ins or other years.
+ $owned=Join-Path $payloadRoot $RevitVersion
+ '{"testOnly":true}' | Set-Content -LiteralPath (Join-Path $owned 'bridge.config.json')
+ 'runtime-generated' | Set-Content -LiteralPath (Join-Path $owned 'runtime/generated-test.tmp')
+ $otherYear=Join-Path $payloadRoot '2099';New-Item -ItemType Directory -Path $otherYear -Force | Out-Null
+ 'keep-other-year' | Set-Content -LiteralPath (Join-Path $otherYear 'keep.txt')
+ 'keep-other-addin' | Set-Content -LiteralPath (Join-Path $registrationRoot 'Other.Addin.keep')
+ if($TestUpgrade){
+  $newCode='{'+[Guid]::NewGuid().ToString().ToUpperInvariant()+'}'
+  $productsToRemove=@($newCode,$productCode)
+  $nextVersion=([version]$version).Major.ToString()+'.'+([version]$version).Minor+'.'+(([version]$version).Build+1)
+  $upgradeMsi=Join-Path $qa 'upgrade-test-only.msi';Copy-Item -LiteralPath $testMsi -Destination $upgradeMsi
+  $upgradeInstaller=New-Object -ComObject WindowsInstaller.Installer
+  $upgradeDb=$upgradeInstaller.OpenDatabase($upgradeMsi,1)
+  function UpgradeSql([string]$query){$view=$upgradeDb.OpenView($query);try{[void]$view.Execute()}finally{[void]$view.Close();[void][Runtime.InteropServices.Marshal]::FinalReleaseComObject($view)}}
+  UpgradeSql "UPDATE ``Property`` SET ``Value``='$newCode' WHERE ``Property``='ProductCode'"
+  UpgradeSql "UPDATE ``Property`` SET ``Value``='$nextVersion' WHERE ``Property``='ProductVersion'"
+  UpgradeSql "INSERT INTO ``Upgrade`` (``UpgradeCode``,``VersionMin``,``VersionMax``,``Attributes``,``Remove``,``ActionProperty``) VALUES ('$upgradeCode','0.0.0','$nextVersion',1,'ALL','TYBIMTESTRELATED')"
+  $summary=$upgradeDb.SummaryInformation(1)
+  [void]$summary.GetType().InvokeMember('Property',[Reflection.BindingFlags]::SetProperty,$null,$summary,@(9,('{'+[Guid]::NewGuid().ToString().ToUpperInvariant()+'}')))
+  [void]$summary.Persist();[void][Runtime.InteropServices.Marshal]::FinalReleaseComObject($summary)
+  [void]$upgradeDb.Commit();[void][Runtime.InteropServices.Marshal]::FinalReleaseComObject($upgradeDb)
+  [void][Runtime.InteropServices.Marshal]::FinalReleaseComObject($upgradeInstaller)
+  $update=Start-Process -FilePath "$env:WINDIR/System32/msiexec.exe" -ArgumentList @('/i',('"'+$upgradeMsi+'"'),'/qn','/norestart','/L*v',('"'+(Join-Path $qa 'upgrade.log')+'"')) -Wait -PassThru -WindowStyle Hidden
+  if($update.ExitCode -notin @(0,3010)){throw "QA major upgrade failed: $($update.ExitCode)"}
+  if((ProductRegistryPaths $productCode | Where-Object {Test-Path -LiteralPath $_})){throw 'QA old product was not removed by upgrade'}
+  $registrationPaths+=@(ProductRegistryPaths $newCode | Where-Object {Test-Path -LiteralPath $_})
+  if(!(Test-Path -LiteralPath (Join-Path $owned 'Tybim.Revit.Addin.dll')) -or !(Test-Path -LiteralPath (Join-Path $owned 'bridge.config.json')) -or !(Test-Path -LiteralPath (Join-Path $owned 'runtime/generated-test.tmp'))){throw 'Old-product cleanup deleted new payload or runtime state during upgrade'}
+  & (Join-Path $PSScriptRoot 'Test-PayloadAssembly.ps1') -RevitVersion $RevitVersion -PayloadPath $owned
+  $upgradeVerified=$true
+ }
 } finally {
  if($attempted){
-  $remove=Start-Process -FilePath "$env:WINDIR/System32/msiexec.exe" -ArgumentList @('/x',$productCode,'/qn','/norestart','/L*v',('"'+(Join-Path $qa 'uninstall.log')+'"')) -Wait -PassThru -WindowStyle Hidden
-  if($remove.ExitCode -notin @(0,3010,1605)){throw "QA MSI uninstall failed: $($remove.ExitCode). Test product: $productCode"}
+  foreach($removeCode in $productsToRemove){
+   $remove=Start-Process -FilePath "$env:WINDIR/System32/msiexec.exe" -ArgumentList @('/x',$removeCode,'/qn','/norestart','/L*v',('"'+(Join-Path $qa ('uninstall-'+$removeCode.Trim('{}')+'.log'))+'"')) -Wait -PassThru -WindowStyle Hidden
+   if($remove.ExitCode -notin @(0,3010,1605)){throw "QA MSI uninstall failed: $($remove.ExitCode). Test product: $removeCode"}
+  }
   foreach($registryPath in $registrationPaths){if(Test-Path -LiteralPath $registryPath){throw 'QA Windows Apps entry remains after uninstall'}}
   if((Test-Path -LiteralPath (Join-Path $payloadRoot "$RevitVersion/Tybim.Revit.Addin.dll")) -or (Test-Path -LiteralPath (Join-Path $registrationRoot 'TYBIM.Mcp.addin'))){throw 'QA add-in files remain after uninstall'}
+  if(Test-Path -LiteralPath (Join-Path $payloadRoot $RevitVersion)){throw 'Owned add-in folder remains after uninstall, including runtime-generated data'}
+  if(!(Test-Path -LiteralPath (Join-Path $payloadRoot '2099/keep.txt')) -or !(Test-Path -LiteralPath (Join-Path $registrationRoot 'Other.Addin.keep'))){throw 'Uninstall touched other years or other add-ins'}
   $uninstalled=$true
  }
 }
-$result=@{RevitVersion=$RevitVersion;Version=$version;IsolatedTest=$true;WindowsAppsRegistered=$registered;UninstallVerified=$uninstalled;Logs=$qa}
+$result=@{RevitVersion=$RevitVersion;Version=$version;IsolatedTest=$true;WindowsAppsRegistered=$registered;UninstallVerified=$uninstalled;UpgradeVerified=$upgradeVerified;Logs=$qa}
 $result | ConvertTo-Json | Tee-Object -FilePath (Join-Path $qa 'result.json')

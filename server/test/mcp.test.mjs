@@ -30,7 +30,7 @@ test('real stdio MCP handshake, tool discovery, validation and bridge roundtrip'
   t.after(async () => { await client.close(); await new Promise(resolve => bridge.close(resolve)); await rm(directory, { recursive: true, force: true }); });
   await client.connect(transport);
   const { tools } = await client.listTools();
-  assert.equal(tools.length, 258);
+  assert.equal(tools.filter(tool => !tool.name.startsWith('revit_private_')).length, 258);
   assert.equal(tools.filter(tool => tool.name.startsWith('revit_study_')).length, 220);
   const execute = tools.find(tool => tool.name === 'revit_execute_doors_at_wall_centers');
   assert.equal(execute.annotations.readOnlyHint, false);

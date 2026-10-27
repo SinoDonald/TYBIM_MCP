@@ -1,4 +1,13 @@
-# TYBIM MCP MSI（0.5.5）
+# TYBIM MCP MSI（0.6.0）
+
+## 0.6.0 UI、服務開關、個人建牆與移除清理（2026-10-27）
+
+- 模型與 codex.exe 使用唯讀下拉選單。偵測本機已存在的 Codex 執行檔；連線後依供應商回傳的模型清單選取，失效的舊模型不能繼續當作有效選項。
+- 啟動時預設載入已編譯命令；MCP listener 隨 AI助手面板開啟／收合啟動及停止，包括 Ribbon 與右上角 X。外部 MCP 用戶端亦需保持 AI助手開啟。收合時清除尚未執行的工作，不重建命令與操作紀錄。
+- 新增 Donald 個人開發的 CAD 圖層查詢與自動建牆，內部預設工具共 260 項。原始碼在 Git 忽略的 private/revit 與 server/src/private，非 Study；安裝附 personal-features/LICENSE.md。
+- 本次依 Donald 選擇只加私人著作權及書面授權聲明，未加入序號、離線驗簽或裝置綁定；不能阻止他人複製 DLL 執行。方案差異與操作見 docs/personal-features.md。
+- 正式解除安裝會清除該年度 TYBIM_MCP 已安裝目錄中的執行時檔案，例如 bridge.config.json。其他 Revit 年份、其他外掛與 LocalAppData 的登入／金鑰資料保留。額外手動建立且不在 MSI 目錄清單內的子資料夾不遞迴刪除。
+- RemoveFile 清理只在完整解除安裝、且非升級移除時執行，避免舊 MSI 晚移除刪到新檔案。測試副本會在專案 artifacts/qa 內驗證，不取代正式安裝。
 
 ## 0.5.5 確認按鈕與窄面板版面修正（2026-10-22）
 
@@ -29,15 +38,15 @@
 
 安裝檔在 Release：
 
-- TYBIM_MCP_Revit2024_0.5.5.msi
-- TYBIM_MCP_Revit2025_0.5.5.msi
-- TYBIM_MCP_Revit2026_0.5.5.msi
+- TYBIM_MCP_Revit2024_0.6.0.msi
+- TYBIM_MCP_Revit2025_0.6.0.msi
+- TYBIM_MCP_Revit2026_0.6.0.msi
 
 三版是獨立的 x64、目前使用者安裝包，具有不同 ProductCode／UpgradeCode，可以並存。同一安裝範圍的升版只取代相同 Revit 年份的 MSI。請先儲存模型並關閉 Revit，再以將實際使用 Revit 的 Windows 帳號執行對應 MSI；不是部署給另一個帳號的全機安裝。
 
 ## Windows 已安裝的應用程式／解除安裝
 
-安裝後搜尋 `TYBIM_MCP`，顯示名稱為 `TYBIM_MCP for Revit 2024`、`TYBIM_MCP for Revit 2025`、`TYBIM_MCP for Revit 2026`，發行者為「拓源數位」，版本為 0.5.5。可在 Windows「設定 → 應用程式 → 已安裝的應用程式」或控制台「程式和功能」選擇解除安裝。
+安裝後搜尋 `TYBIM_MCP`，顯示名稱為 `TYBIM_MCP for Revit 2024`、`TYBIM_MCP for Revit 2025`、`TYBIM_MCP for Revit 2026`，發行者為「拓源數位」，版本為 0.6.0。可在 Windows「設定 → 應用程式 → 已安裝的應用程式」或控制台「程式和功能」選擇解除安裝。
 
 使用 Windows Installer 標準 RegisterProduct／PublishProduct 註冊，不手動建立另一筆重複的解除安裝資料。建置後確認未設定 ARPSYSTEMCOMPONENT／ARPNOREMOVE，設定 ARPNOMODIFY=1 讓系統提供直接移除入口。套件是目前使用者安裝，請用實際使用 Revit 的帳號一般執行，不要切換成另一個管理員帳號。
 

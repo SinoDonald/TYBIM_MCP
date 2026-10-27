@@ -7,6 +7,20 @@ const statusName = 'revit_get_door_operation_status';
 const args = { documentId: 'doc', planId: 'plan' };
 const preview = { ...args, title: 'Test model', ready: 1, skipped: 0 };
 const frame = data => ({ content: [{ type: 'text', text: JSON.stringify(data) }] });
+test('explicit native service refusal is not confused with an unknown committed write', async () => {
+  let attempts=0;
+  const client={callTool:async request=>{
+    if(request.name==='revit_project_info')return frame({documentId:'doc',title:'Model'});
+    attempts++;return attempts===1 ? {isError:true,content:[{type:'text',text:'MCP_SERVICE_DISABLED'}]} : frame({status:'completed'});
+  },close:async()=>{}};
+  const gateway=new McpGateway(()=>{},async()=>true,client);
+  gateway.tools=[{name:'revit_private_create_walls_from_cad',annotations:{readOnlyHint:false}}];
+  const input={documentId:'doc',operationId:'b'.repeat(32)};
+  const refused=await gateway.call('revit_private_create_walls_from_cad',input,new AbortController().signal);
+  assert.equal(JSON.parse(refused.content[0].text).notExecuted,true);
+  assert.equal((await gateway.call('revit_private_create_walls_from_cad',input,new AbortController().signal)).isError,false);
+  assert.equal(attempts,2);
+});
 function upstreamSetup(approve, handle) {
   const calls = [];
   const client = { callTool: async request => {

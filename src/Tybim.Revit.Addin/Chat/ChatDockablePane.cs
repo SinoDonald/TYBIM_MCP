@@ -23,9 +23,14 @@ namespace Tybim.Revit.Addin.Chat
     {
         public Result Execute(ExternalCommandData data, ref string message, ElementSet elements)
         {
-            var pane = data.Application.GetDockablePane(ChatDockablePane.Id);
-            if (pane.IsShown()) pane.Hide(); else pane.Show();
-            return Result.Succeeded;
+            try
+            {
+                var pane = data.Application.GetDockablePane(ChatDockablePane.Id);
+                if (pane.IsShown()) { pane.Hide(); RevitApplication.Current?.SetBridgeEnabled(false); }
+                else { RevitApplication.Current?.SetBridgeEnabled(true); pane.Show(); }
+                return Result.Succeeded;
+            }
+            catch (Exception error) { message = "AI助手服務切換失敗：" + error.Message; return Result.Failed; }
         }
     }
 }

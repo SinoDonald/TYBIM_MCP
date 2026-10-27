@@ -30,20 +30,34 @@ namespace Tybim.Revit.Addin.Chat
             return settings;
         }
         public string FindCodex(string preferred)
+            => FindCodexCandidates(preferred).FirstOrDefault() ?? "";
+
+        public List<string> FindCodexCandidates(string preferred)
         {
-            foreach (var candidate in new[] { preferred, CodexExecutable }) if (!string.IsNullOrWhiteSpace(candidate) && File.Exists(candidate)) return candidate;
+            var result = new List<string>();
+            void Add(string path)
+            {
+                if (string.IsNullOrWhiteSpace(path) || !File.Exists(path)) return;
+                var full = Path.GetFullPath(path);
+                if (!result.Contains(full, StringComparer.OrdinalIgnoreCase)) result.Add(full);
+            }
+            foreach (var candidate in new[] { preferred, CodexExecutable }) Add(candidate);
             foreach (var directory in (Environment.GetEnvironmentVariable("PATH") ?? "").Split(Path.PathSeparator))
             {
-                var candidate = Path.Combine(directory.Trim('"'), "codex.exe");
-                if (File.Exists(candidate)) return candidate;
+                try { Add(Path.Combine(directory.Trim('"'), "codex.exe")); }
+                catch (ArgumentException) { }
             }
             var root = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenAI", "Codex", "bin");
             if (Directory.Exists(root))
             {
-                var found = Directory.GetFiles(root, "codex.exe", SearchOption.AllDirectories).OrderByDescending(File.GetLastWriteTimeUtc).FirstOrDefault();
-                if (found != null) return found;
+                try
+                {
+                    foreach (var found in Directory.GetFiles(root, "codex.exe", SearchOption.AllDirectories).OrderByDescending(File.GetLastWriteTimeUtc)) Add(found);
+                }
+                catch (UnauthorizedAccessException) { }
+                catch (IOException) { }
             }
-            return preferred ?? "";
+            return result;
         }
     }
 

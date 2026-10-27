@@ -70,6 +70,21 @@ reader.on('line', line => {
             var controls = Descendants(panel).ToArray();
             var combos = controls.OfType<ComboBox>().ToArray();
             Assert(combos[0].Items.Count == 3, "three AI providers are available");
+            Assert(!combos[1].IsEditable && !combos[2].IsEditable, "Codex model and executable are selection-only controls");
+            Assert(combos[2].Items.Cast<string>().All(File.Exists), "executable selector contains existing detected files only");
+            panel.NotifyServiceState(false);
+            var bindingFlags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
+            combos[1].Items.Clear(); combos[1].Items.Add("available-model");
+            typeof(ChatPanel).GetMethod("SelectModel", bindingFlags).Invoke(panel, new object[] { "obsolete-model", false });
+            Assert((string)combos[1].SelectedItem == "available-model" && combos[1].Items.Count == 1, "live model selection rejects an unavailable saved model");
+            var fakeCodex = Path.Combine(state, "codex.exe"); File.WriteAllText(fakeCodex, "test fixture; never executed");
+            var candidates = ChatLaunchSettings.Load(config).FindCodexCandidates(fakeCodex);
+            Assert(candidates.First() == fakeCodex && candidates.Distinct(StringComparer.OrdinalIgnoreCase).Count() == candidates.Count,
+                "executable choices preserve saved preference and deduplicate detected paths");
+            Assert(!((Button)typeof(ChatPanel).GetField("send", bindingFlags).GetValue(panel)).IsEnabled
+                && !((Button)typeof(ChatPanel).GetField("connect", bindingFlags).GetValue(panel)).IsEnabled, "hidden-pane service disables new requests");
+            panel.NotifyServiceState(true);
+            Assert(((Button)typeof(ChatPanel).GetField("connect", bindingFlags).GetValue(panel)).IsEnabled, "reopening the service restores connection controls");
             Assert(!controls.OfType<PasswordBox>().Single().IsEnabled, "Codex uses login rather than API key");
             combos[0].SelectedIndex = 1;
             Assert(controls.OfType<PasswordBox>().Single().IsEnabled, "Claude enables API key field");

@@ -14,7 +14,7 @@ export class McpGateway implements ToolGateway {
   private inFlight = new Set<Promise<ToolResult>>();
   private tail: Promise<unknown> = Promise.resolve();
   constructor(private readonly emit: EventSink, private readonly approve: Approve,
-    private readonly client: Pick<Client, "connect" | "listTools" | "callTool" | "close"> = new Client({ name: "tybim-revit-chat", version: "0.5.5" })) { }
+    private readonly client: Pick<Client, "connect" | "listTools" | "callTool" | "close"> = new Client({ name: "tybim-revit-chat", version: "0.6.0" })) { }
   async connect(bridgeConfig: string): Promise<void> {
     await this.client.connect(new StdioClientTransport({ command: process.execPath, args: [fileURLToPath(new URL("../index.js", import.meta.url))], env: { ...process.env as Record<string, string>, TYBIM_MCP_CONFIG: bridgeConfig }, stderr: "pipe" }));
     this.tools = (await this.client.listTools()).tools;
@@ -63,9 +63,15 @@ export class McpGateway implements ToolGateway {
     // An AbortSignal here would abandon a possibly committed Revit transaction.
     let result: ToolResult;
     try {
-      const response = await this.client.callTool({ name, arguments: args }, undefined, { timeout: name.startsWith('revit_study_') ? 185000 : 65000 });
+      const response = await this.client.callTool({ name, arguments: args }, undefined, { timeout: name.startsWith('revit_study_') || name === 'revit_private_create_walls_from_cad' ? 185000 : 65000 });
       result = { isError: !!response.isError, content: (response.content as any[]).filter(c => c.type === "text" || c.type === "image").map(c => c.type === 'text' ? { type: "text", text: c.text } : { type: 'image', data: c.data, mimeType: c.mimeType }) };
     } catch (error) { result = textResult(error instanceof Error ? error.message : String(error), true); }
+    // The native dispatcher uses this exact refusal only before execution.
+    // A dropped connection or a generic timeout remains an unknown operation.
+    if (writes && result.isError && result.content.some(part => part.type === 'text' && part.text.trim() === 'MCP_SERVICE_DISABLED')) {
+      result = textResult(JSON.stringify({ documentId: args.documentId, operationId: args.operationId,
+        planId: args.planId, status: 'failed', notExecuted: true, reason: 'MCP_SERVICE_DISABLED' }), true);
+    }
     let data: any;
     try { data = JSON.parse(result.content.find(c => c.type === 'text')?.text ?? ""); } catch { /* plain tool error */ }
     if (name.startsWith("revit_preview_") && !result.isError && data?.planId && data?.documentId) {

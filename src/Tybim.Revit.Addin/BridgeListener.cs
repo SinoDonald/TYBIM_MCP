@@ -18,24 +18,35 @@ namespace Tybim.Revit.Addin
         private readonly Dispatcher dispatcher;
         private readonly BridgeSettings settings;
         private readonly CancellationTokenSource stop = new CancellationTokenSource();
+        private readonly object lifecycle = new object();
+        private volatile bool accepting;
+        private int disposed;
         private readonly ConcurrentDictionary<TcpClient, byte> clients = new ConcurrentDictionary<TcpClient, byte>();
         private readonly JsonSerializerSettings json = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver(), MaxDepth = 32 };
         public BridgeListener(BridgeSettings settings, Dispatcher dispatcher)
         { this.settings = settings; this.dispatcher = dispatcher; listener = new TcpListener(IPAddress.Loopback, settings.Port); }
-        public void Start() { listener.Start(8); _ = Accept(); }
+        public void Start() { lock (lifecycle) { listener.Start(8); accepting = true; } _ = Accept(); }
+        public void StopAccepting()
+        {
+            lock (lifecycle) { accepting = false; listener.Stop(); }
+            if (clients.IsEmpty) Dispose();
+        }
         private async Task Accept()
         {
             try
             {
-                while (!stop.IsCancellationRequested)
+                while (accepting && !stop.IsCancellationRequested)
                 {
                     var client = await listener.AcceptTcpClientAsync().ConfigureAwait(false);
-                    if (clients.Count >= 8) { client.Dispose(); continue; }
-                    clients.TryAdd(client, 0);
+                    lock (lifecycle)
+                    {
+                        if (!accepting || clients.Count >= 8) { client.Dispose(); continue; }
+                        clients.TryAdd(client, 0);
+                    }
                     _ = Serve(client);
                 }
             }
-            catch (Exception ex) { if (!stop.IsCancellationRequested) System.Diagnostics.Trace.WriteLine("TYBIM MCP accept: " + ex.Message); }
+            catch (Exception ex) { if (accepting && !stop.IsCancellationRequested) System.Diagnostics.Trace.WriteLine("TYBIM MCP accept: " + ex.Message); }
         }
         private async Task Serve(TcpClient client)
         {
@@ -88,11 +99,17 @@ namespace Tybim.Revit.Addin
                 }
             }
             catch (Exception ex) { if (!stop.IsCancellationRequested) System.Diagnostics.Trace.WriteLine("TYBIM MCP connection: " + ex.Message); }
-            finally { clients.TryRemove(client, out _); client.Dispose(); }
+            finally
+            {
+                clients.TryRemove(client, out _); client.Dispose();
+                if (!accepting && clients.IsEmpty) Dispose();
+            }
         }
         public void Dispose()
         {
-            stop.Cancel(); listener.Stop();
+            if (Interlocked.Exchange(ref disposed, 1) != 0) return;
+            lock (lifecycle) { accepting = false; listener.Stop(); }
+            stop.Cancel();
             foreach (var client in clients.Keys) client.Close();
         }
     }

@@ -41,6 +41,18 @@ foreach($year in $RevitVersion){
   }
   return @{root=$id;relative=($parts -join '/')}
  }
+ $cleanup=@(Rows 'SELECT `FileKey`,`FileName`,`DirProperty`,`InstallMode` FROM `RemoveFile`' @('Key','Name','Property','Mode') | Where-Object {$_.Key.StartsWith('TYBIM_Files')})
+ if(!$cleanup.Count){throw 'Missing uninstall cleanup records'}
+ $cleanupActions=@(Rows 'SELECT `Action`,`Type`,`Source`,`Target` FROM `CustomAction`' @('Action','Type','Source','Target'))
+ foreach($row in $cleanup){
+  if($row.Name -ne '*' -or $row.Mode -ne '2'){throw 'Cleanup must be uninstall-only wildcard'}
+  $action=$cleanupActions | Where-Object {$_.Source -eq $row.Property} | Select-Object -First 1
+  if(!$action -or $action.Type -ne '51' -or $action.Target -notmatch '^\[([^\]]+)\]$'){throw 'Unsafe cleanup directory property'}
+  $directoryId=$Matches[1];$owned=RelativeDirectory $directoryId
+  if($owned.root -ne 'TARGETDIR' -or ($owned.relative.Split('/')[0]) -ne $year){throw 'Cleanup escapes the owned year folder'}
+  $entry=$sequence | Where-Object {$_.Action -eq $action.Action} | Select-Object -First 1
+  if($entry.Condition -ne 'REMOVE~="ALL" AND NOT UPGRADINGPRODUCTCODE' -or [int]$entry.Sequence -ge 3500){throw 'Cleanup could run during upgrade or after RemoveFiles'}
+ }
  $files=@(Rows 'SELECT `File`,`Component_`,`FileName` FROM `File`' @('Id','Component','Name'))
  $index=Get-Content (Join-Path $PSScriptRoot "generated/$year/payload-index.json") -Raw | ConvertFrom-Json
  $actual=@{}

@@ -123,6 +123,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_5B47335935B7716987DE1BF667FD753A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_A71CF02B72F7153969FD7407A6EEB2CD"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -22545,7 +22551,7 @@
         "DisplayName" = "8:Debug"
         "IsDebugOnly" = "11:TRUE"
         "IsReleaseOnly" = "11:FALSE"
-        "OutputFilename" = "8:Release\\TYBIM_MCP_Revit2025_0.5.5.msi"
+        "OutputFilename" = "8:Release\\TYBIM_MCP_Revit2025_0.6.0.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -22561,7 +22567,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:Release\\TYBIM_MCP_Revit2025_0.5.5.msi"
+        "OutputFilename" = "8:Release\\TYBIM_MCP_Revit2025_0.6.0.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -22938,6 +22944,26 @@
             "TargetName" = "8:ezdxf_worker.py"
             "Tag" = "8:"
             "Folder" = "8:_77D5A67866EB470F6075830E0B003279"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5B47335935B7716987DE1BF667FD753A"
+            {
+            "SourcePath" = "8:payloads\\2025\\personal-features\\LICENSE.md"
+            "TargetName" = "8:LICENSE.md"
+            "Tag" = "8:"
+            "Folder" = "8:_79CE94FC63FA945FEFF1C111DF163060"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -97697,6 +97723,17 @@
                     "Property" = "8:_77D5A67866EB470F6075830E0B003279_DIR"
                         "Folders"
                         {
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_79CE94FC63FA945FEFF1C111DF163060"
+                            {
+                            "Name" = "8:personal-features"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_79CE94FC63FA945FEFF1C111DF163060_DIR"
+                                "Folders"
+                                {
+                                }
+                            }
                             "{9EF0B969-E518-4E46-987F-47570745A589}:_405C2B33C9536872BCADDDA9398F72C4"
                             {
                             "Name" = "8:runtime"
@@ -104373,15 +104410,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:TYBIM_MCP for Revit 2025"
-        "ProductCode" = "8:{8C0A2D18-3A52-317A-987E-CEC9AE5F1AAE}"
-        "PackageCode" = "8:{DD9F0249-DBA2-4C72-A1FA-51A2EDF5A45B}"
+        "ProductCode" = "8:{595F3190-6232-C811-DA86-AF0A50830D6A}"
+        "PackageCode" = "8:{E2A79D6D-523A-4CDA-9102-FED31FE38407}"
         "UpgradeCode" = "8:{068234C8-3FA4-7287-EE43-2A6853B7058D}"
         "AspNetVersion" = "8:"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:0.5.5"
+        "ProductVersion" = "8:0.6.0"
         "Manufacturer" = "8:拓源數位"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

@@ -1,8 +1,10 @@
 # TYBIM Revit MCP
 
-適合持續擴充的 Revit MCP 基礎專案，預設 Revit 2025，並支援 Revit 2024 分版編譯。
+適合持續擴充的 Revit MCP 專案，預設 Revit 2025；目前已交付 Revit 2024／2025／2026 分版 MSI。
 
-**v0.5.0：新增 Revit 2024／2025 的 Visual Studio Setup Project 與獨立 MSI。** DLL／runtime 部署到 `Addins/TYBIM_MCP/<年份>`，年度 `.addin` 保留在 `Addins/<年份>`；相機管理按鈕可再次點擊收合。安裝檔與重建方式見 [Setup 操作說明](TYBIM_MCP_Setup/README.md)。本次沒有發布 2026／2027 MSI。
+**目前版本為 v0.6.0。** 模型與 Codex 路徑改為唯讀選單，MCP 服務跟隨 AI助手視窗開關；新增 Donald 個人自動建牆及解除安裝清理。個人工具啟用時預設共 260 項，原有 258 項不變。使用與授權選擇見 [個人功能說明](docs/personal-features.md)。最新狀態、程式位置、安裝檔與待驗收事項見 [更新狀態（2026-10-27）](docs/project-status.md)，安裝及重建請以 [Setup 操作說明](TYBIM_MCP_Setup/README.md) 為準。下列早期版本與核心 bridge 段落保留作為開發演進參考。
+
+**v0.5.0：新增 Revit 2024／2025 的 Visual Studio Setup Project 與獨立 MSI。** DLL／runtime 部署到 `Addins/TYBIM_MCP/<年份>`，年度 `.addin` 保留在 `Addins/<年份>`；相機管理按鈕可再次點擊收合。此為早期交付範圍；目前另有 2026 MSI，2027 尚未發布。
 
 **v0.4.1：修正 StudyCatalog 共用命令別名造成的啟動例外。** 保留 258 個 MCP 工具；新增實際 C# 靜態初始化回歸測試，建置與打包前皆執行。
 

@@ -12,6 +12,8 @@ namespace Tybim.Revit.Addin
 {
     internal sealed class RevitApplication : IExternalApplication
     {
+        internal static RevitApplication Current { get; private set; }
+        private BridgeSettings bridgeSettings;
         private Dispatcher dispatcher;
         private BridgeListener listener;
         private ChatDockablePane chat;
@@ -49,11 +51,12 @@ namespace Tybim.Revit.Addin
                 if (settings == null) throw new InvalidOperationException("Missing bridge settings.");
                 settings.Validate();
                 dispatcher = new Dispatcher(); // Created in a valid Revit API context.
-                listener = new BridgeListener(settings, dispatcher);
-                listener.Start();
+                bridgeSettings = settings;
                 app.Idling += dispatcher.OnIdling;
                 chat = new ChatDockablePane(Path.Combine(directory, "chat.config.json"));
                 app.RegisterDockablePane(ChatDockablePane.Id, "TYBIM AI 助手", chat);
+                Current = this;
+                app.DockableFrameVisibilityChanged += OnPaneVisibilityChanged;
                 RibbonUi.Register(app);
                 study = new RevitMCP.Application();
                 study.CameraPaneShown += OnStartupCameraPaneShown;
@@ -67,6 +70,8 @@ namespace Tybim.Revit.Addin
             }
             catch (Exception ex)
             {
+                Current = null;
+                app.DockableFrameVisibilityChanged -= OnPaneVisibilityChanged;
                 DetachStartupLayout();
                 try { study?.OnShutdown(app); } catch { }
                 chat?.Panel.Dispose();
@@ -93,6 +98,36 @@ namespace Tybim.Revit.Addin
             if (sender is Autodesk.Revit.ApplicationServices.Application application)
                 startupUiApp = new UIApplication(application);
             startupLayoutDirty = true;
+            try { if (startupUiApp != null) SyncPaneService(startupUiApp.GetDockablePane(ChatDockablePane.Id).IsShown()); }
+            catch (Exception error) { LogPaneLayout("AI pane not ready: " + error.Message); }
+        }
+        private void OnPaneVisibilityChanged(object sender, DockableFrameVisibilityChangedEventArgs args)
+        {
+            if (args.PaneId.Guid == ChatDockablePane.Id.Guid) SyncPaneService(args.DockableFrameShown);
+        }
+        private void SyncPaneService(bool shown)
+        {
+            try { SetBridgeEnabled(shown); }
+            catch (Exception error) { chat?.Panel.NotifyServiceState(false, "MCP 服務啟動失敗：" + error.Message); }
+        }
+        internal void SetBridgeEnabled(bool enabled)
+        {
+            if (!enabled)
+            {
+                dispatcher?.SetEnabled(false);
+                var previous = listener; listener = null; previous?.StopAccepting();
+                chat?.Panel.NotifyServiceState(false);
+                return;
+            }
+            if (listener != null) return;
+            var next = new BridgeListener(bridgeSettings, dispatcher);
+            try
+            {
+                dispatcher.SetEnabled(true);
+                next.Start(); listener = next;
+                chat?.Panel.NotifyServiceState(true);
+            }
+            catch { dispatcher.SetEnabled(false); next.Dispose(); throw; }
         }
         private void OnStartupViewActivated(object sender, ViewActivatedEventArgs args)
         {
@@ -140,6 +175,7 @@ namespace Tybim.Revit.Addin
                     startupUiApp.GetDockablePane(ChatDockablePane.Id).Show();
                     aiPaneInitialized = true;
                 }
+                SyncPaneService(startupUiApp.GetDockablePane(ChatDockablePane.Id).IsShown());
                 bool stillShown = camera.IsShown();
                 startupLayoutDirty = stillShown;
                 startupLayoutAttempts = 0;
@@ -161,6 +197,9 @@ namespace Tybim.Revit.Addin
         }
         public Result OnShutdown(UIControlledApplication app)
         {
+            app.DockableFrameVisibilityChanged -= OnPaneVisibilityChanged;
+            var shutdownListener = listener;
+            SetBridgeEnabled(false); shutdownListener?.Dispose(); Current = null;
             DetachStartupLayout();
             if (dispatcher != null) app.Idling -= dispatcher.OnIdling;
             chat?.Panel.Dispose();

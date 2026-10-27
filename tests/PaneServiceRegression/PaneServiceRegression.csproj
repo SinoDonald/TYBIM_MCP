@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><UseWPF>false</UseWPF><OutputType>Exe</OutputType></PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <Compile Include="../../src/Tybim.Revit.Addin/Dispatcher.cs" Link="Dispatcher.cs" />
+    <Compile Include="../../src/Tybim.Revit.Addin/BridgeListener.cs" Link="BridgeListener.cs" />
+    <Compile Include="../../src/Tybim.Mcp.Contracts/Protocol.cs" Link="Protocol.cs" />
+  </ItemGroup>
+</Project>

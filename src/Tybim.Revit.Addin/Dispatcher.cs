@@ -20,6 +20,7 @@ namespace Tybim.Revit.Addin
         private readonly object gate = new object();
         private readonly ExternalEvent externalEvent;
         private bool stopped;
+        private bool enabled;
         public Dispatcher() { externalEvent = ExternalEvent.Create(this); }
 
         public Task<BridgeResponse> Enqueue(BridgeRequest request)
@@ -27,6 +28,7 @@ namespace Tybim.Revit.Addin
             lock (gate)
             {
                 if (stopped) return Task.FromResult(BridgeResponse.Fail(request.Id, "SHUTTING_DOWN"));
+                if (!enabled) return Task.FromResult(BridgeResponse.Fail(request.Id, "MCP_SERVICE_DISABLED"));
                 if (queue.Count >= 64) return Task.FromResult(BridgeResponse.Fail(request.Id, "QUEUE_FULL"));
                 var work = new Work { Request = request };
                 queue.Enqueue(work);
@@ -46,7 +48,9 @@ namespace Tybim.Revit.Addin
                     var request = work.Request;
                     try
                     {
-                        if (DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() >= request.ExpiresAt)
+                        if (!enabled)
+                            work.Completion.TrySetResult(BridgeResponse.Fail(request.Id, "MCP_SERVICE_DISABLED"));
+                        else if (DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() >= request.ExpiresAt)
                             work.Completion.TrySetResult(BridgeResponse.Fail(request.Id, "REQUEST_EXPIRED"));
                         else work.Completion.TrySetResult(new BridgeResponse { Id = request.Id, Success = true,
                             Data = commands.Execute(request.Method, app, request.Parameters) });
@@ -56,10 +60,19 @@ namespace Tybim.Revit.Addin
             }
         }
         public string GetName() => "TYBIM MCP command queue";
+        public void SetEnabled(bool value)
+        {
+            lock (gate)
+            {
+                enabled = value && !stopped;
+                if (!enabled)
+                    while (queue.TryDequeue(out var work)) work.Completion.TrySetResult(BridgeResponse.Fail(work.Request.Id, "MCP_SERVICE_DISABLED"));
+            }
+        }
         public void OnIdling(object sender, IdlingEventArgs args)
         {
             lock (gate)
-                if (!stopped && !queue.IsEmpty) externalEvent.Raise();
+                if (!stopped && enabled && !queue.IsEmpty) externalEvent.Raise();
         }
         public void Dispose()
         {

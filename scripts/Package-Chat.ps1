@@ -3,6 +3,11 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
 & dotnet run --project (Join-Path $root 'tests/StudyCatalogRegression/StudyCatalogRegression.csproj')
 if ($LASTEXITCODE -ne 0) { throw 'Study catalog cannot initialize. Refusing to package an add-in that would fail at startup.' }
+$privateTest = Join-Path $root 'private/tests/GeometryRegression/GeometryRegression.csproj'
+if (Test-Path -LiteralPath $privateTest) {
+    & dotnet run --project $privateTest
+    if ($LASTEXITCODE -ne 0) { throw 'Private CAD wall geometry regression failed.' }
+}
 $framework = if ($RevitVersion -eq '2024') { 'net48' } elseif ($RevitVersion -eq '2027') { 'net10.0-windows' } else { 'net8.0-windows' }
 $source = Join-Path $root "src/Tybim.Revit.Addin/bin/$RevitVersion/Release/$framework"
 $server = Join-Path $root 'server'
@@ -34,6 +39,12 @@ foreach ($name in 'NOTICE.md','catalog.json','UPSTREAM.json') { Copy-Item -Liter
 Copy-Item -LiteralPath (Join-Path $root 'third_party/revit-mcp-study/original/README.md') -Destination (Join-Path $studyNotices 'UPSTREAM-README.md') -Force
 Copy-Item -LiteralPath (Join-Path $root 'third_party/revit-mcp-study/original/MCP-Server/package.json') -Destination (Join-Path $studyNotices 'UPSTREAM-package.json') -Force
 Copy-Item -LiteralPath (Join-Path $root 'integrations/revit-mcp-study/ezdxf_worker.py') -Destination $addin -Force
+$privateNotice = Join-Path $root 'private/LICENSE.md'
+if (Test-Path -LiteralPath $privateNotice) {
+    $personal = Join-Path $addin 'personal-features'
+    New-Item -ItemType Directory -Path $personal -Force | Out-Null
+    Copy-Item -LiteralPath $privateNotice -Destination (Join-Path $personal 'LICENSE.md') -Force
+}
 $bridge = Join-Path $addin 'bridge.config.json'
 if (!(Test-Path -LiteralPath $bridge)) {
     $existing = Join-Path $root "artifacts/$RevitVersion/Tybim.Mcp/bridge.config.json"

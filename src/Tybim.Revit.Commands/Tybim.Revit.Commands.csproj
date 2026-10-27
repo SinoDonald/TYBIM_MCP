@@ -2,6 +2,7 @@
   <ItemGroup>
     <Compile Include="../../private/revit/**/*.cs" LinkBase="PrivateFeatures" Condition="'$(IncludePrivateFeatures)' == 'true'" />
     <AssemblyMetadata Include="TYBIM.PrivateExtensionsEnabled" Value="$(IncludePrivateFeatures)" />
+    <AssemblyMetadata Include="TYBIM.PersonalAutoWall" Value="Copyright 2026 Donald; written authorization required; no runtime activation" Condition="'$(IncludePrivateFeatures)' == 'true' and Exists('../../private/revit/AutoBuild/AutoWallCommands.cs')" />
     <ProjectReference Include="../Tybim.Revit.Study/Tybim.Revit.Study.csproj" />
     <ProjectReference Include="../Tybim.Revit.Upstream/Tybim.Revit.Upstream.csproj" />
     <ProjectReference Include="../Tybim.Mcp.Contracts/Tybim.Mcp.Contracts.csproj" />

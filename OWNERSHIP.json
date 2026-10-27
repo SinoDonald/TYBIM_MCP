@@ -27,6 +27,17 @@
     "private",
     "server/src/private"
   ],
+  "personalFeatures": {
+    "owner": "Donald",
+    "cadAutoWalls": {
+      "csharp": "private/revit/AutoBuild",
+      "mcp": "server/src/private/register.ts",
+      "reference": "Donald's personally developed Sinotech_MCP extensions; not Study or an upstream snapshot",
+      "license": "private/LICENSE.md",
+      "authorization": "written permission only; no runtime activation in 0.6.0",
+      "tools": ["revit_private_get_cad_layers", "revit_private_create_walls_from_cad"]
+    }
+  },
   "shareAllowlist": [
     "third_party/mcp-servers-for-revit/original",
     "third_party/revit-mcp-study/original"

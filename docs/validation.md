@@ -1,5 +1,19 @@
 # 驗證方式
 
+## 私人建牆、面板服務與 MSI v0.6.0（2026-10-27）
+
+三版 Revit Addin Release 編譯成功。Node 測試 57 項、私人 MCP schema／確認／分類測試 5 項、私人 CAD 幾何測試 9 項通過。WPF ChatPanelSmoke 在 .NET 8 與 .NET Framework 4.8 各 52 項通過，涵蓋唯讀選單、有效執行檔候選、模型回退與既有裁切／登入回歸案例。
+
+PaneServiceRegression 連結實際 Dispatcher 與 BridgeListener，以 Revit stub 驗證兩框架各 14 項：預載一次命令、服務啟停、同埠重開、停止時清除未執行佇列，以及保留連線至明確拒絕／結果送出。這不是 Revit 宿主視窗事件的端到端測試。Node 另驗證 MCP_SERVICE_DISABLED 的已知未執行寫入不會永久進入結果不明鎖定；一般斷線仍保留不明寫入保護。
+
+最終三版 MSI 通過 CAB 全檔雜湊、五個原生 DLL、框架／API 年份、相對 manifest 路徑、隔離 LoadFile／LoadFrom、解除安裝註冊與 RemoveFile 範圍／升級條件檢查。2024 共 3762 檔，2025／2026 各 3755 檔。2026 最終 payload 探索回傳 260 工具（個人 2、upstream 含狀態 27、Study 220）；沒有向 AI 發出推論或修改模型。
+
+安裝生命週期測試使用全新 Product／Upgrade／Package／Component GUID 與 workspace 隔離路徑，未替換使用者正式外掛。2024 全移除測試通過（artifacts/qa/msi-uninstall-3abb22499bf348e9a13d7dffe6ceec36/result.json）；2025 真實 major upgrade 後全移除通過（artifacts/qa/msi-uninstall-2b0546ea9a4640f88fda2fceee266bc8/result.json），確認升級保留新檔案及 bridge 設定，完整移除清除產生檔並保留其他年份／外掛。上述兩項以首次 0.6.0 包驗證，最終包後續只更新服務／gateway payload，MSI 清理規則相同。
+
+2026 最終 MSI 隔離安裝／解除安裝通過，確認 Windows Apps 註冊、清除該年份產生檔與資料夾、保留其他外掛及年份；紀錄：artifacts/qa/msi-uninstall-4e412f5fe8284f59aca6344742674be7/result.json。
+
+私人原始碼與測試由 Git ignore 排除，內部 MSI 含編譯後功能及著作權聲明。本次依 Donald 選擇未加入執行時授權。仍待實際 Revit 2024／2025／2026 驗收 Ribbon 與 X 的服務切換，以及真實 DWG 的建牆、Undo 與模型結果；獨立幾何測試不能替代模型驗收。
+
 ## 確認按鈕裁切修正 v0.5.5（2026-10-22）
 
 原 Grid 使用三個 Auto 列顯示設定、確認區與輸入區；高度總和超過 dockable pane 時，對話 Star 列縮成零仍無法容納，確認與送出按鈕被裁切。新版使用上方 Star 列的 ScrollViewer 顯示設定／紀錄／完整參數，將 approvalActions 放進下方操作區；下方 ScrollViewer 依實際高度限制在可用高度一半內。取消 300 DIP 最小寬度並讓設定標籤換行。確認完成及取消會一併隱藏參數與操作區。
