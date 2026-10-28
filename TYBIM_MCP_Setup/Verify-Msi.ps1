@@ -70,6 +70,11 @@ foreach($year in $RevitVersion){
  foreach($required in @('Tybim.Mcp.Contracts.dll','Tybim.Revit.Addin.dll','Tybim.Revit.Commands.dll','Tybim.Revit.Study.dll','Tybim.Revit.Upstream.dll','runtime/node/node.exe','runtime/build/chat/index.js')){
   if(!$actual.ContainsKey("$year/$required")){throw "Missing runtime dependency: $required"}
  }
+ if($actual.ContainsKey("$year/runtime/build/private/register.js")){
+  foreach($required in @('ACadSharp.dll','third_party/acadsharp/LICENSE','third_party/acadsharp/NOTICE.md','personal-features/LICENSE.md')){
+   if(!$actual.ContainsKey("$year/$required")){throw "Missing personal CAD dependency/notice: $required"}
+  }
+ }
  $media=@(Rows 'SELECT `Cabinet` FROM `Media`' @('Cabinet'))
  if($media | Where-Object { !$_.Cabinet.StartsWith('#') }){throw 'MSI requires external cabinet files'}
  # Verify the bytes actually inside the MSI, rather than just its File table

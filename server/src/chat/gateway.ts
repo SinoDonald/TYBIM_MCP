@@ -14,7 +14,7 @@ export class McpGateway implements ToolGateway {
   private inFlight = new Set<Promise<ToolResult>>();
   private tail: Promise<unknown> = Promise.resolve();
   constructor(private readonly emit: EventSink, private readonly approve: Approve,
-    private readonly client: Pick<Client, "connect" | "listTools" | "callTool" | "close"> = new Client({ name: "tybim-revit-chat", version: "0.6.0" })) { }
+    private readonly client: Pick<Client, "connect" | "listTools" | "callTool" | "close"> = new Client({ name: "tybim-revit-chat", version: "0.7.1" })) { }
   async connect(bridgeConfig: string): Promise<void> {
     await this.client.connect(new StdioClientTransport({ command: process.execPath, args: [fileURLToPath(new URL("../index.js", import.meta.url))], env: { ...process.env as Record<string, string>, TYBIM_MCP_CONFIG: bridgeConfig }, stderr: "pipe" }));
     this.tools = (await this.client.listTools()).tools;
@@ -63,7 +63,7 @@ export class McpGateway implements ToolGateway {
     // An AbortSignal here would abandon a possibly committed Revit transaction.
     let result: ToolResult;
     try {
-      const response = await this.client.callTool({ name, arguments: args }, undefined, { timeout: name.startsWith('revit_study_') || name === 'revit_private_create_walls_from_cad' ? 185000 : 65000 });
+      const response = await this.client.callTool({ name, arguments: args }, undefined, { timeout: name.startsWith('revit_study_') || name.startsWith('revit_private_create_') ? 185000 : 65000 });
       result = { isError: !!response.isError, content: (response.content as any[]).filter(c => c.type === "text" || c.type === "image").map(c => c.type === 'text' ? { type: "text", text: c.text } : { type: 'image', data: c.data, mimeType: c.mimeType }) };
     } catch (error) { result = textResult(error instanceof Error ? error.message : String(error), true); }
     // The native dispatcher uses this exact refusal only before execution.
@@ -86,7 +86,3 @@ export class McpGateway implements ToolGateway {
   async idle(): Promise<void> { await Promise.allSettled([...this.inFlight]); }
   async close(): Promise<void> { await this.idle(); await this.client.close(); }
 }
-
-
-
-

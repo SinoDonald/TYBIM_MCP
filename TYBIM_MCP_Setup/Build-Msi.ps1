@@ -1,4 +1,4 @@
-param([ValidateSet('2024','2025','2026')][string[]]$RevitVersion=@('2024','2025','2026'),[switch]$SkipBuild)
+param([ValidateSet('2024','2025','2026')][string[]]$RevitVersion=@('2025'),[switch]$SkipBuild)
 $ErrorActionPreference='Stop'
 $root=Split-Path $PSScriptRoot -Parent
 $vswhere='C:/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe'
@@ -31,4 +31,27 @@ try {
   if($LASTEXITCODE -ne 0){throw "MSI registration settings failed for $year"}
   & (Join-Path $PSScriptRoot 'Verify-Msi.ps1') -RevitVersion $year
  }
+ # Retire only older installers for years successfully built in this run.
+ # Resolve and check the output folder before any removal; never recurse.
+ $release=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot 'Release'))
+ $expected=[IO.Path]::GetFullPath((Join-Path $root 'TYBIM_MCP_Setup/Release'))
+ if($release -ne $expected -or ((Get-Item -LiteralPath $release).Attributes -band [IO.FileAttributes]::ReparsePoint)){throw 'Unsafe installer cleanup folder'}
+ foreach($old in Get-ChildItem -LiteralPath $release -File -Filter 'TYBIM_MCP_Revit*.msi'){
+  if($old.Name -match '^TYBIM_MCP_Revit(2024|2025|2026)_(\d+\.\d+\.\d+)\.msi$' -and $Matches[1] -in $RevitVersion -and [version]$Matches[2] -lt [version]$version){
+   if([IO.Path]::GetDirectoryName($old.FullName) -ne $release){throw 'Installer cleanup escapes Release'}
+   Remove-Item -LiteralPath $old.FullName -Force
+   Write-Host "Removed superseded installer: $($old.Name)"
+  }
+ }
+ $remaining=@(Get-ChildItem -LiteralPath $release -File -Filter 'TYBIM_MCP_Revit*.msi')
+ foreach($checksum in Get-ChildItem -LiteralPath $release -File -Filter 'checksums-*.sha256'){
+  if($checksum.Name -match '^checksums-(\d+\.\d+\.\d+)\.sha256$'){
+   $checksumVersion=$Matches[1]
+   $versionFiles=@($remaining | Where-Object {$_.Name.EndsWith("_$checksumVersion.msi")})
+   if(!$versionFiles.Count){Remove-Item -LiteralPath $checksum.FullName -Force}
+   else {$versionFiles | Sort-Object Name | ForEach-Object {"$((Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash)  $($_.Name)"} | Set-Content -LiteralPath $checksum.FullName -Encoding ascii}
+  }
+ }
+ $remaining | Sort-Object Name | ForEach-Object {"$((Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash)  $($_.Name)"} | Set-Content -LiteralPath (Join-Path $release 'checksums.sha256') -Encoding ascii
+ $remaining | Where-Object {$_.Name.EndsWith("_$version.msi")} | Sort-Object Name | ForEach-Object {"$((Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash)  $($_.Name)"} | Set-Content -LiteralPath (Join-Path $release "checksums-$version.sha256") -Encoding ascii
 }finally{Pop-Location}

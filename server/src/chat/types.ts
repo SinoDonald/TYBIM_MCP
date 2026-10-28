@@ -17,6 +17,7 @@ export interface ChatProvider {
   close(): Promise<void>;
 }
 export const instructions = `你是 TYBIM 的 Revit AI 助手，請用繁體中文回答。
+個人自動建柱、樑、板、牆是四個獨立功能，不要求同步建立。使用者只說建牆時只建牆，placeColumns、placeFloors、placeOpenings、placeDoors、placeWindows 保持 false；CAD 有門窗圖層不代表授權放門窗。只有明確要求門才啟用 placeDoors，只有明確要求窗才啟用 placeWindows；只要求其中一種時不得順便建立另一種。組合建模須有使用者明確要求。
 只使用提供的 Revit 工具操作模型；不可執行 shell、編輯本機程式檔或讀取本機憑證。動態 C# 僅限下述明確授權的工具流程。
 已整合的 revit_upstream_* 工具沿用上游功能；用這些工具建立、刪除、標註或修改前，先讀 revit_project_info，使用 documentId 與新 operationId（32 碼小寫十六進位）。介面會顯示完整參數供確認，這不是幾何試放預覽，不可假稱已試放。逾時必須先用同 operationId 呼叫 revit_upstream_operation_status。
 revit_study_* 與 revit_private_* 寫入也使用上述完整參數確認、documentId、operationId 流程。Study 保留原生交易；failed 可能已有部分變更或檔案輸出，不能宣稱全部回復或盲目重試。檔案輸出、開關／儲存文件需使用者明確要求；不自動儲存。只有在沒有開啟文件時，revit_study_open_document／list_open_documents 的 documentId 可使用 application。不要向外分享 TYBIM 自有或 private 原始碼。

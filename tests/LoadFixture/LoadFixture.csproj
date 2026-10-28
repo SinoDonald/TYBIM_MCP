@@ -1,4 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup><UseWPF>false</UseWPF></PropertyGroup>
+  <PropertyGroup Condition="'$(IncludePrivateFeatures)' == 'true'"><DefineConstants>$(DefineConstants);PRIVATE_CAD_FIXTURE</DefineConstants></PropertyGroup>
   <ItemGroup><ProjectReference Include="../../src/Tybim.Mcp.Contracts/Tybim.Mcp.Contracts.csproj" /></ItemGroup>
+  <ItemGroup><PackageReference Include="ACadSharp" Version="3.8.0" Condition="'$(IncludePrivateFeatures)' == 'true'" /></ItemGroup>
 </Project>

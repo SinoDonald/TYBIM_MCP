@@ -15,6 +15,12 @@
     {
         "Entry"
         {
+        "MsmKey" = "8:_4EAA0CA237503F3091AB51854F587D77"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_3445CE98F2C9D0A9A3FCD70200D72CBE"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -22491,6 +22497,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_D404F5F9999AB1C3B7BB4739AA501DCA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B37A82B8B7045DA4F18EBAAA9FB39372"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_399EC614E064320D302148C33774AAD1"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -22551,7 +22569,7 @@
         "DisplayName" = "8:Debug"
         "IsDebugOnly" = "11:TRUE"
         "IsReleaseOnly" = "11:FALSE"
-        "OutputFilename" = "8:Release\\TYBIM_MCP_Revit2025_0.6.0.msi"
+        "OutputFilename" = "8:Release\\TYBIM_MCP_Revit2025_0.7.1.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -22567,7 +22585,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:Release\\TYBIM_MCP_Revit2025_0.6.0.msi"
+        "OutputFilename" = "8:Release\\TYBIM_MCP_Revit2025_0.7.1.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -22598,6 +22616,26 @@
         }
         "File"
         {
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4EAA0CA237503F3091AB51854F587D77"
+            {
+            "SourcePath" = "8:payloads\\2025\\ACadSharp.dll"
+            "TargetName" = "8:ACadSharp.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_77D5A67866EB470F6075830E0B003279"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3445CE98F2C9D0A9A3FCD70200D72CBE"
             {
             "SourcePath" = "8:payloads\\2025\\ClosedXML.dll"
@@ -97518,6 +97556,46 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D404F5F9999AB1C3B7BB4739AA501DCA"
+            {
+            "SourcePath" = "8:payloads\\2025\\third_party\\acadsharp\\LICENSE"
+            "TargetName" = "8:LICENSE"
+            "Tag" = "8:"
+            "Folder" = "8:_4EEA9B9A6CF3F03E775BBED9D08C9787"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B37A82B8B7045DA4F18EBAAA9FB39372"
+            {
+            "SourcePath" = "8:payloads\\2025\\third_party\\acadsharp\\NOTICE.md"
+            "TargetName" = "8:NOTICE.md"
+            "Tag" = "8:"
+            "Folder" = "8:_4EEA9B9A6CF3F03E775BBED9D08C9787"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_399EC614E064320D302148C33774AAD1"
             {
             "SourcePath" = "8:payloads\\2025\\third_party\\mcp-servers-for-revit\\LICENSE"
@@ -104354,6 +104432,17 @@
                             "Property" = "8:_74E3AC9D143D1D48241A8407FEEEE324_DIR"
                                 "Folders"
                                 {
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_4EEA9B9A6CF3F03E775BBED9D08C9787"
+                                    {
+                                    "Name" = "8:acadsharp"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_4EEA9B9A6CF3F03E775BBED9D08C9787_DIR"
+                                        "Folders"
+                                        {
+                                        }
+                                    }
                                     "{9EF0B969-E518-4E46-987F-47570745A589}:_E0CFBD9AD8772E76AB698627870034CB"
                                     {
                                     "Name" = "8:mcp-servers-for-revit"
@@ -104410,15 +104499,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:TYBIM_MCP for Revit 2025"
-        "ProductCode" = "8:{595F3190-6232-C811-DA86-AF0A50830D6A}"
-        "PackageCode" = "8:{E2A79D6D-523A-4CDA-9102-FED31FE38407}"
+        "ProductCode" = "8:{FD5DEA52-4288-F825-54D6-DF6F9BC6C040}"
+        "PackageCode" = "8:{0774DD2E-00EB-4F65-8289-80B45C474031}"
         "UpgradeCode" = "8:{068234C8-3FA4-7287-EE43-2A6853B7058D}"
         "AspNetVersion" = "8:"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:0.6.0"
+        "ProductVersion" = "8:0.7.1"
         "Manufacturer" = "8:拓源數位"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

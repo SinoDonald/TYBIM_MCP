@@ -5,7 +5,7 @@ import { registerUpstreamTools } from "./integrations/mcp-servers-for-revit/regi
 import { registerStudyTools } from "./integrations/revit-mcp-study/register.js";
 
 export function createServer(bridge: RevitBridge): McpServer {
-  const server = new McpServer({ name: "tybim-revit-mcp", version: "0.6.0" });
+  const server = new McpServer({ name: "tybim-revit-mcp", version: "0.7.1" });
   const documentId = z.string().min(1).optional().describe("Document ID returned by revit_project_info; rejects a changed active document");
   const limit = z.number().int().min(1).max(1000).default(100);
   const requiredDocumentId = z.string().min(1).describe("Exact session document ID returned by project_info or door placement context");
@@ -41,7 +41,3 @@ export function createServer(bridge: RevitBridge): McpServer {
   registerStudyTools(server, bridge);
   return server;
 }
-
-
-
-

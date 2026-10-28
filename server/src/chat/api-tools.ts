@@ -26,6 +26,7 @@ export class ApiTools {
     for (const [pattern, words] of [
       [/樓層|標高|level|storey/i, ["level"]], [/房間|room/i, ["room"]],
       [/牆|wall/i, ["wall"]], [/門|door/i, ["door"]], [/相機|camera/i, ["camera"]],
+      [/柱|column/i, ["column"]], [/樑|梁|beam/i, ["beam"]], [/樓板|建板|floor|slab/i, ["floor"]],
       [/建立|新增|create|add/i, ["create"]], [/刪除|delete/i, ["delete"]],
       [/自動建牆|圖層|cad|dwg/i, ["cad", "layers"]],
       [/查詢|讀取|query|list|get/i, ["query", "get"]], [/樓板|floor/i, ["floor"]]

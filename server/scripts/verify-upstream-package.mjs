@@ -17,6 +17,10 @@ try {
   assert.equal(tools.filter(t => t.name.startsWith('revit_upstream_')).length, 27);
   assert.ok(tools.some(t => t.name === 'revit_upstream_send_code_to_revit'));
   assert.ok(tools.some(t => t.name === 'revit_execute_doors_along_walls'));
+  if (tools.some(t => t.name.startsWith('revit_private_'))) {
+    for (const suffix of ['get_cad_layers','create_walls_from_cad','create_beams_from_cad','create_columns_from_cad','create_floors_from_cad'])
+      assert.ok(tools.some(t=>t.name===`revit_private_${suffix}`),`Missing personal CAD tool ${suffix}`);
+  }
   console.log(JSON.stringify({ passed: true, toolCount: tools.length, privateTools: tools.filter(t => t.name.startsWith('revit_private_')).length, upstreamToolsIncludingStatus: 27, studyTools: 220, inferenceRequested: false, modelModified: false }));
 } finally { await client.close(); }
 

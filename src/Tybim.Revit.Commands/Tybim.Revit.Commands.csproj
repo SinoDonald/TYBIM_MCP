@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
+    <PackageReference Include="ACadSharp" Version="3.8.0" Condition="'$(IncludePrivateFeatures)' == 'true'" />
     <Compile Include="../../private/revit/**/*.cs" LinkBase="PrivateFeatures" Condition="'$(IncludePrivateFeatures)' == 'true'" />
     <AssemblyMetadata Include="TYBIM.PrivateExtensionsEnabled" Value="$(IncludePrivateFeatures)" />
     <AssemblyMetadata Include="TYBIM.PersonalAutoWall" Value="Copyright 2026 Donald; written authorization required; no runtime activation" Condition="'$(IncludePrivateFeatures)' == 'true' and Exists('../../private/revit/AutoBuild/AutoWallCommands.cs')" />

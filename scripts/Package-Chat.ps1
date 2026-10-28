@@ -45,6 +45,11 @@ if (Test-Path -LiteralPath $privateNotice) {
     New-Item -ItemType Directory -Path $personal -Force | Out-Null
     Copy-Item -LiteralPath $privateNotice -Destination (Join-Path $personal 'LICENSE.md') -Force
 }
+if (Test-Path -LiteralPath (Join-Path $addin 'ACadSharp.dll')) {
+    $cadNotice = Join-Path $addin 'third_party/acadsharp'
+    New-Item -ItemType Directory -Path $cadNotice -Force | Out-Null
+    foreach ($noticeName in @('LICENSE','NOTICE.md')) { Copy-Item -LiteralPath (Join-Path $root "third_party/acadsharp/$noticeName") -Destination $cadNotice -Force }
+}
 $bridge = Join-Path $addin 'bridge.config.json'
 if (!(Test-Path -LiteralPath $bridge)) {
     $existing = Join-Path $root "artifacts/$RevitVersion/Tybim.Mcp/bridge.config.json"

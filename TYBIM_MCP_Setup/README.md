@@ -1,4 +1,28 @@
-# TYBIM MCP MSI（0.6.0）
+# TYBIM MCP MSI（0.7.1）
+
+## 後續交付規則（Donald，2026-10-28）
+
+預設只製作 Revit **2025**，待 Donald 測試確認並要求後，再製作 **2024**。2026 等其他年份亦須另有要求；歷史三版交付不代表未來每次都要重建三版。
+
+新版成功產生且驗證通過後，刪除 Release 中被取代的同年份舊安裝檔，該年份只保留最新可用版；其他年份的最新可用版保留。同步維護校驗清單與下載連結。清理範圍是安裝輸出，不含原始碼或測試紀錄。0.7.1 起由建置腳本在驗證後執行此清理。
+
+腳本目前預設只製作 2025；若本次另有指定年份，可使用 -RevitVersion 2024,2025,2026。新版全部驗證成功後，會清除本次年份被取代的舊 MSI 並更新校驗清單。一般製作命令：
+
+```powershell
+& ./TYBIM_MCP_Setup/Build-Msi.ps1 -RevitVersion 2025
+```
+
+## 0.7.1 建牆預設及門窗分開（2026-10-28）
+
+建牆預設只建牆；門與窗分別透過 placeDoors／placeWindows 明確啟用。CAD 開口圖層不代表允許放門窗。本次依 Donald 明確要求重建 2024、2025、2026；後續仍預設只製作 2025。
+
+## 0.7.0 個人自動建柱、樑、板、牆（2026-10-28）
+
+- 參考 Donald 的 Sinotech_MCP 個人 AutoBuild，加入單獨建柱、樑及樓板，更新建牆及 CAD 圖層查詢。內部共 263 項 MCP 工具，原有 258 項不變。
+- 在 AI助手對話使用，所有個人寫入需確認參數；組合建柱／板／門窗預設關閉，須明確要求。樓板使用現有房間邊界，並非任意 CAD 輪廓轉板。操作見 docs/personal-features.md。
+- DWG 樑標註讀取新增 ACadSharp 3.8.0，依對應框架打包 DLL 與相依檔，附 third_party/acadsharp 授權聲明。私人演算法與第三方解析函式庫分開分類。
+- 仍採私人著作權及書面授權方式，沒有執行時序號驗證。私人原始碼及內部安裝包排除 Git，須另外私人備份；取得 DLL 者仍可複製執行。
+- 請關閉對應 Revit 後安裝 0.7.0，再在測試模型中逐一驗收建柱、樑、牆及板。既有登入設定保留；本次沒有更改埠號。
 
 ## 0.6.0 UI、服務開關、個人建牆與移除清理（2026-10-27）
 
@@ -38,15 +62,15 @@
 
 安裝檔在 Release：
 
-- TYBIM_MCP_Revit2024_0.6.0.msi
-- TYBIM_MCP_Revit2025_0.6.0.msi
-- TYBIM_MCP_Revit2026_0.6.0.msi
+- TYBIM_MCP_Revit2024_0.7.1.msi
+- TYBIM_MCP_Revit2025_0.7.1.msi
+- TYBIM_MCP_Revit2026_0.7.1.msi
 
 三版是獨立的 x64、目前使用者安裝包，具有不同 ProductCode／UpgradeCode，可以並存。同一安裝範圍的升版只取代相同 Revit 年份的 MSI。請先儲存模型並關閉 Revit，再以將實際使用 Revit 的 Windows 帳號執行對應 MSI；不是部署給另一個帳號的全機安裝。
 
 ## Windows 已安裝的應用程式／解除安裝
 
-安裝後搜尋 `TYBIM_MCP`，顯示名稱為 `TYBIM_MCP for Revit 2024`、`TYBIM_MCP for Revit 2025`、`TYBIM_MCP for Revit 2026`，發行者為「拓源數位」，版本為 0.6.0。可在 Windows「設定 → 應用程式 → 已安裝的應用程式」或控制台「程式和功能」選擇解除安裝。
+安裝後搜尋 `TYBIM_MCP`，顯示名稱為 `TYBIM_MCP for Revit 2024`、`TYBIM_MCP for Revit 2025`、`TYBIM_MCP for Revit 2026`，發行者為「拓源數位」，版本為 0.7.1。可在 Windows「設定 → 應用程式 → 已安裝的應用程式」或控制台「程式和功能」選擇解除安裝。
 
 使用 Windows Installer 標準 RegisterProduct／PublishProduct 註冊，不手動建立另一筆重複的解除安裝資料。建置後確認未設定 ARPSYSTEMCOMPONENT／ARPNOREMOVE，設定 ARPNOMODIFY=1 讓系統提供直接移除入口。套件是目前使用者安裝，請用實際使用 Revit 的帳號一般執行，不要切換成另一個管理員帳號。
 

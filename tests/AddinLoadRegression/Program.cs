@@ -24,6 +24,12 @@ internal static class Program
             var fixture = Assembly.LoadFile(Path.Combine(folder, "LoadFixture.dll"));
             var request = fixture.GetType("LoadFixture", true).GetMethod("CreateRequest").Invoke(null, null);
             if (baseline) throw new Exception("Expected the old LoadFile startup to fail, but it passed.");
+            if (File.Exists(Path.Combine(folder,"ACadSharp.dll")))
+            {
+                var cad = fixture.GetType("LoadFixture",true).GetMethod("CreateCadDocument").Invoke(null,null);
+                if (cad == null) throw new Exception("DWG library cannot initialize");
+                Console.WriteLine("PASS: ACadSharp DWG text write/read roundtrip through sibling dependency resolver");
+            }
             foreach (var file in Directory.GetFiles(folder, "Tybim*.dll"))
             {
                 var identity = AssemblyName.GetAssemblyName(file);

@@ -2,7 +2,9 @@
 
 適合持續擴充的 Revit MCP 專案，預設 Revit 2025；目前已交付 Revit 2024／2025／2026 分版 MSI。
 
-**目前版本為 v0.6.0。** 模型與 Codex 路徑改為唯讀選單，MCP 服務跟隨 AI助手視窗開關；新增 Donald 個人自動建牆及解除安裝清理。個人工具啟用時預設共 260 項，原有 258 項不變。使用與授權選擇見 [個人功能說明](docs/personal-features.md)。最新狀態、程式位置、安裝檔與待驗收事項見 [更新狀態（2026-10-27）](docs/project-status.md)，安裝及重建請以 [Setup 操作說明](TYBIM_MCP_Setup/README.md) 為準。下列早期版本與核心 bridge 段落保留作為開發演進參考。
+**後續安裝檔規則（2026-10-28）：先只產出 2025，待 Donald 確認並要求後才製作 2024；其他年份亦需另行要求。新版驗證成功後刪除被取代的同年份舊安裝檔。** 詳見 [Setup 交付規則](TYBIM_MCP_Setup/README.md)。
+
+**目前版本為 v0.7.1。** 個人自動建柱、樑、板、牆各自獨立；建牆預設只建牆，門／窗須明確要求並可分別啟用。個人工具啟用時預設共 263 項，原有 258 項不變。保留唯讀選單、面板服務開關與解除安裝清理。使用與私人書面授權見 [個人功能說明](docs/personal-features.md)。最新狀態、程式位置、安裝檔與待驗收事項見 [更新狀態（2026-10-28）](docs/project-status.md)，安裝及重建請以 [Setup 操作說明](TYBIM_MCP_Setup/README.md) 為準。下列早期版本與核心 bridge 段落保留作為開發演進參考。
 
 **v0.5.0：新增 Revit 2024／2025 的 Visual Studio Setup Project 與獨立 MSI。** DLL／runtime 部署到 `Addins/TYBIM_MCP/<年份>`，年度 `.addin` 保留在 `Addins/<年份>`；相機管理按鈕可再次點擊收合。此為早期交付範圍；目前另有 2026 MSI，2027 尚未發布。
 

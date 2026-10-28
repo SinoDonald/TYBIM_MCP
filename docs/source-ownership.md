@@ -2,7 +2,7 @@
 
 本專案整體以**私人專案／內部使用**管理。兩份上游是共同開發的外來程式，不代表 TYBIM_MCP 全部程式都可公開。分類記錄在根目錄 OWNERSHIP.json；上游原有授權與告示繼續保留，分類不變更其授權。
 
-0.6.0 新增 Donald 個人開發的 CAD 自動建牆，來源為其 Sinotech_MCP 私人擴充，放在 `private/revit/AutoBuild` 與 `server/src/private/register.ts`，不放入 Study 或上游目錄。授權聲明為 `private/LICENSE.md`，內部安裝附 `personal-features/LICENSE.md`。依本次選擇只要求書面授權，沒有執行時啟用／序號驗證。這些原始碼已忽略 Git，請另外私人備份；操作與其他授權方案見 [個人功能與授權](personal-features.md)。
+0.7.0 的 Donald 個人 CAD 建模包含自動建柱、樑、板、牆及圖層分析，來源為其 Sinotech_MCP 私人擴充，放在 `private/revit/AutoBuild` 與 `server/src/private/register.ts`，不放入 Study 或上游目錄。授權聲明為 `private/LICENSE.md`，內部安裝附 `personal-features/LICENSE.md`。依本次選擇只要求書面授權，沒有執行時啟用／序號驗證。這些原始碼已忽略 Git，請另外私人備份；操作與其他授權方案見 [個人功能與授權](personal-features.md)。第三方 ACadSharp 解析函式庫另列在 `third_party/acadsharp`，原授權隨 MSI 提供。
 
 ## 找程式與修改位置
 
@@ -25,7 +25,7 @@ Visual Studio 的 Tybim.Revit.Upstream／Tybim.Revit.Study 只是各來源的編
 
 private/revit/PrivateRegistration.cs 提供一個 partial 掛接點，範例如下（示範唯讀回應，不建立模型）：
 
-0.6.0 的現有掛接點已註冊 CAD 圖層與建牆兩個功能；新增功能時請加入同一個 `RegisterPrivateCommands` 方法，不要另建第二份同名 partial 實作。下面是註冊方式範例，不要整段覆蓋現有功能。
+0.7.0 的現有掛接點已註冊 CAD 圖層與四種建模，共五個功能；新增功能時請加入同一個 `RegisterPrivateCommands` 方法，不要另建第二份同名 partial 實作。下面是註冊方式範例，不要整段覆蓋現有功能。
 
 ```csharp
 namespace Tybim.Revit.Commands
