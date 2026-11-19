@@ -1,5 +1,27 @@
 # Revit 內嵌 AI 對話面板
 
+## v0.8.2：回合結束與下一步（2026-10-29）
+
+送出請求返回後，對話歷史新增一則「回合狀態」，設定收合以外的狀態區也保留同樣訊息，恢復送出／新對話按鈕並停止計時。一般完成顯示「本回合已完成，可以輸入下一個需求。」；工具曾回報錯誤則顯示「本回合已結束（有工具錯誤）」，要求先查看結果；使用者停止顯示已停止及核對已派送操作提醒；例外則顯示「本回合未完成」與原因，先處理後再送出。這是對話回合的完成標記，不保證模型寫入成功；真正結果仍以工具回報為準。新對話清除歷史與結束狀態。
+
+2024 的 .NET Framework 重新導向輸入可能在第一筆 JSONL 前送出 UTF-8 BOM；背景入口已容許該前導字元，避免 configure／send 因 JSON 解析失敗。2024／2025 面板測試直接使用相同解析器驗證跨程序繁體中文。本次依使用者指定製作 2024～2026，其餘情況預設仍只製作 2025。
+
+## v0.8.1（Revit 2025）：忙碌保護、設定收合與附件（2026-10-29）
+
+Revit 的 ExternalEvent 在放置柱／牆、草圖或模態視窗期間可能接受排隊但無法執行，造成 REQUEST_EXPIRED；新對話不會解除 Revit 指令。請先回到 Revit 按 Esc 結束放置；草圖須自行完成或取消，再關閉對話框。原生佇列新增 8 秒未開始保護，回覆 REVIT_BUSY 並保證該工作不會稍後執行；已開始的交易不因這項保護中止。讀取或寫入前專案核對收到忙碌／逾時時，AI 回合中止，不反覆讀取專案；未知寫入結果的 operationId 查詢規則仍保留。截圖中的柱請求在專案讀取階段即失敗，不能視為 CAD 柱演算法失敗。
+
+「連線設定」包含 AI 供應商、模型、金鑰、Codex 路徑、連線／登入／登出按鈕及連線狀態。收合後保留「新對話」；執行中進度另顯示，修改確認與送出／停止仍可用。
+
+輸入區「加入附件」選取 PNG／JPG／JPEG／WebP 或 UTF-8 TXT／MD／CSV／JSON，可在送出前移除；最多 4 檔，圖片每檔 4 MiB、文字每檔 256 KiB、合計 8 MiB。選檔後不自動上傳，按送出才傳給目前所選 AI；新對話清除待送附件。後端再次驗證大小、UTF-8 與圖片檔頭，不只傳檔名或路徑。三供應商均傳真實圖片／文字內容；附件是參考資料，不能跳過模型確認。PDF、Office、DWG 尚不支援附件解析，請轉圖片／文字；CAD 精確建模仍從 Revit 連結圖層讀取。
+
+本機 MCP Server 是 Node.js 背景程序，不需另外架遠端主機。開發程式在 server/src；安裝後為 `%APPDATA%/Autodesk/Revit/Addins/TYBIM_MCP/2025/runtime/build/index.js`，面板 runtime 入口為同目錄下 `chat/index.js`。面板以 stdio 啟動 MCP Server，再經本機 loopback bridge 與 Revit 外掛溝通。模型操作由 Revit API 執行；AI 推論與選取附件內容送往所選供應商，整份 RVT 不會因此自動上傳。
+
+圖片輸入格式依官方文件：[Codex App Server](https://learn.chatgpt.com/docs/app-server)、[Claude Vision](https://platform.claude.com/docs/en/build-with-claude/vision)、[Gemini Image understanding](https://ai.google.dev/gemini-api/docs/image-understanding)。Revit 2025 的 0.8.1 MSI 已製作並通過封裝檢查；未自動安裝或使用真實 AI 憑證。請儲存模型並關閉 Revit，安裝後重新開啟並按新對話才會套用新版。
+
+## v0.8.0 CAD 自動建模與著作權紀錄（2026-10-29）
+
+CAD 圖層／向量辨識已更新自有建模流程；牆採平行雙線配對，不要求輪廓封閉。四種建模仍可獨立執行。著作權名稱為拓源數位科技，僅保留文件、註解及套件紀錄；AI／MCP 不詢問產品授權、序號或啟用。AI 供應商登入／API Key 與模型修改參數確認仍需要。詳細限制及與截圖估測的差別見 [個人功能說明](personal-features.md)。
+
 ## v0.7.1 建牆預設（2026-10-28）
 
 柱、樑、板、牆獨立操作。只要求建牆時，預設只建牆，即使 CAD 有門窗圖層也不放門窗。明確說「嘗試建門」才開 placeDoors；「嘗試建窗」才開 placeWindows；單獨要求其中一種不會一併放另一種。組合建立其他元件須明確要求，面板仍顯示完整參數供確認。
@@ -14,7 +36,7 @@
 
 啟動時先載入所有命令；MCP 服務隨 AI助手顯示／隱藏切換，Ribbon 按鈕與視窗 X 都適用。因此外部 MCP 用戶端也必須先開啟 AI助手才能連線。收合會拒絕尚未開始的工具，已派送的工具仍等待結果，避免把未知寫入誤認為失敗而重送。
 
-內部版本新增兩項 Donald 個人工具，預設共 260 項。CAD 自動建牆的操作、限制及本次採用的私人書面授權見 [個人功能與授權](personal-features.md)。
+內部版本新增兩項 拓源數位科技 個人工具，預設共 260 項。CAD 自動建牆的操作、限制及本次採用的私人書面授權見 [個人功能與授權](personal-features.md)。
 
 ## v0.5.2 Claude／API 穩定性與三版 MSI（2026-10-21）
 
@@ -158,7 +180,7 @@ AI 會查詢工具、建立預覽。面板顯示模型、門型、位置比例�
 v0.2.1 的門預覽會在可回復的交易群組中暫時試放，逐牆提交以取得 Revit 接合檢查結果，最後回復整組試放，不保留任何新門。正式放置仍須按確認。`ready` 是試放檢查結果，正式執行若失敗仍會整批回復。
 衝突牆會在 `targets[].diagnostics` 列出牆 ID、失敗原因與相關元素；試放門的暫時 ID 在回復後不再有效。程式不自動解除接合或偏移指定位置。
 
-更新 v0.2.1：儲存模型、關閉所有 Revit，執行 `artifacts/packages/2025/Install-RevitAddin.ps1 -RevitVersion 2025`，再開啟模型。此更新包含 C# DLL，單獨執行 Update-ChatRuntime.ps1 不足以載入新版放門診斷。登入資料保留；更新後請在面板重新連線並開始新對話。
+更新 v0.2.1：儲存模型、關閉所有 Revit，執行 `artifacts/packages/2025/Install-RevitAddin.ps1 -RevitVersion 2025`，再開啟模型。此更新包含 C# DLL，單獨更新 JavaScript 不足以載入新版放門診斷。登入資料保留；更新後請在面板重新連線並開始新對話。
 
 | 狀況 | 處理 |
 |---|---|
@@ -166,7 +188,7 @@ v0.2.1 的門預覽會在可回復的交易群組中暫時試放，逐牆提交�
 | 找不到 runtime／Node | 檢查 chat.config.json；runtimeScript 相對於外掛目錄，nodeExecutable 必須存在 |
 | 找不到 codex.exe | 指定真正的 Windows codex.exe 路徑；不要填 codex.cmd |
 | Codex 未登入 | 按登入，完成瀏覽器授權後重新取得模型 |
-| `code-mode host is disabled` | 舊版啟動設定誤關閉工具主機。更新修正版；可等待回合結束後執行下方 runtime 修復，無須關閉 Revit或重新登入 |
+| `code-mode host is disabled` | 舊版啟動設定誤關閉工具主機。更新修正版；請儲存模型、關閉 Revit 並安裝完整新版套件 |
 | API 401／403／配額錯誤 | 檢查對應供應商金鑰、模型權限及 API 額度 |
 | ECONNREFUSED | 確認 Revit bridge 已啟動及 bridge.config.json 的 port；同版本 Revit 只能一個行程佔用該 port |
 | Revit timeout | 關閉模態視窗後重試唯讀工具；寫入先查原操作狀態 |
@@ -177,15 +199,7 @@ v0.2.1 的門預覽會在可回復的交易群組中暫時試放，逐牆提交�
 ### Codex 工具主機修復（2026-10-21）
 
 修正 `features.code_mode_host=true`；保留 shell 工具停用與模型修改預覽確認流程。
-已安裝完整聊天面板時，可在回合結束後執行：
-
-```powershell
-& 'C:\Prj\Revit\TYBIM_MCP\scripts\Update-ChatRuntime.ps1' -RevitVersion 2025 -RestartChat
-```
-
-只替換已安裝的 `codex-provider.js`（保留備份），結束由 Revit 啟動的該面板背景程序樹。
-Revit 與模型保持開啟，登入資料保留。接著按「連線／取得模型」及「新對話」，再查詢專案與樓層。
-未執行中的已安裝面板可省略 `-RestartChat`。若有模型寫入進行中，先等待其工具結果，勿中止背景程序。
+當時的一次性 runtime 熱修腳本已移除；此修正已包含在目前完整套件。請安裝新版 MSI，或開發者重新 Package-Chat 後執行 Install-RevitAddin。更新 DLL 時須先關閉 Revit；保留既有登入與連線資料。
 
 唯讀實機驗證（使用面板既有登入與 Codex 額度，需開啟模型）：
 

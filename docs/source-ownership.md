@@ -2,9 +2,13 @@
 
 本專案整體以**私人專案／內部使用**管理。兩份上游是共同開發的外來程式，不代表 TYBIM_MCP 全部程式都可公開。分類記錄在根目錄 OWNERSHIP.json；上游原有授權與告示繼續保留，分類不變更其授權。
 
-0.7.0 的 Donald 個人 CAD 建模包含自動建柱、樑、板、牆及圖層分析，來源為其 Sinotech_MCP 私人擴充，放在 `private/revit/AutoBuild` 與 `server/src/private/register.ts`，不放入 Study 或上游目錄。授權聲明為 `private/LICENSE.md`，內部安裝附 `personal-features/LICENSE.md`。依本次選擇只要求書面授權，沒有執行時啟用／序號驗證。這些原始碼已忽略 Git，請另外私人備份；操作與其他授權方案見 [個人功能與授權](personal-features.md)。第三方 ACadSharp 解析函式庫另列在 `third_party/acadsharp`，原授權隨 MSI 提供。
+0.7.0 的 拓源數位科技 個人 CAD 建模包含自動建柱、樑、板、牆及圖層分析，放在 `private/revit/AutoBuild` 與 `server/src/private/register.ts`，不放入 Study 或上游目錄。授權聲明為 `private/LICENSE.md`，內部安裝附 `personal-features/LICENSE.md`。0.8.0 起僅保留拓源數位科技著作權／授權文字紀錄，操作不詢問產品授權，沒有執行時啟用／序號驗證。這些原始碼已忽略 Git，請另外私人備份；操作與其他授權方案見 [個人功能與授權](personal-features.md)。第三方 ACadSharp 解析函式庫另列在 `third_party/acadsharp`，原授權隨 MSI 提供。
 
 ## 找程式與修改位置
+
+2026-11-04 起，VS 連結檔案的顯示路徑統一採用相對於 **TYBIM_MCP 根目錄**的實體路徑，而不是相對於各 csproj 的路徑；沒有搬動實體檔案。Commands 顯示 `private/revit`，Study 顯示 `integrations/revit-mcp-study/revit`，Upstream 顯示 `integrations/mcp-servers-for-revit/revit`。測試專案也保留來源完整路徑，如 `src/Tybim.Revit.Addin/Chat/ChatPanel.cs`；圖片顯示為 `Pic/...`，其執行時 LogicalName 保持原樣。重新載入專案或重新開啟方案即可看到新樹狀結構。
+
+Git 依實體路徑判斷排除，與 VS 的 Link／LinkBase 無關。`private/`、`server/src/private/`、建置及安裝產物繼續排除；新增 `.vs/` 排除，並已將兩個先前追蹤的 Copilot 索引資料庫從 Git 索引移除，本機檔案保留。其他來源仍維持原有追蹤與授權分類。
 
 | 類別 | 位置 | 用法 |
 |---|---|---|
@@ -14,10 +18,10 @@
 | Study C# 移植修改 | integrations/revit-mcp-study/revit | 同上；含相機管理生命週期適配，不啟動原 WebSocket 服務 |
 | 兩份上游 Node 適配 | server/src/integrations/各來源名稱 | 工具參數、catalog、bridge 與結果適配 |
 | TYBIM 自有框架／現有功能 | src、server/src/chat、server/src/bridge.ts、server/src/tools.ts | 原 ribbon、AI助手、通訊、放門等自有邏輯；不要當成上游公開程式 |
-| 新增私人 Revit 功能 | private/revit | 已排除 Git；在 Commands 專案的 PrivateFeatures 下編輯 |
+| 新增私人 Revit 功能 | private/revit | 已排除 Git；在 Commands 專案的 private/revit 下編輯 |
 | 新增私人 MCP 工具 | server/src/private/register.ts | 已排除 Git；編譯後由可選 loader 載入 |
 
-Visual Studio 的 Tybim.Revit.Upstream／Tybim.Revit.Study 只是各來源的編譯與適配入口；真正的外來修改版在它們連結的 AdaptedUpstream／AdaptedStudy 資料夾。TYBIM 自有業務功能請優先放 private，而不是塞進上游 CommandExecutor。
+Visual Studio 的 Tybim.Revit.Upstream／Tybim.Revit.Study 只是各來源的編譯與適配入口；真正的外來修改版在它們連結的 integrations/mcp-servers-for-revit/revit／integrations/revit-mcp-study/revit 路徑。TYBIM 自有業務功能請優先放 private，而不是塞進上游 CommandExecutor。
 
 原始碼快照與修改版的 SHA256、來源 commit、對照路徑在各來源 UPSTREAM.json。Study 的本機版本沒有獨立 LICENSE 檔，已保留其 README 與 package.json 的 MIT 聲明並記錄於 NOTICE.md；未代替作者創作版權文字。
 

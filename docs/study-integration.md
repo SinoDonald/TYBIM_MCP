@@ -28,7 +28,7 @@ Revit 啟動時相機面板預設隱藏，AI助手顯示。v0.4.2 只在早期�
 | 統一文件／操作狀態管理 | `src/Tybim.Revit.Commands/UpstreamCommands.cs` |
 | MCP 工具宣告與轉接 | `server/src/integrations/revit-mcp-study/` |
 
-Visual Studio 開啟 `TYBIM.MCP.sln`，展開 `Tybim.Revit.Study → AdaptedStudy` 即可看到實際編譯的外來程式。不要將新私人功能寫進原始快照；請參考 `source-ownership.md` 的私人入口。
+Visual Studio 開啟 `TYBIM.MCP.sln`，展開 `Tybim.Revit.Study → integrations → revit-mcp-study → revit` 即可看到實際編譯的外來程式。不要將新私人功能寫進原始快照；請參考 `source-ownership.md` 的私人入口。
 
 ## 操作與交易
 

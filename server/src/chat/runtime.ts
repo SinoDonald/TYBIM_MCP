@@ -3,6 +3,7 @@ import { ApiProvider } from "./api-providers.js";
 import { CodexProvider } from "./codex-provider.js";
 import { McpGateway, type Approve } from "./gateway.js";
 import type { ChatProvider, EventSink, ModelOption, ProviderSettings } from "./types.js";
+import { loadAttachments } from "./attachments.js";
 
 export class ChatRuntime {
   private gateway: McpGateway;
@@ -58,7 +59,12 @@ export class ChatRuntime {
       if (typeof params.text !== "string" || !params.text.trim() || params.text.length > 20000) throw new Error("訊息長度須為 1–20000 字。");
       this.turn = new AbortController();
       const signal = this.turn.signal;
-      this.active = this.provider.send(params.text, signal);
+      // Reserve the active turn before asynchronous file IO so two sends cannot race.
+      this.active = (async () => {
+        const attachments = await loadAttachments(params.attachments);
+        signal.throwIfAborted();
+        await this.provider!.send(params.text, signal, attachments);
+      })();
       try { await this.active; return { status: signal.aborted ? "cancelled" : "completed" }; }
       finally { await this.gateway.idle(); this.active = undefined; this.turn = undefined; this.emit({ event: "turnCompleted", cancelled: signal.aborted }); }
     }

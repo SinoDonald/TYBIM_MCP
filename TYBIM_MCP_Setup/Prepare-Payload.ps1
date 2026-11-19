@@ -10,7 +10,7 @@ if (Test-Path -LiteralPath $payload) {
  Remove-Item -LiteralPath $payload -Recurse -Force
 }
 New-Item -ItemType Directory -Path $payload -Force | Out-Null
-Get-ChildItem -LiteralPath $package -Force | Where-Object { $_.Name -ne 'bridge.config.json' -and $_.Extension -ne '.pdb' } | Copy-Item -Destination $payload -Recurse -Force
+Get-ChildItem -LiteralPath $package -Force | Where-Object { $_.Name -notin @('bridge.config.json','external.bridge.config.json','external-ai.mcp.json') -and $_.Extension -ne '.pdb' } | Copy-Item -Destination $payload -Recurse -Force
 $nodeDirectory=Join-Path $payload 'runtime/node'
 New-Item -ItemType Directory -Path $nodeDirectory -Force | Out-Null
 $nodePath=(Get-Command node.exe -ErrorAction Stop).Source

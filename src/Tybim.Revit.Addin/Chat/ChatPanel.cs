@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,6 +22,7 @@ namespace Tybim.Revit.Addin.Chat
         private readonly ComboBox codexPath = new ComboBox { IsEditable = false, MinHeight = 28 };
         private readonly TextBlock status = new TextBlock { TextWrapping = TextWrapping.Wrap, Foreground = Brushes.DimGray };
         private readonly TextBlock authHint = new TextBlock { TextWrapping = TextWrapping.Wrap };
+        private readonly TextBlock turnStatus = new TextBlock { TextWrapping = TextWrapping.Wrap, Foreground = Brushes.DimGray, Visibility = Visibility.Collapsed };
         private readonly TextBox input = new TextBox { AcceptsReturn = true, TextWrapping = TextWrapping.Wrap, MinHeight = 72, MaxHeight = 160, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
         private readonly StackPanel messages = new StackPanel();
         private readonly ScrollViewer scroll;
@@ -35,11 +37,15 @@ namespace Tybim.Revit.Addin.Chat
         private readonly Button send = Button("送出");
         private readonly Button stop = Button("停止");
         private readonly Button reset = Button("新對話");
+        private readonly Button attach = Button("加入附件");
+        private readonly StackPanel attachmentList = new StackPanel();
+        private readonly List<string> attachmentPaths = new List<string>();
         private ChatLaunchSettings launch;
         private ChatPreferences preferences;
         private ChatProcessClient client;
         private TextBox currentAnswer;
         private bool answerPending;
+        private bool turnHadToolError;
         private readonly Stopwatch turnWatch = new Stopwatch();
         private readonly DispatcherTimer progressTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
         private string progressPhase;
@@ -74,16 +80,18 @@ namespace Tybim.Revit.Addin.Chat
             var header = new StackPanel(); body.Children.Add(header);
             header.Children.Add(new TextBlock { Text = "TYBIM AI 助手", FontSize = 20, FontWeight = FontWeights.SemiBold, Foreground = new SolidColorBrush(Color.FromRgb(25, 56, 86)), Margin = new Thickness(0, 0, 0, 8) });
             provider.Items.Add("Codex · ChatGPT 登入"); provider.Items.Add("Claude · API Key"); provider.Items.Add("Gemini · API Key");
-            header.Children.Add(provider);
             var settings = new StackPanel();
+            settings.Children.Add(provider);
             settings.Children.Add(Label("模型（連線後取得，請從清單選擇）")); settings.Children.Add(model);
             settings.Children.Add(Label("Claude／Gemini API Key（本機加密儲存）")); settings.Children.Add(apiKey);
             settings.Children.Add(Label("Codex 執行檔（自動偵測，請從清單選擇）")); settings.Children.Add(codexPath);
             header.Children.Add(new Expander { Header = "連線設定", IsExpanded = true, Content = settings, Margin = new Thickness(0, 6, 0, 6) });
-            var controls = new WrapPanel(); controls.Children.Add(connect); controls.Children.Add(login); controls.Children.Add(logout); controls.Children.Add(reset); header.Children.Add(controls);
-            header.Children.Add(authHint); header.Children.Add(status);
+            var controls = new WrapPanel(); controls.Children.Add(connect); controls.Children.Add(login); controls.Children.Add(logout); settings.Children.Add(controls);
+            settings.Children.Add(authHint); settings.Children.Add(status);
             reopenLogin.Visibility = Visibility.Collapsed;
-            header.Children.Add(reopenLogin);
+            settings.Children.Add(reopenLogin);
+            header.Children.Add(reset);
+            header.Children.Add(turnStatus);
             reopenLogin.Click += (_, e) =>
             {
                 e.Handled = true;
@@ -101,7 +109,18 @@ namespace Tybim.Revit.Addin.Chat
             Grid.SetRow(footerScroll, 1); root.Children.Add(footerScroll);
             SizeChanged += (_, e) => footerScroll.MaxHeight = Math.Max(0, (e.NewSize.Height - 24) / 2);
             footer.Children.Add(input);
+            footer.Children.Add(attachmentList);
+            footer.Children.Add(new TextBlock { Text = "支援圖片／UTF-8 文字；附件隨送出傳給所選 AI。", FontSize = 11, TextWrapping = TextWrapping.Wrap, Foreground = Brushes.Gray });
+            attach.ToolTip = "PNG／JPG／WebP、UTF-8 TXT／MD／CSV／JSON；最多 4 個、單檔 4 MiB（文字 256 KiB）、合計 8 MiB。PDF、Office、DWG 請先轉圖片或文字。";
+            attach.Click += (_, __) =>
+            {
+                var picker = new Microsoft.Win32.OpenFileDialog { Multiselect = true, Filter = "支援的附件|*.png;*.jpg;*.jpeg;*.webp;*.txt;*.md;*.csv;*.json" };
+                if (picker.ShowDialog() != true) return;
+                try { AddAttachments(picker.FileNames); }
+                catch (Exception ex) { AddMessage("系統", ex.Message); }
+            };
             var sendButtons = new WrapPanel { Margin = new Thickness(0, 6, 0, 0) }; sendButtons.Children.Add(send); sendButtons.Children.Add(stop); footer.Children.Add(sendButtons);
+            sendButtons.Children.Add(attach);
             footer.Children.Add(new TextBlock { Text = "Enter 送出 · Shift+Enter 換行｜修改前顯示預覽，完成後請自行儲存模型。", FontSize = 11, TextWrapping = TextWrapping.Wrap, Foreground = Brushes.Gray });
             connect.Click += async (_, __) => await Run(Connect);
             login.Click += async (_, e) => { e.Handled = true; await Run(Login); };
@@ -117,7 +136,7 @@ namespace Tybim.Revit.Addin.Chat
             });
             send.Click += async (_, __) => await Run(Send);
             stop.Click += async (_, __) => await Run(async () => { status.Text = "停止後續動作；已送出的 Revit 交易會等待結果。"; if (client != null) await client.Request("cancel"); });
-            reset.Click += async (_, __) => await Run(async () => { if (client != null) await client.Request("reset"); messages.Children.Clear(); currentAnswer = null; status.Text = "已開始新對話。"; });
+            reset.Click += async (_, __) => await Run(async () => { if (client != null) await client.Request("reset"); messages.Children.Clear(); attachmentPaths.Clear(); RenderAttachments(); currentAnswer = null; turnStatus.Visibility = Visibility.Collapsed; status.Text = "已開始新對話。"; });
             input.PreviewKeyDown += async (_, e) => { if (e.Key == Key.Enter && (Keyboard.Modifiers & ModifierKeys.Shift) == 0) { e.Handled = true; await Run(Send); } };
             provider.SelectionChanged += (_, __) => SwitchProvider();
             try
@@ -131,6 +150,36 @@ namespace Tybim.Revit.Addin.Chat
             }
             catch (Exception ex) { status.Text = ex.Message; connect.IsEnabled = false; login.IsEnabled = false; }
             SetBusy(false);
+        }
+        private void AddAttachments(string[] paths)
+        {
+            if (busy) return;
+            var next = attachmentPaths.Concat(paths.Select(Path.GetFullPath)).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+            if (next.Length > 4) throw new InvalidOperationException("每次最多加入 4 個附件。");
+            long total = 0;
+            foreach (var path in next)
+            {
+                var ext = Path.GetExtension(path).ToLowerInvariant();
+                bool image = new[] { ".png", ".jpg", ".jpeg", ".webp" }.Contains(ext);
+                if (!image && !new[] { ".txt", ".md", ".csv", ".json" }.Contains(ext)) throw new InvalidOperationException("不支援此附件格式；PDF、Office、DWG 請先轉成圖片或 UTF-8 文字。");
+                var file = new FileInfo(path);
+                if (!file.Exists || file.Length > (image ? 4 * 1024 * 1024 : 256 * 1024)) throw new InvalidOperationException("附件不存在或超過單檔大小上限：" + file.Name);
+                total += file.Length;
+            }
+            if (total > 8 * 1024 * 1024) throw new InvalidOperationException("附件合計不得超過 8 MiB。");
+            attachmentPaths.Clear(); attachmentPaths.AddRange(next); RenderAttachments();
+        }
+        private void RenderAttachments()
+        {
+            attachmentList.Children.Clear();
+            foreach (var path in attachmentPaths.ToArray())
+            {
+                var row = new WrapPanel();
+                row.Children.Add(new TextBlock { Text = Path.GetFileName(path), ToolTip = path, TextWrapping = TextWrapping.Wrap, MaxWidth = 210 });
+                var remove = Button("移除"); remove.IsEnabled = !busy;
+                remove.Click += (_, __) => { if (!busy) { attachmentPaths.Remove(path); RenderAttachments(); } };
+                row.Children.Add(remove); attachmentList.Children.Add(row);
+            }
         }
         private void SwitchProvider()
         {
@@ -228,30 +277,53 @@ namespace Tybim.Revit.Addin.Chat
             if (busy || launch == null || string.IsNullOrWhiteSpace(input.Text)) return;
             if (string.IsNullOrWhiteSpace(SelectedModel)) { status.Text = "請先連線並選擇模型。"; return; }
             var text = input.Text.Trim();
+            var outcome = "failed";
+            string error = null;
+            turnHadToolError = false;
             SetBusy(true);
+            turnStatus.Text = "正在準備本回合…";
             try
             {
                 SavePreferences(); await EnsureClient();
                 if (connectedProvider != Provider || connectedModel != SelectedModel) await Configure(SelectedModel);
-                AddMessage("你", text); input.Clear(); currentAnswer = AddMessage("AI", "等待 AI 回應…尚未收到文字或工具指令。");
+                var files = attachmentPaths.ToArray();
+                AddMessage("你", text + (files.Length == 0 ? "" : "\n附件：" + string.Join("、", files.Select(Path.GetFileName)))); input.Clear(); currentAnswer = AddMessage("AI", "等待 AI 回應…尚未收到文字或工具指令。");
                 answerPending = true;
                 turnWatch.Restart(); progressTimer.Start();
                 UpdateAnswerProgress("等待 AI 回應…尚未收到文字或工具指令。");
-                var result = await client.Request("send", new { text }, 660000);
-                status.Text = result.Value<string>("status") == "cancelled" ? "已停止。" : "本回合完成。";
+                var result = await client.Request("send", new { text, attachments = files }, 660000);
+                attachmentPaths.Clear(); RenderAttachments();
+                outcome = result.Value<string>("status") == "cancelled" ? "cancelled" : "completed";
             }
-            finally
+            catch (Exception ex) { error = ex.Message; }
+            finally { CompleteTurn(outcome, error); }
+        }
+        private void CompleteTurn(string outcome, string error = null)
+        {
+            progressTimer.Stop(); turnWatch.Stop(); progressPhase = null;
+            if (answerPending && currentAnswer != null) currentAnswer.Text = "此回合未收到文字回覆，請查看工具結果與下方回合狀態。";
+            currentAnswer = null; answerPending = false; SetBusy(false);
+            string message;
+            if (outcome == "completed")
             {
-                progressTimer.Stop(); turnWatch.Stop(); progressPhase = null;
-                if (answerPending && currentAnswer != null) currentAnswer.Text = "此回合已結束，未收到文字回覆；請查看狀態與工具結果。";
-                currentAnswer = null; answerPending = false; SetBusy(false);
+                message = turnHadToolError
+                    ? "本回合已結束（有工具錯誤）。請查看上方結果，確認後可輸入下一個需求。"
+                    : "本回合已完成，可以輸入下一個需求。";
             }
+            else if (outcome == "cancelled") message = "本回合已停止，可輸入下一個需求。已送出的操作請先核對工具結果。";
+            else message = "本回合未完成：" + (error ?? "請查看工具結果。") + "\n請先處理上述原因，完成後可輸入下一個需求；修改結果不明時，先查詢原操作狀態。";
+            status.Text = message;
+            turnStatus.Text = message;
+            turnStatus.Visibility = Visibility.Visible;
+            AddMessage("回合狀態", message);
+            if (serviceAvailable) input.Focus();
         }
         private void UpdateAnswerProgress(string text)
         {
             progressPhase = text;
             var display = turnWatch.IsRunning ? text + "（本回合 " + (int)turnWatch.Elapsed.TotalSeconds + " 秒）" : text;
             status.Text = display;
+            turnStatus.Text = display;
             if (answerPending && currentAnswer != null) currentAnswer.Text = display;
         }
         private void HandleEvent(JObject message)
@@ -288,6 +360,7 @@ namespace Tybim.Revit.Addin.Chat
         }
         private void AddToolResult(JObject message)
         {
+            if (busy && message["result"]?.Value<bool?>("isError") == true) turnHadToolError = true;
             var data = message["data"];
             var caption = message.Value<string>("name");
             if (data?["createdCount"] != null) caption += " · " + data.Value<string>("status") + " · 建立 " + data.Value<int>("createdCount");
@@ -373,7 +446,7 @@ namespace Tybim.Revit.Addin.Chat
         {
             if (disposed) return;
             serviceAvailable = available;
-            status.Text = error ?? (available ? "MCP 服務已啟用，請連線或繼續對話。" : "AI助手已收合，MCP 服務已停止；重新開啟後啟用。");
+            status.Text = error ?? (available ? "AI助手 MCP 服務已啟用，請連線或繼續對話。" : "AI助手已收合，內部 MCP 服務已停止；外部AI服務由獨立按鈕控制。");
             if (!available && busy && client != null) _ = Run(async () => await client.Request("cancel"));
             SetBusy(busy);
         }
@@ -384,6 +457,8 @@ namespace Tybim.Revit.Addin.Chat
             login.IsEnabled = !value && serviceAvailable && launch != null; send.IsEnabled = !value && serviceAvailable && launch != null; reset.IsEnabled = !value && serviceAvailable && launch != null;
             logout.IsEnabled = !value && launch != null;
             stop.IsEnabled = value;
+            turnStatus.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+            attach.IsEnabled = !value && launch != null; RenderAttachments();
         }
         public void Dispose() { if (disposed) return; disposed = true; progressTimer.Stop(); client?.Dispose(); }
     }

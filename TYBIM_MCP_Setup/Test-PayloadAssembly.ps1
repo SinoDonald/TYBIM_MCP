@@ -1,4 +1,4 @@
-param([ValidateSet('2024','2025','2026')][string]$RevitVersion='2024', [string]$PayloadPath)
+param([ValidateSet('2024','2025','2026')][string]$RevitVersion='2024', [string]$PayloadPath,[switch]$KeepDiagnostics)
 $ErrorActionPreference='Stop'
 $root=Split-Path $PSScriptRoot -Parent
 if(!$PayloadPath){$PayloadPath=Join-Path $PSScriptRoot "payloads/$RevitVersion"}
@@ -27,4 +27,10 @@ try {
  if($LASTEXITCODE -ne 0){throw "Revit $RevitVersion dependency loading regression"}
  & $hostExe $folder loadfrom
  if($LASTEXITCODE -ne 0){throw "Revit $RevitVersion default/load-from dependency regression"}
+ if(!$KeepDiagnostics){
+  $fixturePath=[IO.Path]::GetFullPath($folder)
+  $fixtureRoot=[IO.Path]::GetFullPath((Join-Path $root 'artifacts/qa'))+[IO.Path]::DirectorySeparatorChar
+  if(!$fixturePath.StartsWith($fixtureRoot,[StringComparison]::OrdinalIgnoreCase) -or ((Get-Item -LiteralPath $fixturePath).Attributes -band [IO.FileAttributes]::ReparsePoint)){throw 'Unsafe assembly review cleanup path'}
+  Remove-Item -LiteralPath $fixturePath -Recurse -Force
+ }
 } finally {Pop-Location}

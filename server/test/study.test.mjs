@@ -33,6 +33,22 @@ test('Study aliases map to implemented native command and preserve filters', asy
   assert.equal(calls[0].method, 'upstream.study.query_elements');
   assert.equal(calls[0].args.filters[0].value, '外牆'); assert.equal(calls[0].timeout, 60000);
 });
+
+test('column tools forward an explicit Type ID and reject invalid IDs before Revit', async t => {
+  const { client, calls } = await setup(t);
+  for (const [name, parameters] of [
+    ['revit_study_create_column', { x: 0, y: 0 }],
+    ['revit_study_create_columns_from_dwg', { layerName: 'COL' }]
+  ]) {
+    const result = await client.callTool({ name, arguments: { documentId, operationId, ...parameters, columnTypeId: 154486 } });
+    assert.equal(result.isError, false);
+    assert.equal(calls.at(-1).args.columnTypeId, 154486);
+    const count = calls.length;
+    const rejected = await client.callTool({ name, arguments: { documentId, operationId, ...parameters, columnTypeId: -1 } });
+    assert.equal(rejected.isError, true);
+    assert.equal(calls.length, count);
+  }
+});
 test('Study validation rejects missing write IDs and out-of-range capture dimensions', async t => {
   const { client, calls } = await setup(t);
   for (const [name, args] of [ ['open_document', { documentId, filePath: 'C:/test.rvt' }], ['capture_view_image', { documentId, operationId, pixelSize: 10 }] ]) {

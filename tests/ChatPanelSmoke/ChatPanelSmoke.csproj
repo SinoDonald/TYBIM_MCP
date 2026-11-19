@@ -3,8 +3,8 @@
   <ItemGroup>
     <Reference Include="System.Security" Condition="'$(TargetFramework)' == 'net48'" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <Compile Include="../../src/Tybim.Revit.Addin/Chat/ChatPanel.cs" Link="ChatPanel.cs" />
-    <Compile Include="../../src/Tybim.Revit.Addin/Chat/ChatSettings.cs" Link="ChatSettings.cs" />
-    <Compile Include="../../src/Tybim.Revit.Addin/Chat/ChatProcessClient.cs" Link="ChatProcessClient.cs" />
+    <Compile Include="../../src/Tybim.Revit.Addin/Chat/ChatPanel.cs" Link="src/Tybim.Revit.Addin/Chat/ChatPanel.cs" />
+    <Compile Include="../../src/Tybim.Revit.Addin/Chat/ChatSettings.cs" Link="src/Tybim.Revit.Addin/Chat/ChatSettings.cs" />
+    <Compile Include="../../src/Tybim.Revit.Addin/Chat/ChatProcessClient.cs" Link="src/Tybim.Revit.Addin/Chat/ChatProcessClient.cs" />
   </ItemGroup>
 </Project>

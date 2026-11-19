@@ -33,7 +33,7 @@ async function walk(dir) {
 const payload = path.join(setup, 'payloads', year);
 const files = await walk(payload);
 if (!files.some(f => path.basename(f) === 'Tybim.Revit.Addin.dll')) throw new Error('Prepare MSI payload before generating setup.');
-for (const f of files) if (/^(RevitAPI.*\.dll|bridge.config.json|auth.json)$/i.test(path.basename(f))) throw new Error('Forbidden payload file: ' + f);
+for (const f of files) if (/^(RevitAPI.*\.dll|bridge\.config\.json|external\.bridge\.config\.json|external-ai\.mcp\.json|auth\.json)$/i.test(path.basename(f))) throw new Error('Forbidden payload file: ' + f);
 const registration = path.join(setup, 'registration', year, 'TYBIM.Mcp.addin');
 await fs.mkdir(path.dirname(registration), { recursive: true });
 await fs.writeFile(registration, `<?xml version="1.0" encoding="utf-8"?>\n<RevitAddIns><AddIn Type="Application"><Name>TYBIM MCP</Name><Assembly>..\\TYBIM_MCP\\${year}\\Tybim.Revit.Addin.dll</Assembly><AddInId>A405238F-64C6-4FE2-A3C8-B698E159A6C1</AddInId><FullClassName>Tybim.Revit.Addin.Application</FullClassName><VendorId>TYBM</VendorId><VendorDescription>TYBIM Revit AI Chat</VendorDescription></AddIn></RevitAddIns>\n`);

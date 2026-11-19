@@ -16,7 +16,13 @@ try {
    & dotnet build src/Tybim.Revit.Addin/Tybim.Revit.Addin.csproj -c Release "-p:RevitVersion=$year" --ignore-failed-sources
    if($LASTEXITCODE -ne 0){throw "Revit $year compilation failed"}
    Push-Location server
-   try{& npm.cmd run build;if($LASTEXITCODE -ne 0){throw 'Node build failed'}}finally{Pop-Location}
+   try{
+    if(!(Test-Path -LiteralPath 'node_modules/.bin/tsc.cmd') -or !(Test-Path -LiteralPath 'node_modules/@modelcontextprotocol/sdk/package.json')){
+     & npm.cmd ci --no-audit --no-fund
+     if($LASTEXITCODE -ne 0){throw 'Node dependency restore failed'}
+    }
+    & npm.cmd run build;if($LASTEXITCODE -ne 0){throw 'Node build failed'}
+   }finally{Pop-Location}
    & ./scripts/Package-Chat.ps1 -RevitVersion $year
   }
   & (Join-Path $PSScriptRoot 'Prepare-Payload.ps1') -RevitVersion $year

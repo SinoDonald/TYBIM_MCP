@@ -45,12 +45,15 @@ internal static class Program
             RuntimeScript = "runtime.js", StateDirectory = state
         }));
         Assert(ChatLaunchSettings.Load(config).NodeExecutable == @"C:\Program Files\nodejs\node.exe", "portable Node path resolves relative to installed chat.config.json");
-        File.WriteAllText(Path.Combine(state, "runtime.js"), @"
+        var codecUrl = new Uri(Path.Combine(root, "server", "build", "chat", "jsonl.js")).AbsoluteUri;
+        File.WriteAllText(Path.Combine(state, "runtime.js"), "const codec = import(" + JsonConvert.SerializeObject(codecUrl) + ");\n" + @"
 const readline = require('node:readline');
 console.log(JSON.stringify({event:'ready'}));
 const reader = readline.createInterface({input:process.stdin});
-reader.on('line', line => {
-  const request = JSON.parse(line);
+reader.on('line', async line => {
+  let request;
+  try { request = (await codec).parseChatRequest(line); }
+  catch (error) { console.log(JSON.stringify({event:'fatal',text:'Fixture JSONL parse failed: '+error.message})); return; }
   if (request.method === 'shutdown') process.exit(0);
   console.log(JSON.stringify({id:request.id,result:{received:request.params.text}}));
 });
@@ -74,6 +77,32 @@ reader.on('line', line => {
             Assert(combos[2].Items.Cast<string>().All(File.Exists), "executable selector contains existing detected files only");
             panel.NotifyServiceState(false);
             var bindingFlags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
+            var connectionSettings = controls.OfType<Expander>().Single(e => (string)e.Header == "連線設定");
+            connectionSettings.IsExpanded = false; panel.UpdateLayout();
+            Assert(!LayoutVisible(combos[0]) && !LayoutVisible(combos[1]) && !LayoutVisible(combos[2])
+                && !LayoutVisible((Button)typeof(ChatPanel).GetField("connect", bindingFlags).GetValue(panel))
+                && !LayoutVisible((Button)typeof(ChatPanel).GetField("login", bindingFlags).GetValue(panel))
+                && !LayoutVisible((Button)typeof(ChatPanel).GetField("logout", bindingFlags).GetValue(panel))
+                && !LayoutVisible((TextBlock)typeof(ChatPanel).GetField("authHint", bindingFlags).GetValue(panel))
+                && LayoutVisible((Button)typeof(ChatPanel).GetField("reset", bindingFlags).GetValue(panel)),
+                "collapsed connection settings hides all provider/config/login details but retains new conversation");
+            connectionSettings.IsExpanded = true; panel.UpdateLayout();
+            var attachment = Path.Combine(state, "附件.txt"); File.WriteAllText(attachment, "柱子 FL1-FL2");
+            var addAttachments = typeof(ChatPanel).GetMethod("AddAttachments", bindingFlags);
+            addAttachments.Invoke(panel, new object[] { new[] { attachment, attachment } });
+            Assert(((List<string>)typeof(ChatPanel).GetField("attachmentPaths", bindingFlags).GetValue(panel)).Count == 1,
+                "attachment selection deduplicates paths");
+            Assert(Descendants(panel).OfType<TextBlock>().Any(t => t.Text == "附件.txt"), "selected attachment filename is visible before sending");
+            connectionSettings.IsExpanded = false;
+            panel.Measure(new Size(320, 820)); panel.Arrange(new Rect(new Size(320, 820))); panel.UpdateLayout();
+            var collapsedPreview = new RenderTargetBitmap(320, 820, 96, 96, PixelFormats.Pbgra32); collapsedPreview.Render(panel);
+            var collapsedEncoder = new PngBitmapEncoder(); collapsedEncoder.Frames.Add(BitmapFrame.Create(collapsedPreview));
+            using (var imageFile = File.Create(Path.Combine(root, "artifacts", "chat-panel-collapsed-attachments.png"))) collapsedEncoder.Save(imageFile);
+            connectionSettings.IsExpanded = true;
+            panel.Measure(size); panel.Arrange(new Rect(size)); panel.UpdateLayout();
+            Descendants(panel).OfType<Button>().Single(b => (string)b.Content == "移除").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Assert(((List<string>)typeof(ChatPanel).GetField("attachmentPaths", bindingFlags).GetValue(panel)).Count == 0,
+                "attachment remove button clears pending file");
             combos[1].Items.Clear(); combos[1].Items.Add("available-model");
             typeof(ChatPanel).GetMethod("SelectModel", bindingFlags).Invoke(panel, new object[] { "obsolete-model", false });
             Assert((string)combos[1].SelectedItem == "available-model" && combos[1].Items.Count == 1, "live model selection rejects an unavailable saved model");
@@ -148,6 +177,35 @@ reader.on('line', line => {
             handleEvent.Invoke(panel, new object[] { Newtonsoft.Json.Linq.JObject.FromObject(new { @event = "textDelta", text = "房間共 3 間" }) });
             handleEvent.Invoke(panel, new object[] { Newtonsoft.Json.Linq.JObject.FromObject(new { @event = "status", text = "後續狀態" }) });
             Assert(pendingAnswer.Text == "房間共 3 間", "real answer replaces placeholder and subsequent status cannot overwrite it");
+            var completeTurn = typeof(ChatPanel).GetMethod("CompleteTurn", flags);
+            var setBusy = typeof(ChatPanel).GetMethod("SetBusy", flags);
+            connectionSettings.IsExpanded = false;
+            setBusy.Invoke(panel, new object[] { true });
+            int beforeCompletion = messageList.Children.Count;
+            completeTurn.Invoke(panel, new object[] { "completed", null }); panel.UpdateLayout();
+            var completionStatus = (TextBlock)typeof(ChatPanel).GetField("turnStatus", flags).GetValue(panel);
+            Assert(messageList.Children.Count == beforeCompletion + 1 && completionStatus.Text.Contains("本回合已完成")
+                && Descendants(panel).OfType<TextBox>().Any(t => t.Text.Contains("可以輸入下一個需求")),
+                "completed turn appends a visible next-step message to conversation history exactly once");
+            Assert(LayoutVisible(completionStatus) && !LayoutVisible(combos[0])
+                && ((Button)typeof(ChatPanel).GetField("send", flags).GetValue(panel)).IsEnabled
+                && !((Button)typeof(ChatPanel).GetField("stop", flags).GetValue(panel)).IsEnabled,
+                "ready status remains visible with settings collapsed and send becomes available");
+            var completionPreview = new RenderTargetBitmap(440, 960, 96, 96, PixelFormats.Pbgra32); completionPreview.Render(panel);
+            var completionEncoder = new PngBitmapEncoder(); completionEncoder.Frames.Add(BitmapFrame.Create(completionPreview));
+            using (var imageFile = File.Create(Path.Combine(root, "artifacts", "chat-panel-turn-completed.png"))) completionEncoder.Save(imageFile);
+            setBusy.Invoke(panel, new object[] { true });
+            handleEvent.Invoke(panel, new object[] { Newtonsoft.Json.Linq.JObject.FromObject(new { @event = "toolCompleted", name = "revit_project_info", result = new { isError = true, content = new[] { new { type = "text", text = "REVIT_BUSY" } } } }) });
+            completeTurn.Invoke(panel, new object[] { "completed", null });
+            Assert(completionStatus.Text.Contains("有工具錯誤") && !completionStatus.Text.Contains("本回合已完成"),
+                "tool errors cannot produce an unqualified success marker");
+            completeTurn.Invoke(panel, new object[] { "cancelled", null });
+            Assert(completionStatus.Text.Contains("已停止") && completionStatus.Text.Contains("核對工具結果"),
+                "cancelled turn announces readiness and preserves dispatched-operation caution");
+            completeTurn.Invoke(panel, new object[] { "failed", "REVIT_BUSY：請先按 Esc" });
+            Assert(completionStatus.Text.Contains("未完成") && completionStatus.Text.Contains("Esc")
+                && completionStatus.Text.Contains("先處理上述原因"), "failed turn keeps the reason and actionable next step instead of claiming completion");
+            connectionSettings.IsExpanded = true;
             var approvalMessage = Newtonsoft.Json.Linq.JObject.FromObject(new {
                 id = "smoke-approval", preview = new { kind = "upstream", title = "測試專案", tool = "revit_upstream_send_code_to_revit",
                     note = "參數確認，尚未試放", arguments = new { documentId = "doc", code = "return 1;" } }

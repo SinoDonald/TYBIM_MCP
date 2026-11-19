@@ -8,7 +8,7 @@
     <ProjectReference Include="../Tybim.Revit.Upstream/Tybim.Revit.Upstream.csproj" />
     <Using Include="Autodesk.Revit.DB" />
     <Compile Include="../../integrations/revit-mcp-study/revit/**/*.cs"
-      Exclude="../../integrations/revit-mcp-study/revit/Core/SocketService.cs;../../integrations/revit-mcp-study/revit/Core/ExternalEventManager.cs;../../integrations/revit-mcp-study/revit/Commands/MCPCommands.cs" LinkBase="AdaptedStudy" />
+      Exclude="../../integrations/revit-mcp-study/revit/Core/SocketService.cs;../../integrations/revit-mcp-study/revit/Core/ExternalEventManager.cs;../../integrations/revit-mcp-study/revit/Commands/MCPCommands.cs" LinkBase="integrations/revit-mcp-study/revit" />
     <PackageReference Include="ClosedXML" Version="0.102.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <Reference Include="RevitAPI"><HintPath>$(RevitApiDirectory)\RevitAPI.dll</HintPath><Private>false</Private></Reference>

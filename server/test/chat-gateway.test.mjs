@@ -1,12 +1,26 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { McpGateway } from '../build/chat/gateway.js';
+import { McpGateway, RevitUnavailableError } from '../build/chat/gateway.js';
 const previewName = 'revit_preview_doors_along_walls';
 const executeName = 'revit_execute_doors_along_walls';
 const statusName = 'revit_get_door_operation_status';
 const args = { documentId: 'doc', planId: 'plan' };
 const preview = { ...args, title: 'Test model', ready: 1, skipped: 0 };
 const frame = data => ({ content: [{ type: 'text', text: JSON.stringify(data) }] });
+
+for (const code of ['REQUEST_EXPIRED', 'REVIT_BUSY']) {
+  test(code + ' stops read and write-preflight rounds without dispatching the write', async () => {
+    const calls = [], emitted = [];
+    const client = { callTool: async request => { calls.push(request.name); return { isError: true, content: [{ type: 'text', text: code }] }; }, close: async () => {} };
+    const gateway = new McpGateway(e => emitted.push(e), async () => { throw new Error('must not approve'); }, client);
+    gateway.tools = [{ name: 'revit_project_info', annotations: { readOnlyHint: true } }, { name: 'revit_private_create_columns_from_cad', annotations: { readOnlyHint: false } }];
+    const signal = new AbortController().signal;
+    await assert.rejects(gateway.call('revit_project_info', {}, signal), e => e instanceof RevitUnavailableError && /Esc/.test(e.message));
+    await assert.rejects(gateway.call('revit_private_create_columns_from_cad', { documentId: 'doc', operationId: 'a'.repeat(32) }, signal), RevitUnavailableError);
+    assert.deepEqual(calls, ['revit_project_info', 'revit_project_info']);
+    assert.equal(emitted.filter(e => e.event === 'toolCompleted').length, 2);
+  });
+}
 test('explicit native service refusal is not confused with an unknown committed write', async () => {
   let attempts=0;
   const client={callTool:async request=>{

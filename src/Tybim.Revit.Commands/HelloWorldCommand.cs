@@ -9,13 +9,7 @@ namespace Tybim.Revit.Commands
 
         public object Execute(UIApplication app, JObject parameters)
         {
-            var dialog = new TaskDialog("TYBIM MCP")
-            {
-                MainInstruction = "Hello World！",
-                CommonButtons = TaskDialogCommonButtons.Ok,
-                TitleAutoPrefix = false
-            };
-            dialog.Show();
+            Tybim.Revit.Upstream.TybimWindow.ShowMessage("TYBIM MCP","Hello World！",true);
             return new { message = "Hello World！", closed = true };
         }
     }

@@ -1,5 +1,6 @@
 import { createInterface } from "node:readline";
 import { ChatRuntime } from "./runtime.js";
+import { parseChatRequest } from "./jsonl.js";
 
 const keys = new Set<string>();
 function output(value: unknown) {
@@ -21,8 +22,7 @@ async function main() {
     void (async () => {
       let request: any;
       try {
-        if (line.length > 1024 * 1024) throw new Error("Chat request too large");
-        request = JSON.parse(line);
+        request = parseChatRequest(line);
         if (request.method === "shutdown") { await shutdown(); return; }
         if (closing) return;
         if (request.method === "configure" && typeof request.params?.apiKey === "string") keys.add(request.params.apiKey);

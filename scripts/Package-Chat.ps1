@@ -1,12 +1,33 @@
 param([ValidateSet('2024','2025','2026','2027')][string]$RevitVersion = '2025')
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
+& powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root 'tests/ExternalAiSetup/Test-ClientSetup.ps1')
+if($LASTEXITCODE -ne 0){throw 'External AI client setup regression failed.'}
+& dotnet run --project (Join-Path $root 'tests/ExternalAiSetup/ExternalAiSetup.csproj')
+if($LASTEXITCODE -ne 0){throw 'External AI first-run receipt regression failed.'}
+& dotnet run --project (Join-Path $root 'tests/ColumnTypeRegression/ColumnTypeRegression.csproj')
+if($LASTEXITCODE -ne 0){throw 'Column Type selection regression failed.'}
 & dotnet run --project (Join-Path $root 'tests/StudyCatalogRegression/StudyCatalogRegression.csproj')
 if ($LASTEXITCODE -ne 0) { throw 'Study catalog cannot initialize. Refusing to package an add-in that would fail at startup.' }
 $privateTest = Join-Path $root 'private/tests/GeometryRegression/GeometryRegression.csproj'
 if (Test-Path -LiteralPath $privateTest) {
     & dotnet run --project $privateTest
     if ($LASTEXITCODE -ne 0) { throw 'Private CAD wall geometry regression failed.' }
+}
+$wallTest = Join-Path $root 'private/tests/WallCreationRegression/WallCreationRegression.csproj'
+if (Test-Path -LiteralPath $wallTest) {
+    & dotnet run --project $wallTest
+    if ($LASTEXITCODE -ne 0) { throw 'Private CAD wall selection/join regression failed.' }
+}
+$joinTest = Join-Path $root 'private/tests/WallJoinRegression/WallJoinRegression.csproj'
+if (Test-Path -LiteralPath $joinTest) {
+    & dotnet run --project $joinTest
+    if ($LASTEXITCODE -ne 0) { throw 'Private per-pair wall joining regression failed.' }
+}
+$postCommitTest = Join-Path $root 'private/tests/PostCommitRegression/PostCommitRegression.csproj'
+if (Test-Path -LiteralPath $postCommitTest) {
+    & dotnet run --project $postCommitTest
+    if ($LASTEXITCODE -ne 0) { throw 'Post-commit joining isolation regression failed.' }
 }
 $framework = if ($RevitVersion -eq '2024') { 'net48' } elseif ($RevitVersion -eq '2027') { 'net10.0-windows' } else { 'net8.0-windows' }
 $source = Join-Path $root "src/Tybim.Revit.Addin/bin/$RevitVersion/Release/$framework"
@@ -17,6 +38,14 @@ $bundle = Join-Path $root "artifacts/packages/$RevitVersion"
 $addin = Join-Path $bundle 'Tybim.Mcp'
 $runtime = Join-Path $addin 'runtime'
 New-Item -ItemType Directory -Path $runtime -Force | Out-Null
+$clientSetup = Join-Path $addin 'client-setup'
+New-Item -ItemType Directory -Path $clientSetup -Force | Out-Null
+foreach($setupFile in @('Setup-ExternalAi.ps1','ClientSetup.psm1','Start-Setup.cmd','README.md')) {
+    Copy-Item -LiteralPath (Join-Path $root "scripts/ExternalAiSetup/$setupFile") -Destination $clientSetup -Force
+}
+$packagePictures=Join-Path $addin 'Pic'
+New-Item -ItemType Directory -Path $packagePictures -Force | Out-Null
+Copy-Item -LiteralPath (Join-Path $root 'Pic/TYBIM.ico') -Destination $packagePictures -Force
 Get-ChildItem -LiteralPath $source -File | Where-Object { $_.Extension -in '.dll','.pdb','.json' -and $_.Name -notlike 'RevitAPI*' } | Copy-Item -Destination $addin -Force
 $generatedBuild = [IO.Path]::GetFullPath((Join-Path $runtime 'build'))
 $expectedBuild = [IO.Path]::GetFullPath((Join-Path $root "artifacts/packages/$RevitVersion/Tybim.Mcp/runtime/build"))

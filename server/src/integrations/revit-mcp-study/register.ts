@@ -48,12 +48,23 @@ function shape(schema: any): z.ZodRawShape {
   }));
 }
 function failed(value: any): boolean { return !!value && (value.status === 'rolledBack' || value.status === 'failed' || value.Success === false || value.success === false); }
+// Keep local column fixes when the pinned upstream catalog is regenerated.
+function columnTool(tool: any): any {
+  if (tool.name === 'get_column_types') return { ...tool,
+    description: tool.description + ' 同時查詢結構柱與建築柱。篩選無符合時查看 availableColumnTypes，請讓使用者選擇並以 elementId 作為 columnTypeId。' };
+  if (tool.name !== 'create_column' && tool.name !== 'create_columns_from_dwg') return tool;
+  return { ...tool,
+    description: tool.description + ' 先用 get_column_types 列出已載入柱型，讓使用者選擇 columnTypeId。名稱或材質條件無符合不代表沒有柱型。指定 ID 時以該 Type 判斷結構柱或建築柱，保持原 Type 尺寸。'
+      + (tool.name === 'create_columns_from_dwg' ? ' columnTypeId 與 familyName、textLayerName 不可同時指定。' : ''),
+    inputSchema: { ...tool.inputSchema, properties: { ...tool.inputSchema.properties,
+      columnTypeId: { type: 'integer', minimum: 1, description: 'get_column_types 回傳的 elementId，精確使用所選柱 Type 及其原尺寸' } } } };
+}
 export function registerStudyTools(server: McpServer, bridge: RevitBridge): void {
   const validator = new AjvJsonSchemaValidator();
   const slow = new Set(['read_source_file_sheets', 'copy_sheets_from_file', 'sync_sheet_parameters_from_source', 'inject_green_material_into_family',
     'open_document', 'save_document', 'reload_links', 'capture_view_image', 'run_camera_keyplan', 'list_cameras', 'run_camera_overview', 'create_camera_sheet']);
   for (const entry of catalog.filter(entry => entry.implemented)) {
-    const tool = entry.tool, writes = tool.annotations?.readOnlyHint !== true;
+    const tool = columnTool(entry.tool), writes = tool.annotations?.readOnlyHint !== true;
     const validate = validator.getValidator<Record<string, unknown>>(tool.inputSchema as any);
     server.registerTool('revit_study_' + tool.name, {
       title: tool.title, description: tool.description + '\n來源：REVIT_MCP_study。先取得 TYBIM documentId。'

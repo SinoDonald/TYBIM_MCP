@@ -1496,24 +1496,15 @@ namespace RevitMCP.Core
             string materialFilter = parameters["material"]?.Value<string>();
 
             // 查詢結構柱和建築柱的 FamilySymbol
-            var columnTypes = new FilteredElementCollector(doc)
-                .OfClass(typeof(FamilySymbol))
-                .Cast<FamilySymbol>()
-                .Where(fs => fs.Category != null && 
-                    (fs.Category.Id.GetIdValue() == (IdType)BuiltInCategory.OST_Columns ||
-                     fs.Category.Id.GetIdValue() == (IdType)BuiltInCategory.OST_StructuralColumns))
+            var columnTypes = ColumnTypeSelection.Loaded(doc)
                 .Select(fs =>
                 {
                     // 嘗試取得尺寸參數
                     double width = 0, depth = 0;
                     
                     // 常見的柱尺寸參數名稱
-                    Parameter widthParam = fs.LookupParameter("寬度") ?? 
-                                          fs.LookupParameter("Width") ?? 
-                                          fs.LookupParameter("b");
-                    Parameter depthParam = fs.LookupParameter("深度") ?? 
-                                          fs.LookupParameter("Depth") ?? 
-                                          fs.LookupParameter("h");
+                    Parameter widthParam = ColumnTypeSelection.Dimension(fs, "b");
+                    Parameter depthParam = ColumnTypeSelection.Dimension(fs, "h");
                     
                     if (widthParam != null && widthParam.HasValue)
                         width = Math.Round(widthParam.AsDouble() * 304.8, 0);  // 轉公釐
@@ -1526,22 +1517,29 @@ namespace RevitMCP.Core
                         TypeName = fs.Name,
                         FamilyName = fs.FamilyName,
                         Category = fs.Category?.Name,
+                        BuiltInCategory = fs.Category.Id.GetIdValue() == (long)BuiltInCategory.OST_StructuralColumns
+                            ? "OST_StructuralColumns" : "OST_Columns",
                         Width = width,
                         Depth = depth,
                         SizeDescription = width > 0 && depth > 0 ? $"{width}x{depth}" : "未知尺寸"
                     };
                 })
-                .Where(ct => string.IsNullOrEmpty(materialFilter) || 
-                             ct.FamilyName.Contains(materialFilter) || 
-                             ct.TypeName.Contains(materialFilter))
                 .OrderBy(ct => ct.FamilyName)
                 .ThenBy(ct => ct.TypeName)
                 .ToList();
 
+            var matchingTypes = columnTypes.Where(ct => string.IsNullOrWhiteSpace(materialFilter) ||
+                ct.FamilyName.IndexOf(materialFilter, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                ct.TypeName.IndexOf(materialFilter, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
             return new
             {
-                Count = columnTypes.Count,
-                ColumnTypes = columnTypes
+                Count = matchingTypes.Count,
+                ColumnTypes = matchingTypes,
+                TotalAvailable = columnTypes.Count,
+                AvailableColumnTypes = matchingTypes.Count == 0 ? columnTypes : null,
+                Message = matchingTypes.Count == 0 && columnTypes.Count > 0
+                    ? "篩選條件沒有符合項目，專案仍有可用柱 Type，請從 availableColumnTypes 選擇 elementId。"
+                    : "建立柱子時可用 elementId 作為 columnTypeId，精確選取 Type。"
             };
         }
 
@@ -1558,6 +1556,8 @@ namespace RevitMCP.Core
             string bottomLevelName = parameters["bottomLevel"]?.Value<string>() ?? "Level 1";
             string topLevelName = parameters["topLevel"]?.Value<string>();
             string columnTypeName = parameters["columnType"]?.Value<string>();
+            long? columnTypeId = parameters["columnTypeId"]?.Value<long>();
+            FamilySymbol columnSymbol = ColumnTypeSelection.Resolve(doc, columnTypeId, columnTypeName);
 
             // 轉換座標（公釐 → 英尺）
             XYZ location = new XYZ(x / 304.8, y / 304.8, 0);
@@ -1569,24 +1569,6 @@ namespace RevitMCP.Core
                 // 取得底部樓層
                 Level bottomLevel = FindLevel(doc, bottomLevelName, true);
 
-                // 取得柱類型（FamilySymbol）
-                FamilySymbol columnSymbol = new FilteredElementCollector(doc)
-                    .OfClass(typeof(FamilySymbol))
-                    .Cast<FamilySymbol>()
-                    .Where(fs => fs.Category != null &&
-                        (fs.Category.Id.GetIdValue() == (IdType)BuiltInCategory.OST_Columns ||
-                         fs.Category.Id.GetIdValue() == (IdType)BuiltInCategory.OST_StructuralColumns))
-                    .FirstOrDefault(fs => string.IsNullOrEmpty(columnTypeName) || 
-                                          fs.Name == columnTypeName ||
-                                          fs.FamilyName.Contains(columnTypeName));
-
-                if (columnSymbol == null)
-                {
-                    throw new Exception(string.IsNullOrEmpty(columnTypeName) 
-                        ? "專案中沒有可用的柱類型" 
-                        : $"找不到柱類型: {columnTypeName}");
-                }
-
                 // 確保 FamilySymbol 已啟用
                 if (!columnSymbol.IsActive)
                 {
@@ -1596,10 +1578,12 @@ namespace RevitMCP.Core
 
                 // 建立柱子
                 FamilyInstance column = doc.Create.NewFamilyInstance(
-                    location,
+                    new XYZ(location.X, location.Y, bottomLevel.Elevation),
                     columnSymbol,
                     bottomLevel,
-                    Autodesk.Revit.DB.Structure.StructuralType.Column
+                    columnSymbol.Category.Id.GetIdValue() == (long)BuiltInCategory.OST_StructuralColumns
+                        ? Autodesk.Revit.DB.Structure.StructuralType.Column
+                        : Autodesk.Revit.DB.Structure.StructuralType.NonStructural
                 );
 
                 // 設定頂部樓層（如果有指定）
@@ -1626,6 +1610,7 @@ namespace RevitMCP.Core
                 {
                     ElementId = column.Id.GetIdValue(),
                     ColumnType = columnSymbol.Name,
+                    ColumnTypeId = columnSymbol.Id.GetIdValue(),
                     FamilyName = columnSymbol.FamilyName,
                     Level = bottomLevel.Name,
                     LocationX = x,

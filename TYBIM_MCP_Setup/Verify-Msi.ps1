@@ -1,4 +1,4 @@
-param([ValidateSet('2024','2025','2026')][string[]]$RevitVersion=@('2024','2025','2026'))
+param([ValidateSet('2024','2025','2026')][string[]]$RevitVersion=@('2024','2025','2026'),[switch]$KeepDiagnostics)
 $ErrorActionPreference='Stop'
 $root=Split-Path $PSScriptRoot -Parent
 $version=(Get-Content (Join-Path $root 'server/package.json') -Raw | ConvertFrom-Json).version
@@ -58,7 +58,7 @@ foreach($year in $RevitVersion){
  $actual=@{}
  foreach($file in $files){
   $name=($file.Name.Split('|') | Select-Object -Last 1)
-  if($name -match '^(RevitAPI.*\.dll|bridge.config.json|auth.json)$'){throw "Forbidden MSI file: $name"}
+  if($name -match '^(RevitAPI.*\.dll|bridge\.config\.json|external\.bridge\.config\.json|external-ai\.mcp\.json|auth\.json)$'){throw "Forbidden MSI file: $name"}
   $dir=RelativeDirectory $components[$file.Component]
   $relative=(@($dir.relative,$name) | Where-Object {$_}) -join '/'
   if($dir.root -eq 'TYBIMREGISTERDIR'){
@@ -67,7 +67,7 @@ foreach($year in $RevitVersion){
  }
  if($files.Count -ne $index.files.Count+1){throw 'MSI file count differs from reviewed payload'}
  foreach($file in $index.files){if(!$actual.ContainsKey("$year/$($file.relative)")){throw "MSI missing payload file: $($file.relative)"}}
- foreach($required in @('Tybim.Mcp.Contracts.dll','Tybim.Revit.Addin.dll','Tybim.Revit.Commands.dll','Tybim.Revit.Study.dll','Tybim.Revit.Upstream.dll','runtime/node/node.exe','runtime/build/chat/index.js')){
+ foreach($required in @('Tybim.Mcp.Contracts.dll','Tybim.Revit.Addin.dll','Tybim.Revit.Commands.dll','Tybim.Revit.Study.dll','Tybim.Revit.Upstream.dll','runtime/node/node.exe','runtime/build/chat/index.js','Pic/TYBIM.ico','client-setup/Setup-ExternalAi.ps1','client-setup/ClientSetup.psm1','client-setup/Start-Setup.cmd')){
   if(!$actual.ContainsKey("$year/$required")){throw "Missing runtime dependency: $required"}
  }
  if($actual.ContainsKey("$year/runtime/build/private/register.js")){
@@ -103,7 +103,13 @@ foreach($year in $RevitVersion){
  if($manifest.RevitAddIns.AddIn.Assembly -ne "..\TYBIM_MCP\$year\Tybim.Revit.Addin.dll"){throw 'Incorrect relative Assembly path'}
  if($properties.UpgradeCode -eq $lastUpgrade){throw 'Revit versions must have different upgrade identities'}
  $lastUpgrade=$properties.UpgradeCode
- & (Join-Path $PSScriptRoot 'Test-PayloadAssembly.ps1') -RevitVersion $year -PayloadPath $verified
+ & (Join-Path $PSScriptRoot 'Test-PayloadAssembly.ps1') -RevitVersion $year -PayloadPath $verified -KeepDiagnostics:$KeepDiagnostics
  [pscustomobject]@{RevitVersion=$year;Msi=$msi;FileCount=$files.Count;Version=$properties.ProductVersion;DisplayName=$properties.ProductName;UninstallEnabled=$true;PerUser=$true;EmbeddedCabinet=$true;PathsVerified=$true;NoSharedToken=$true} | ConvertTo-Json
+ if(!$KeepDiagnostics){
+  $qaFull=[IO.Path]::GetFullPath($qa)
+  $qaRoot=[IO.Path]::GetFullPath((Join-Path $root 'artifacts/qa'))+[IO.Path]::DirectorySeparatorChar
+  if(!$qaFull.StartsWith($qaRoot,[StringComparison]::OrdinalIgnoreCase) -or ((Get-Item -LiteralPath $qaFull).Attributes -band [IO.FileAttributes]::ReparsePoint)){throw 'Unsafe MSI review cleanup path'}
+  Remove-Item -LiteralPath $qaFull -Recurse -Force
+ }
 }
 

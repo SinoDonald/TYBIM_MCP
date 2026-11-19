@@ -6,6 +6,9 @@ artifacts/
 .local/
 *.user
 *.log
+**/external.bridge.config.json
+**/external-ai.mcp.json
+/.vs/
 /private/
 /server/src/private/
 /TYBIM_MCP_Setup/payloads/

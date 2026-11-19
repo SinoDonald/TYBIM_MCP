@@ -13,6 +13,7 @@ namespace RevitMCP.Core
 
         public LogViewerWindow()
         {
+            Icon = Tybim.Revit.Upstream.TybimWindow.CreateIcon();
             Title = "RevitMCP Real-time Log Viewer";
             Width = 600;
             Height = 400;

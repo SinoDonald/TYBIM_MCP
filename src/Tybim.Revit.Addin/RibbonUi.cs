@@ -13,6 +13,12 @@ namespace Tybim.Revit.Addin
         private const string PanelName = "MCP";
         // Internal ID is separate from the displayed name and other TYBIM buttons.
         private const string ButtonId = "TYBIM.MCP.ShowAiAssistant.A405238F";
+        private static PushButton externalAiButton;
+
+        internal static void SetExternalAiState(bool enabled)
+        {
+            if (externalAiButton != null) externalAiButton.ItemText = "外部AI\n服務：" + (enabled ? "開" : "關");
+        }
 
         internal static void Register(UIControlledApplication app)
         {
@@ -37,7 +43,27 @@ namespace Tybim.Revit.Addin
                 };
                 panel.AddItem(data);
             }
+            const string externalId = "TYBIM.MCP.ExternalAiService";
+            externalAiButton = panel.GetItems().FirstOrDefault(item => item.Name == externalId) as PushButton;
+            if (externalAiButton == null)
+            {
+                externalAiButton = panel.AddItem(new PushButtonData(externalId, "外部AI\n服務：關",
+                    Assembly.GetExecutingAssembly().Location, typeof(ExternalAiCommand).FullName)
+                {
+                    LargeImage = RibbonImages.LoadImage("Tybim.Mcp.Images.AiAssistant.png"),
+                    ToolTip = "【功能介紹】\n獨立開關供外部 Codex、Claude 使用的本機 MCP 連線；不影響內建 AI助手。預設關閉。",
+                    LongDescription = "【使用步驟】\n1. 點選啟用外部AI服務，查看本機埠號與設定檔位置。\n2. 首次使用會自動開啟設定精靈，選擇 Codex／Claude 並套用；日後可用「AI連線設定」重開。\n3. 先要求執行 revit_health，再讀取目前專案。\n4. 內外部可以同時連線，Revit 指令依序執行；修改模型前核對範圍，並避免兩邊同時修改相同元素。\n5. 再次點選即可停用；關閉 AI助手不會關閉本服務。重開 Revit 後須重新啟用。"
+                }) as PushButton;
+            }
             const string cameraId = "TYBIM.MCP.Study.CameraManager";
+            const string setupId = "TYBIM.MCP.ExternalAiSetup";
+            if (!panel.GetItems().Any(item=>item.Name==setupId))
+                panel.AddItem(new PushButtonData(setupId,"AI連線\n設定",Assembly.GetExecutingAssembly().Location,typeof(ExternalAiSetupCommand).FullName)
+                {
+                    LargeImage=RibbonImages.LoadImage("Tybim.Mcp.Images.AiAssistant.png"),
+                    ToolTip="設定本機 Codex、Claude Code 或 Claude Desktop 使用 TYBIM MCP；備份並保留其他設定。",
+                    LongDescription="首次啟用外部 AI 服務時自動開啟。成功套用後不重複提示；日後可由此重新設定。請先結束要設定的 AI，用精靈套用後重新啟動。不會代為登入帳號或關閉工具授權提示，也不會開關外部服務。"
+                });
             if (!panel.GetItems().Any(item => item.Name == cameraId))
             {
                 var camera = new PushButtonData(cameraId, "相機管理", typeof(RevitMCP.Commands.CameraManagerCommand).Assembly.Location,

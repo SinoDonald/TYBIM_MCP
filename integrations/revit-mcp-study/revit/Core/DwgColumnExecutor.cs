@@ -176,7 +176,10 @@ namespace RevitMCP.Core
             StructuralType stype = isStructural ? StructuralType.Column : StructuralType.NonStructural;
 
             string requestedFamilyName = p["familyName"]?.Value<string>();
+            long? requestedTypeId = p["columnTypeId"]?.Value<long>();
             string textLayerName = p["textLayerName"]?.Value<string>();
+            if (requestedTypeId.HasValue && (!string.IsNullOrEmpty(requestedFamilyName) || !string.IsNullOrEmpty(textLayerName)))
+                throw new Exception("columnTypeId 固定使用所選 Type，請省略 familyName 與 textLayerName。");
 
             var bLv = vp.GenLevel;
             if (bLv == null) throw new Exception("無法取得基準樓層");
@@ -195,17 +198,24 @@ namespace RevitMCP.Core
 
             string wp = null, dp = null;
             FamilySymbol baseSym;
-            if (!string.IsNullOrEmpty(requestedFamilyName))
+            if (requestedTypeId.HasValue)
+            {
+                baseSym = ColumnTypeSelection.Resolve(doc, requestedTypeId, null);
+                isStructural = baseSym.Category.Id.GetIdValue() == (long)BuiltInCategory.OST_StructuralColumns;
+                columnTypeName = isStructural ? "結構柱" : "建築柱";
+                stype = isStructural ? StructuralType.Column : StructuralType.NonStructural;
+            }
+            else if (!string.IsNullOrEmpty(requestedFamilyName))
             {
                 baseSym = FindFamilyByName(doc, bic, requestedFamilyName, ref wp, ref dp);
                 if (baseSym == null)
-                    throw new Exception($"找不到名稱為「{requestedFamilyName}」的{columnTypeName}族群，請確認族群已載入且名稱正確");
+                    throw new Exception($"指定名稱「{requestedFamilyName}」沒有符合的{columnTypeName}族群，請選擇 columnTypeId。" + ColumnTypeSelection.AvailableMessage(doc));
             }
             else
             {
                 baseSym = FindFamily(doc, bic, ref wp, ref dp);
                 if (baseSym == null)
-                    throw new Exception($"找不到{columnTypeName}族群，請先在專案中載入矩形柱族群");
+                    throw new Exception($"目前指定品類中找不到{columnTypeName}族群，請選擇 columnTypeId 或載入矩形柱族群。" + ColumnTypeSelection.AvailableMessage(doc));
             }
 
             // 讀取 CAD 文字標注（如 C1、C2）
@@ -253,7 +263,11 @@ namespace RevitMCP.Core
                     {
                         FamilySymbol sym;
                         string matchedLabel = null;
-                        if (labels != null && labels.Count > 0)
+                        if (requestedTypeId.HasValue)
+                        {
+                            sym = baseSym;
+                        }
+                        else if (labels != null && labels.Count > 0)
                         {
                             // 找距離最近的文字標注（容許範圍 2000mm）
                             var nearest = labels

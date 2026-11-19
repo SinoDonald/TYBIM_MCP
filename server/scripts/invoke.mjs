@@ -5,11 +5,12 @@ import { fileURLToPath } from 'node:url';
 const name = process.argv[2];
 if (!name) throw new Error('Usage: node server/scripts/invoke.mjs <tool> [arguments JSON]');
 const args = JSON.parse(process.argv[3] ?? '{}');
+if (!process.env.TYBIM_MCP_CONFIG) throw new Error('Set TYBIM_MCP_CONFIG to the installed Revit external.bridge.config.json before invoking tools.');
 const client = new Client({ name: 'tybim-local-client', version: '1.0.0' });
 try {
   await client.connect(new StdioClientTransport({ command: process.execPath,
     args: [fileURLToPath(new URL('../build/index.js', import.meta.url))],
-    env: { ...process.env, TYBIM_MCP_CONFIG: process.env.TYBIM_MCP_CONFIG ?? fileURLToPath(new URL('../../artifacts/2025/Tybim.Mcp/bridge.config.json', import.meta.url)) }
+    env: { ...process.env }
   }));
   const result = await client.callTool({ name, arguments: args });
   for (const item of result.content ?? []) if (item.type === 'text') console.log(item.text);

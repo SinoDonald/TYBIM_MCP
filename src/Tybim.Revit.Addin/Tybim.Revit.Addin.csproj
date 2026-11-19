@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup><UseWPF>true</UseWPF><EnableDynamicLoading>true</EnableDynamicLoading></PropertyGroup>
   <ItemGroup>
-    <EmbeddedResource Include="../../Pic/AI助手.png" LogicalName="Tybim.Mcp.Images.AiAssistant.png" />
-    <EmbeddedResource Include="../../Pic/原圖/AI助手(原圖).png" LogicalName="Tybim.Mcp.Images.AiAssistant.Original.png" />
-    <EmbeddedResource Include="../../Pic/相機管理.png" LogicalName="Tybim.Mcp.Images.CameraManager.png" />
-    <EmbeddedResource Include="../../Pic/原圖/相機管理(原圖).png" LogicalName="Tybim.Mcp.Images.CameraManager.Original.png" />
+    <EmbeddedResource Include="../../Pic/AI助手.png" LogicalName="Tybim.Mcp.Images.AiAssistant.png" Link="Pic/AI助手.png" />
+    <EmbeddedResource Include="../../Pic/原圖/AI助手(原圖).png" LogicalName="Tybim.Mcp.Images.AiAssistant.Original.png" Link="Pic/原圖/AI助手(原圖).png" />
+    <EmbeddedResource Include="../../Pic/相機管理.png" LogicalName="Tybim.Mcp.Images.CameraManager.png" Link="Pic/相機管理.png" />
+    <EmbeddedResource Include="../../Pic/原圖/相機管理(原圖).png" LogicalName="Tybim.Mcp.Images.CameraManager.Original.png" Link="Pic/原圖/相機管理(原圖).png" />
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" Condition="'$(RevitVersion)' != '2024'" />
     <Reference Include="System.Security" Condition="'$(RevitVersion)' == '2024'" />
     <ProjectReference Include="../Tybim.Revit.Commands/Tybim.Revit.Commands.csproj" />

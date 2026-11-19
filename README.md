@@ -1,10 +1,22 @@
 # TYBIM Revit MCP
 
+**v0.14.0 / Revit 2024、2025、2026 MSI：** AI連線設定新增「清除 TYBIM 設定」，依所選年份及用戶端備份後清除。版本選單僅列已安裝 TYBIM 的年份，遞增排序並預選目前 Revit 版本；切換年份使用各自的安裝目錄。自有視窗統一使用 Pic/TYBIM.ico。首次設定仍支援沒有任何 MCP 設定的新電腦；詳見 [外部服務流程](docs/external-ai.md)。
+
+**v0.11.0 / Revit 2025：建牆提交後預設自動逐組接合。** 先嘗試牆端，失敗再試幾何接合；失敗僅回復該組，保留牆體及先前成功接合。可用 autoJoin=false 只建不接合。新增私人 revit_private_auto_join，支援柱、樑、牆、板的接合／取消接合與明確的樓板切割順序；失敗提供元素 ID、mm 座標及可取得的 PNG／JSON 診斷。見 [接合與定位說明](docs/wall-two-stage.md)。
+
+**v0.10.0 / Revit 2025：建牆與接合分開。** 建牆先停用兩端自動接合，保留 CAD 自動選型；需要時另確認並執行私人 join_walls 工具，逐組接合，失敗保留原牆與先前成功結果。失敗可回傳牆 ID、mm 位置、局部 PNG 截圖與 JSON 診斷報告。見 [兩階段建牆／接合與定位](docs/wall-two-stage.md)。
+
+**2026-11-17 / v0.9.1（Revit 2025）：** 修正 0.9.0 建牆錯誤處理器被 Transaction.Start 重設的缺陷；改為先啟動交易，再設定失敗前處理器。新增重現舊問題與正向生命週期檢查。0.9.0 在實機仍回滾，不應繼續使用該安裝檔。詳見 [修正紀錄](docs/cad-wall-auto-types.md)。
+
+**2026-11-17 / v0.9.0（本次只產出 Revit 2025）：** CAD 建牆不指定類型時，依厚度選型；缺少同厚度類型可複製安全的單層牆型。針對新牆之間「無法保持接合元素」使用 Revit 明確的解除接合處理，保留牆體並回報；其他錯誤仍回滾。版本包含獨立外部 AI 服務。操作與驗收見 [自動選型與接合修正](docs/cad-wall-auto-types.md)。
+
+**2026-11-13：新增獨立「外部AI服務」開關。** 內建 AI助手維持原本開關行為；外部入口預設關閉，Revit 2025 預設埠為 21825。Claude Code／Claude Desktop 設定與部署步驟見 [外部 AI 服務](docs/external-ai.md)。本次不製作 MSI。
+
 適合持續擴充的 Revit MCP 專案，預設 Revit 2025；目前已交付 Revit 2024／2025／2026 分版 MSI。
 
-**後續安裝檔規則（2026-10-28）：先只產出 2025，待 Donald 確認並要求後才製作 2024；其他年份亦需另行要求。新版驗證成功後刪除被取代的同年份舊安裝檔。** 詳見 [Setup 交付規則](TYBIM_MCP_Setup/README.md)。
+**後續安裝檔規則（2026-10-28）：先只產出 2025，待 拓源數位科技 確認並要求後才製作 2024；其他年份亦需另行要求。新版驗證成功後刪除被取代的同年份舊安裝檔。** 詳見 [Setup 交付規則](TYBIM_MCP_Setup/README.md)。
 
-**目前版本為 v0.7.1。** 個人自動建柱、樑、板、牆各自獨立；建牆預設只建牆，門／窗須明確要求並可分別啟用。個人工具啟用時預設共 263 項，原有 258 項不變。保留唯讀選單、面板服務開關與解除安裝清理。使用與私人書面授權見 [個人功能說明](docs/personal-features.md)。最新狀態、程式位置、安裝檔與待驗收事項見 [更新狀態（2026-10-28）](docs/project-status.md)，安裝及重建請以 [Setup 操作說明](TYBIM_MCP_Setup/README.md) 為準。下列早期版本與核心 bridge 段落保留作為開發演進參考。
+**歷史版本 v0.8.2：** 新增回合結束與下一步提示，並修正 2024 UTF-8 BOM 通訊相容性。 個人自動建柱、樑、板、牆各自獨立；建牆預設只建牆，門／窗須明確要求並可分別啟用。個人工具啟用時預設共 263 項，原有 258 項不變。保留唯讀選單、面板服務開關與解除安裝清理。CAD 圖層／向量辨識與著作權紀錄見 [個人功能說明](docs/personal-features.md)。最新狀態、程式位置、安裝檔與待驗收事項見 [更新狀態（2026-10-29）](docs/project-status.md)，安裝及重建請以 [Setup 操作說明](TYBIM_MCP_Setup/README.md) 為準。下列早期版本與核心 bridge 段落保留作為開發演進參考。
 
 **v0.5.0：新增 Revit 2024／2025 的 Visual Studio Setup Project 與獨立 MSI。** DLL／runtime 部署到 `Addins/TYBIM_MCP/<年份>`，年度 `.addin` 保留在 `Addins/<年份>`；相機管理按鈕可再次點擊收合。此為早期交付範圍；目前另有 2026 MSI，2027 尚未發布。
 
@@ -16,7 +28,7 @@
 
 **v0.2.0：新增 Revit 內嵌 AI 對話面板。** 於 Revit「拓源數位 → MCP → AI助手」切換 Codex、Claude、Gemini。Codex 使用官方登入，Claude／Gemini 使用獨立 API Key。
 完整安裝、登入與使用步驟請先看 [內嵌 AI 對話操作說明](docs/embedded-chat.md)。
-建置後執行 `scripts/Package-Chat.ps1` 產生完整面板套件；早期的 `Prepare-Package.ps1` 只準備核心 bridge，不含面板 runtime。
+建置後執行 `scripts/Package-Chat.ps1` 產生完整面板套件，包含 AI 連線設定精靈；舊核心打包腳本已移除。
 
 ```mermaid
 flowchart LR
@@ -43,7 +55,7 @@ flowchart LR
 | `src/Tybim.Revit.Addin` | 外掛生命週期、TCP listener、ExternalEvent 佇列 |
 | `src/Tybim.Revit.Commands` | Revit API 功能及命令註冊 |
 | `src/Tybim.Revit.Upstream` | 上游指令編譯與現有 ExternalEvent 的同步適配 |
-| `src/Tybim.Revit.Study` | Study 原生命令接入；Visual Studio 的 AdaptedStudy 連至實際適配原始碼 |
+| `src/Tybim.Revit.Study` | Study 原生命令接入；Visual Studio 的 integrations/revit-mcp-study/revit 對應實際適配原始碼 |
 | `third_party/<來源>/original` | 兩份外來原始快照、授權／告示與來源版本／雜湊 |
 | `integrations/<來源>/revit` | 實際編譯的兩份外來 C# 適配版 |
 | `server/src/integrations/<來源>` | 上游 MCP 工具 schema、統一 bridge 適配與 SQLite |
@@ -65,35 +77,27 @@ flowchart LR
 
 ## 建置與準備部署
 
-在 PowerShell 中切換到專案根目錄：
+一般使用者請安裝對應年度 MSI，先儲存模型並關閉 Revit，再執行安裝。首次啟用「外部 AI 服務」會開啟設定精靈，選擇外部 AI 後套用，重新啟動 AI。
+
+開發者在專案根目錄使用 PowerShell：
 
 ```powershell
-cd C:\Prj\Revit\TYBIM_MCP
 ./scripts/Check-Prerequisites.ps1
 ./scripts/Build.ps1 -RevitVersion 2025
-./scripts/Prepare-Package.ps1 -RevitVersion 2025
+./scripts/Package-Chat.ps1 -RevitVersion 2025
 ```
 
-2024 改用 `-RevitVersion 2024`。兩版輸出分開；預設 port 是 17824、17825。
-`Build.ps1` 使用 `npm ci` 與 lockfile，編譯後執行自動測試，不會直接啟動 MCP 常駐程序。
-若機器限制 PowerShell 腳本，使用組織允許的執行方式；不必全機關閉執行政策或防火牆。
+完整套件位於 `artifacts/packages/2025`；開發部署可執行 `scripts/Install-RevitAddin.ps1 -RevitVersion 2025`，不會取代正式 MSI 的程式與功能登錄。2024、2026 改用相應年份。
 
-在關閉對應 Revit 版本後，將產生的 `artifacts/2025/TYBIM.Mcp.addin` 複製到：
+製作 MSI：
 
-```text
-%APPDATA%\Autodesk\Revit\Addins\2025\TYBIM.Mcp.addin
+```powershell
+./TYBIM_MCP_Setup/Build-Msi.ps1 -RevitVersion 2025
+# 只有明確要求三版時
+./TYBIM_MCP_Setup/Build-Msi.ps1 -RevitVersion 2024,2025,2026
 ```
 
-Manifest 指向本專案 `artifacts/2025/Tybim.Mcp` 的絕對路徑，因此套件目錄須維持固定。
-將 `artifacts/2025/mcp-client.example.json` 中該 server 的內容加入 MCP 用戶端設定；不同用戶端的外層設定格式可能不同。
-其核心是以 `node` 執行 `server/build/index.js`，並以環境變數 `TYBIM_MCP_CONFIG` 指向同一份 `bridge.config.json`。
-
-重啟 Revit 與 MCP 用戶端，開啟測試模型後先呼叫 `revit_health`，再呼叫 `revit_project_info`。
-後續查詢可傳入取得的 `documentId`，確保切換模型後拒絕對錯誤文件執行。
-
-套件產生器建立隨機權杖，重跑會保留原設定。不可把 `bridge.config.json`、包含它的部署套件上傳公開儲存庫。
-此版本每個 port 對應一個 Revit 行程；同版本多開第二個行程會因 port 已使用而無法啟動 bridge。
-需要多實例時，下一階段應新增實例探索／選擇及各自的設定，不能讓 AI 隨機連線到其中一個模型。
+預設只製作 2025。發行內容使用安裝位置與每台電腦獨立設定，不依賴開發者的 C:/Prj 路徑，不包含登入資料或共用權杖。不要再使用早期 artifacts/<年份> 的核心部署方式。
 
 ## 開發前需要留意
 

@@ -28,13 +28,13 @@
     "server/src/private"
   ],
   "personalFeatures": {
-    "owner": "Donald",
+    "owner": "拓源數位科技",
     "cadAutoWalls": {
       "csharp": "private/revit/AutoBuild",
       "mcp": "server/src/private/register.ts",
-      "reference": "Donald's personally developed Sinotech_MCP extensions; not Study or an upstream snapshot",
+      "classification": "拓源數位科技自有 CAD 建模功能；非 Study 或上游快照",
       "license": "private/LICENSE.md",
-      "authorization": "written permission only; no runtime activation",
+      "authorization": "copyright notice only; no runtime license prompt",
       "tools": [
         "revit_private_get_cad_layers",
         "revit_private_create_walls_from_cad",

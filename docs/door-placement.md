@@ -46,8 +46,9 @@ Autodesk 的本機 RevitAPI.xml 明確指出，同一開啟文件可能由相等
 ## 本機呼叫
 
 ```powershell
+$env:TYBIM_MCP_CONFIG = Join-Path $env:APPDATA 'Autodesk/Revit/Addins/TYBIM_MCP/2025/external.bridge.config.json'
 node server/scripts/invoke.mjs revit_get_door_placement_context '{"scope":"all","limit":1000}'
 ```
 
 此 CLI 透過官方 MCP Client 呼叫 stdio server，不繞過工具輸入 schema 或橋接權杖。
-預設讀取本專案 Revit 2025 設定，也可用 TYBIM_MCP_CONFIG 指向其他已備妥的橋接設定。
+請用 TYBIM_MCP_CONFIG 明確指定已安裝外掛的橋接設定；不再依賴已清除的早期 artifacts/2025 部署副本。原始碼精簡後若需使用此開發 CLI，先在 server 執行 npm ci 與 npm run build。

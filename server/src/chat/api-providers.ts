@@ -1,6 +1,7 @@
 import { checkResponse, fetchWithRetry, requestSignal, sseJson } from "./http.js";
 import { instructions, textResult, type ChatProvider, type EventSink, type ModelOption, type ProviderSettings, type ToolGateway } from "./types.js";
 import { ApiTools, searchToolName } from "./api-tools.js";
+import { attachmentText, type ChatAttachment } from "./attachments.js";
 import { claudeModelRank, isRecommendedClaudeModel, isRecommendedGeminiModel, recommendedGeminiModels } from "./model-policy.js";
 
 const apiInstructions = instructions + "\n需要其他功能時先呼叫 tybim_search_revit_tools 搜尋，不可宣稱未載入的功能不存在。建立多個樓層優先使用 revit_upstream_create_level 的 data 陣列；先讀現有樓層確認基準與標高，單位 mm（350 cm = 3500 mm），不得重複建立已存在的名稱。";
@@ -47,12 +48,12 @@ export class ApiProvider implements ChatProvider {
       .map((m: any) => ({ id: m.name.replace(/^models\//, ""), name: m.displayName ?? m.name }))
       .sort((a: ModelOption, b: ModelOption) => recommendedGeminiModels.indexOf(a.id as any) - recommendedGeminiModels.indexOf(b.id as any));
   }
-  async send(text: string, signal: AbortSignal): Promise<void> {
+  async send(text: string, signal: AbortSignal, attachments: ChatAttachment[] = []): Promise<void> {
     if (!this.settings.model) throw new Error("請先選擇模型。");
     this.key();
     try {
-      if (this.settings.provider === "claude") await this.claude(text, signal);
-      else await this.gemini(text, signal);
+      if (this.settings.provider === "claude") await this.claude(text, signal, attachments);
+      else await this.gemini(text, signal, attachments);
     } catch (error) {
       // A cancelled/failed tool round may contain incomplete tool-use pairs.
       // Never resend such history (and never replay writes) on the next prompt.
@@ -65,10 +66,12 @@ export class ApiProvider implements ChatProvider {
       throw error;
     }
   }
-  private async claude(text: string, signal: AbortSignal): Promise<void> {
+  private async claude(text: string, signal: AbortSignal, attachments: ChatAttachment[]): Promise<void> {
     const toolbox = this.toolbox ??= new ApiTools(this.gateway.tools);
     toolbox.load(text);
-    this.history.push({ role: "user", content: text });
+    this.history.push({ role: "user", content: attachments.length ? [{ type: "text", text }, ...attachments.map(file => file.type === "text"
+      ? { type: "text", text: attachmentText(file) }
+      : { type: "image", source: { type: "base64", media_type: file.mimeType, data: file.data } })] : text });
     for (let round = 0; round < 30; round++) {
       signal.throwIfAborted();
       this.emit({ event: "status", text: round === 0 ? `已準備本次需要的 Revit 功能，等待 Claude（${this.settings.model}）回應…` : "工具結果已回傳，等待 Claude 後續回應…" });
@@ -115,10 +118,11 @@ export class ApiProvider implements ChatProvider {
     }
     throw new Error("工具回合超過 30 次，請拆分工作。");
   }
-  private async gemini(text: string, signal: AbortSignal): Promise<void> {
+  private async gemini(text: string, signal: AbortSignal, attachments: ChatAttachment[]): Promise<void> {
     const toolbox = this.toolbox ??= new ApiTools(this.gateway.tools);
     toolbox.load(text);
-    this.history.push({ role: "user", parts: [{ text }] });
+    this.history.push({ role: "user", parts: [{ text }, ...attachments.map(file => file.type === "text"
+      ? { text: attachmentText(file) } : { inlineData: { mimeType: file.mimeType, data: file.data } })] });
     for (let round = 0; round < 30; round++) {
       signal.throwIfAborted();
       const model = encodeURIComponent(this.settings.model!);

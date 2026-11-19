@@ -14,8 +14,10 @@ namespace Tybim.Revit.Addin
     {
         internal static RevitApplication Current { get; private set; }
         private BridgeSettings bridgeSettings;
-        private Dispatcher dispatcher;
-        private BridgeListener listener;
+        private BridgeEndpoint internalEndpoint;
+        private BridgeEndpoint externalEndpoint;
+        private string installDirectory;
+        private string revitYear;
         private ChatDockablePane chat;
         private RevitMCP.Application study;
         private UIControlledApplication uiHost;
@@ -30,6 +32,8 @@ namespace Tybim.Revit.Addin
             {
                 uiHost = app;
                 var directory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                installDirectory = directory;
+                revitYear = app.ControlledApplication.VersionNumber;
                 var bridgePath = Path.Combine(directory, "bridge.config.json");
                 if (!File.Exists(bridgePath))
                 {
@@ -50,9 +54,11 @@ namespace Tybim.Revit.Addin
                 var settings = JsonConvert.DeserializeObject<BridgeSettings>(File.ReadAllText(bridgePath));
                 if (settings == null) throw new InvalidOperationException("Missing bridge settings.");
                 settings.Validate();
-                dispatcher = new Dispatcher(); // Created in a valid Revit API context.
+                internalEndpoint = new BridgeEndpoint(); // Created in a valid Revit API context.
+                externalEndpoint = new BridgeEndpoint();
                 bridgeSettings = settings;
-                app.Idling += dispatcher.OnIdling;
+                app.Idling += internalEndpoint.Dispatcher.OnIdling;
+                app.Idling += externalEndpoint.Dispatcher.OnIdling;
                 chat = new ChatDockablePane(Path.Combine(directory, "chat.config.json"));
                 app.RegisterDockablePane(ChatDockablePane.Id, "TYBIM AI 助手", chat);
                 Current = this;
@@ -75,8 +81,9 @@ namespace Tybim.Revit.Addin
                 DetachStartupLayout();
                 try { study?.OnShutdown(app); } catch { }
                 chat?.Panel.Dispose();
-                if (dispatcher != null) app.Idling -= dispatcher.OnIdling;
-                listener?.Dispose(); dispatcher?.Dispose();
+                if (internalEndpoint != null) app.Idling -= internalEndpoint.Dispatcher.OnIdling;
+                if (externalEndpoint != null) app.Idling -= externalEndpoint.Dispatcher.OnIdling;
+                internalEndpoint?.Dispose(); externalEndpoint?.Dispose();
                 // Preserve the complete exception chain for startup diagnostics;
                 // TypeInitializationException.Message alone hides the real cause.
                 string logPath = null;
@@ -88,7 +95,7 @@ namespace Tybim.Revit.Addin
                     File.WriteAllText(logPath, ex.ToString());
                 }
                 catch { /* Diagnostics must not mask the original startup failure. */ }
-                TaskDialog.Show("TYBIM MCP", "TYBIM MCP failed to start: " + ex.GetBaseException().Message
+                Tybim.Revit.Upstream.TybimWindow.ShowMessage("TYBIM MCP", "TYBIM MCP failed to start: " + ex.GetBaseException().Message
                     + (logPath == null ? "" : "\n\nDetails: " + logPath));
                 return Result.Failed;
             }
@@ -112,22 +119,42 @@ namespace Tybim.Revit.Addin
         }
         internal void SetBridgeEnabled(bool enabled)
         {
-            if (!enabled)
+            if (enabled) internalEndpoint.Enable(bridgeSettings);
+            else internalEndpoint?.Disable();
+            chat?.Panel.NotifyServiceState(enabled);
+        }
+        internal void ToggleExternalAi()
+        {
+            if (externalEndpoint.Enabled)
             {
-                dispatcher?.SetEnabled(false);
-                var previous = listener; listener = null; previous?.StopAccepting();
-                chat?.Panel.NotifyServiceState(false);
+                externalEndpoint.Disable();
+                RibbonUi.SetExternalAiState(false);
                 return;
             }
-            if (listener != null) return;
-            var next = new BridgeListener(bridgeSettings, dispatcher);
+            var settings = ExternalAiConfiguration.Load(installDirectory, revitYear, bridgeSettings);
+            ExternalAiConfiguration.ExportClient(installDirectory, revitYear);
+            externalEndpoint.Enable(settings);
+            RibbonUi.SetExternalAiState(true);
+            string setupNotice;
             try
             {
-                dispatcher.SetEnabled(true);
-                next.Start(); listener = next;
-                chat?.Panel.NotifyServiceState(true);
+                // A modal Revit dialog would block the wizard's read-only health request.
+                if(ExternalAiSetup.Launch(installDirectory,revitYear)) return;
+                setupNotice="\n需要新增或重設用戶端時，請點選「AI連線設定」。";
             }
-            catch { dispatcher.SetEnabled(false); next.Dispose(); throw; }
+            catch(Exception error) { setupNotice = "\n外部服務已開啟，但設定精靈未啟動："+error.Message; }
+            Tybim.Revit.Upstream.TybimWindow.ShowMessage("TYBIM 外部AI服務", "外部 AI 服務已啟用。\n本機位址：127.0.0.1:" + settings.Port
+                + setupNotice
+                + "\n與 AI助手視窗的開關互相獨立。\n\nClaude 連線設定：\n"
+                + Path.Combine(installDirectory, "external-ai.mcp.json")
+                + "\n\n外部工具的權限確認由外部 AI 用戶端處理；兩邊不共享對話紀錄。\n再次點選「外部AI服務」即可關閉；重開 Revit 後預設關閉。");
+        }
+        internal void OpenExternalAiSetup()
+        {
+            // Prepare per-user paths even if the listener is currently disabled.
+            ExternalAiConfiguration.Load(installDirectory,revitYear,bridgeSettings);
+            ExternalAiConfiguration.ExportClient(installDirectory,revitYear);
+            ExternalAiSetup.Launch(installDirectory,revitYear,true);
         }
         private void OnStartupViewActivated(object sender, ViewActivatedEventArgs args)
         {
@@ -197,14 +224,15 @@ namespace Tybim.Revit.Addin
         }
         public Result OnShutdown(UIControlledApplication app)
         {
+            ExternalAiSetup.Dispose();
             app.DockableFrameVisibilityChanged -= OnPaneVisibilityChanged;
-            var shutdownListener = listener;
-            SetBridgeEnabled(false); shutdownListener?.Dispose(); Current = null;
+            internalEndpoint?.Dispose(); externalEndpoint?.Dispose(); Current = null;
             DetachStartupLayout();
-            if (dispatcher != null) app.Idling -= dispatcher.OnIdling;
+            if (internalEndpoint != null) app.Idling -= internalEndpoint.Dispatcher.OnIdling;
+            if (externalEndpoint != null) app.Idling -= externalEndpoint.Dispatcher.OnIdling;
             chat?.Panel.Dispose();
             study?.OnShutdown(app);
-            listener?.Dispose(); dispatcher?.Dispose(); return Result.Succeeded;
+            return Result.Succeeded;
         }
     }
 }

@@ -63,6 +63,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_D04BE3F20B1989C0A65A2870F9D9DFC6"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_E0102F5B410CC4E5107BFE809F8DF460"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -123,6 +129,30 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_0E56AB35CADD73A4B495505508F9A397"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_FE99B0DD9173D71EB42C0E9281D7E876"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B524C11023D7811B9D0A09954B543B73"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3427680C53D89B656E17F51A3105B326"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_E6E88EB98660A6CE453AC930CF193147"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -153,6 +183,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_03026720C4679172EA91F1F29679468C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_510D8E1AD8679A658D6D3A2CBA5B3693"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -165,12 +201,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_DF867A0EF716CCF8E4D0451CE962F203"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_8B6DDB534B10277D30BFFAC83B385B7D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -178,6 +208,12 @@
         "Entry"
         {
         "MsmKey" = "8:_E84C52C901DCF986BDFEAEC3CB970C27"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BF27D8BC60CD1DAACA5BB0FB4D34E987"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -442,6 +478,12 @@
         "Entry"
         {
         "MsmKey" = "8:_96BDE9D299191AB1C94EF4A22135A49A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_93A7667D53ACD7C9B5A1618D0B9FDEF7"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -22569,7 +22611,7 @@
         "DisplayName" = "8:Debug"
         "IsDebugOnly" = "11:TRUE"
         "IsReleaseOnly" = "11:FALSE"
-        "OutputFilename" = "8:Release\\TYBIM_MCP_Revit2025_0.7.1.msi"
+        "OutputFilename" = "8:Release\\TYBIM_MCP_Revit2025_0.14.2.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -22585,7 +22627,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:Release\\TYBIM_MCP_Revit2025_0.7.1.msi"
+        "OutputFilename" = "8:Release\\TYBIM_MCP_Revit2025_0.14.2.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -22762,6 +22804,26 @@
             "TargetName" = "8:Newtonsoft.Json.dll"
             "Tag" = "8:"
             "Folder" = "8:_77D5A67866EB470F6075830E0B003279"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D04BE3F20B1989C0A65A2870F9D9DFC6"
+            {
+            "SourcePath" = "8:payloads\\2025\\Pic\\TYBIM.ico"
+            "TargetName" = "8:TYBIM.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_75F47DE0DA20D68096CC4A9BB5E6B6F8"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -22976,6 +23038,86 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0E56AB35CADD73A4B495505508F9A397"
+            {
+            "SourcePath" = "8:payloads\\2025\\client-setup\\ClientSetup.psm1"
+            "TargetName" = "8:ClientSetup.psm1"
+            "Tag" = "8:"
+            "Folder" = "8:_2F367415E795BF9C1EEDE6C0BE9FFD0E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FE99B0DD9173D71EB42C0E9281D7E876"
+            {
+            "SourcePath" = "8:payloads\\2025\\client-setup\\README.md"
+            "TargetName" = "8:README.md"
+            "Tag" = "8:"
+            "Folder" = "8:_2F367415E795BF9C1EEDE6C0BE9FFD0E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B524C11023D7811B9D0A09954B543B73"
+            {
+            "SourcePath" = "8:payloads\\2025\\client-setup\\Setup-ExternalAi.ps1"
+            "TargetName" = "8:Setup-ExternalAi.ps1"
+            "Tag" = "8:"
+            "Folder" = "8:_2F367415E795BF9C1EEDE6C0BE9FFD0E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3427680C53D89B656E17F51A3105B326"
+            {
+            "SourcePath" = "8:payloads\\2025\\client-setup\\Start-Setup.cmd"
+            "TargetName" = "8:Start-Setup.cmd"
+            "Tag" = "8:"
+            "Folder" = "8:_2F367415E795BF9C1EEDE6C0BE9FFD0E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E6E88EB98660A6CE453AC930CF193147"
             {
             "SourcePath" = "8:payloads\\2025\\ezdxf_worker.py"
@@ -23076,6 +23218,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_03026720C4679172EA91F1F29679468C"
+            {
+            "SourcePath" = "8:payloads\\2025\\runtime\\build\\chat\\attachments.js"
+            "TargetName" = "8:attachments.js"
+            "Tag" = "8:"
+            "Folder" = "8:_A2F638E97281088CA01CDE284554F633"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_510D8E1AD8679A658D6D3A2CBA5B3693"
             {
             "SourcePath" = "8:payloads\\2025\\runtime\\build\\chat\\codex-provider.js"
@@ -23116,26 +23278,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DF867A0EF716CCF8E4D0451CE962F203"
-            {
-            "SourcePath" = "8:payloads\\2025\\runtime\\build\\chat\\gemini-tools.js"
-            "TargetName" = "8:gemini-tools.js"
-            "Tag" = "8:"
-            "Folder" = "8:_A2F638E97281088CA01CDE284554F633"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8B6DDB534B10277D30BFFAC83B385B7D"
             {
             "SourcePath" = "8:payloads\\2025\\runtime\\build\\chat\\http.js"
@@ -23160,6 +23302,26 @@
             {
             "SourcePath" = "8:payloads\\2025\\runtime\\build\\chat\\index.js"
             "TargetName" = "8:index.js"
+            "Tag" = "8:"
+            "Folder" = "8:_A2F638E97281088CA01CDE284554F633"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BF27D8BC60CD1DAACA5BB0FB4D34E987"
+            {
+            "SourcePath" = "8:payloads\\2025\\runtime\\build\\chat\\jsonl.js"
+            "TargetName" = "8:jsonl.js"
             "Tag" = "8:"
             "Folder" = "8:_A2F638E97281088CA01CDE284554F633"
             "Condition" = "8:"
@@ -24040,6 +24202,26 @@
             {
             "SourcePath" = "8:payloads\\2025\\runtime\\build\\private\\register.js"
             "TargetName" = "8:register.js"
+            "Tag" = "8:"
+            "Folder" = "8:_ACA3267F8C30540B7EA32C08DF1511C1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_93A7667D53ACD7C9B5A1618D0B9FDEF7"
+            {
+            "SourcePath" = "8:payloads\\2025\\runtime\\build\\private\\wall-evidence.js"
+            "TargetName" = "8:wall-evidence.js"
             "Tag" = "8:"
             "Folder" = "8:_ACA3267F8C30540B7EA32C08DF1511C1"
             "Condition" = "8:"
@@ -97801,6 +97983,28 @@
                     "Property" = "8:_77D5A67866EB470F6075830E0B003279_DIR"
                         "Folders"
                         {
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_75F47DE0DA20D68096CC4A9BB5E6B6F8"
+                            {
+                            "Name" = "8:Pic"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_75F47DE0DA20D68096CC4A9BB5E6B6F8_DIR"
+                                "Folders"
+                                {
+                                }
+                            }
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_2F367415E795BF9C1EEDE6C0BE9FFD0E"
+                            {
+                            "Name" = "8:client-setup"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_2F367415E795BF9C1EEDE6C0BE9FFD0E_DIR"
+                                "Folders"
+                                {
+                                }
+                            }
                             "{9EF0B969-E518-4E46-987F-47570745A589}:_79CE94FC63FA945FEFF1C111DF163060"
                             {
                             "Name" = "8:personal-features"
@@ -104499,15 +104703,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:TYBIM_MCP for Revit 2025"
-        "ProductCode" = "8:{FD5DEA52-4288-F825-54D6-DF6F9BC6C040}"
-        "PackageCode" = "8:{0774DD2E-00EB-4F65-8289-80B45C474031}"
+        "ProductCode" = "8:{33711B26-040E-B615-CDB4-7DE9E030CED8}"
+        "PackageCode" = "8:{E71D6A9A-7954-4FEF-8554-8C692C559E3E}"
         "UpgradeCode" = "8:{068234C8-3FA4-7287-EE43-2A6853B7058D}"
         "AspNetVersion" = "8:"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:0.7.1"
+        "ProductVersion" = "8:0.14.2"
         "Manufacturer" = "8:拓源數位"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

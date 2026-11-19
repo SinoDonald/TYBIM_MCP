@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using System.Threading;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Events;
 using Tybim.Mcp.Contracts;
@@ -13,6 +14,8 @@ namespace Tybim.Revit.Addin
         private sealed class Work
         {
             public BridgeRequest Request;
+            // 0 = queued, 1 = executing, 2 = refused before execution.
+            public int State;
             public TaskCompletionSource<BridgeResponse> Completion = new TaskCompletionSource<BridgeResponse>(TaskCreationOptions.RunContinuationsAsynchronously);
         }
         private readonly ConcurrentQueue<Work> queue = new ConcurrentQueue<Work>();
@@ -29,14 +32,24 @@ namespace Tybim.Revit.Addin
             {
                 if (stopped) return Task.FromResult(BridgeResponse.Fail(request.Id, "SHUTTING_DOWN"));
                 if (!enabled) return Task.FromResult(BridgeResponse.Fail(request.Id, "MCP_SERVICE_DISABLED"));
+                while (queue.TryPeek(out var expired) && expired.Completion.Task.IsCompleted) queue.TryDequeue(out _);
                 if (queue.Count >= 64) return Task.FromResult(BridgeResponse.Fail(request.Id, "QUEUE_FULL"));
                 var work = new Work { Request = request };
                 queue.Enqueue(work);
                 var status = externalEvent.Raise();
                 if (status != ExternalEventRequest.Accepted && status != ExternalEventRequest.Pending)
                     while (queue.TryDequeue(out var rejected)) rejected.Completion.TrySetResult(BridgeResponse.Fail(rejected.Request.Id, "REVIT_BUSY"));
+                _ = RefuseUnstarted(work);
                 return work.Completion.Task;
             }
+        }
+        private static async Task RefuseUnstarted(Work work)
+        {
+            // Revit may accept ExternalEvent.Raise while an interactive command prevents Execute.
+            // Refuse only queued work: a running transaction must retain its real result.
+            if (await Task.WhenAny(work.Completion.Task, Task.Delay(8000)).ConfigureAwait(false) != work.Completion.Task
+                && Interlocked.CompareExchange(ref work.State, 2, 0) == 0)
+                work.Completion.TrySetResult(BridgeResponse.Fail(work.Request.Id, "REVIT_BUSY"));
         }
         public void Execute(UIApplication app)
         {
@@ -45,6 +58,7 @@ namespace Tybim.Revit.Addin
             {
                 while (queue.TryDequeue(out var work))
                 {
+                    if (Interlocked.CompareExchange(ref work.State, 1, 0) != 0) continue;
                     var request = work.Request;
                     try
                     {

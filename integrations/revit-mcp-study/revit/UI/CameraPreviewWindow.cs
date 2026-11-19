@@ -21,6 +21,7 @@ namespace RevitMCP.UI
 
         public CameraPreviewWindow()
         {
+            Icon = Tybim.Revit.Upstream.TybimWindow.CreateIcon();
             Title = "相機預覽（實驗）";
             Width = 900;
             Height = 480;

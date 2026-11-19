@@ -23,6 +23,12 @@ namespace Tybim.Revit.Commands
             public object Result;
         }
         private static readonly Dictionary<string, Operation> Operations = new Dictionary<string, Operation>();
+        private static readonly Dictionary<string, Func<UIApplication, JObject, object, object>> AfterCommit = new Dictionary<string, Func<UIApplication, JObject, object, object>>();
+        public static void RegisterAfterCommit(string name, Func<UIApplication, JObject, object, object> execute)
+        {
+            if (!name.StartsWith("private.", StringComparison.Ordinal)) throw new ArgumentException("Private extension names must start with private.");
+            AfterCommit[name] = execute;
+        }
         private static readonly Dictionary<string, Func<UIApplication, ExternalEventCommandBase>> Factories = UpstreamCatalog.Factories.ToDictionary(p => p.Key, p => p.Value);
         private static readonly HashSet<string> ReadOnly = new HashSet<string>(StringComparer.Ordinal)
         { "get_current_view_info", "get_current_view_elements", "get_available_family_types", "get_selected_elements",
@@ -95,7 +101,10 @@ namespace Tybim.Revit.Commands
             // Study commands manage their own transactions and may switch/open
             // documents. Preserve that contract rather than putting them inside
             // a group that prevents Save/Open or gives false rollback guarantees.
-            if (study)
+            // Join commands own an assimilated group with isolated pair transactions.
+            // Preserve partial success and keep post-build joining separate from creation.
+            bool independentWallJoins = command == "private.join_walls" || command == "private.auto_join";
+            if (study || independentWallJoins)
             {
                 try
                 {
@@ -110,6 +119,7 @@ namespace Tybim.Revit.Commands
             }
             var failures = new List<object>();
             object nativeResult = null;
+            bool committed = false;
             EventHandler<FailuresProcessingEventArgs> onFailures = (_, e) =>
             {
                 var accessor = e.GetFailuresAccessor();
@@ -136,6 +146,7 @@ namespace Tybim.Revit.Commands
                     var json = result == null ? JValue.CreateNull() : JToken.FromObject(result);
                     if (failures.Count > 0 || Failed(json)) throw new InvalidOperationException("UPSTREAM_OPERATION_FAILED");
                     if (group.Assimilate() != TransactionStatus.Committed) throw new InvalidOperationException("TRANSACTION_GROUP_NOT_COMMITTED");
+                    committed = true;
                     state.Result = new { operationId, documentId = Context.Id(doc), status = "completed", result, undoName = "TYBIM MCP - " + command };
                 }
                 catch (Exception ex)
@@ -144,6 +155,23 @@ namespace Tybim.Revit.Commands
                     state.Result = new { operationId, documentId = Context.Id(doc), status = "rolledBack", error = ex.Message, failures = failures.ToArray(), result = nativeResult };
                 }
                 finally { app.Application.FailuresProcessing -= onFailures; }
+            }
+            // Run only after the creation group is disposed and its rollback handler
+            // removed. A failed optional join must never roll back committed walls.
+            if (committed && AfterCommit.TryGetValue(command, out var afterCommit))
+            {
+                try
+                {
+                    var result = afterCommit(app, payload, nativeResult);
+                    state.Result = new { operationId, documentId = Context.Id(doc), status = "completed", result,
+                        modelChangesCommitted = true, undoName = "TYBIM MCP - " + command };
+                }
+                catch (Exception error)
+                {
+                    state.Result = new { operationId, documentId = Context.Id(doc), status = "completed", result = nativeResult,
+                        modelChangesCommitted = true, postProcessingError = error.Message,
+                        message = "模型建立已提交；後續接合未完成，請檢查現有元素，不要重複建牆。" };
+                }
             }
             return state.Result;
         }

@@ -6,6 +6,18 @@ import { randomUUID } from "node:crypto";
 import { textResult, type EventSink, type ToolGateway, type ToolResult } from "./types.js";
 
 export type Approve = (request: { id: string; name: string; arguments: Record<string, unknown>; preview: unknown }, signal: AbortSignal) => Promise<boolean>;
+export class RevitUnavailableError extends Error {
+  constructor(public readonly code: string) {
+    super(`Revit 暫時無法處理 MCP（${code}）。請回到 Revit 按 Esc 結束「放置結構柱／牆」等互動指令；草圖請自行完成或取消，並關閉對話框後再送出。開新對話不會結束 Revit 指令。此回合停止重複查詢；若曾送出修改，先查原 operationId 狀態，勿直接重建。`);
+    this.name = "RevitUnavailableError";
+  }
+}
+function readBlock(result: ToolResult): string | undefined {
+  if (!result.isError) return;
+  const text = result.content.filter(c => c.type === "text").map(c => c.text).join("\n");
+  return text.match(/\b(REQUEST_EXPIRED|REVIT_BUSY|REVIT_TIMEOUT|MCP_SERVICE_DISABLED)\b/)?.[1]
+    ?? (/timed out|timeout|ECONNREFUSED|disconnected/i.test(text) ? "REVIT_READ_UNAVAILABLE" : undefined);
+}
 export class McpGateway implements ToolGateway {
   tools: Tool[] = [];
   private previews = new Map<string, any>();
@@ -14,7 +26,7 @@ export class McpGateway implements ToolGateway {
   private inFlight = new Set<Promise<ToolResult>>();
   private tail: Promise<unknown> = Promise.resolve();
   constructor(private readonly emit: EventSink, private readonly approve: Approve,
-    private readonly client: Pick<Client, "connect" | "listTools" | "callTool" | "close"> = new Client({ name: "tybim-revit-chat", version: "0.7.1" })) { }
+    private readonly client: Pick<Client, "connect" | "listTools" | "callTool" | "close"> = new Client({ name: "tybim-revit-chat", version: "0.8.2" })) { }
   async connect(bridgeConfig: string): Promise<void> {
     await this.client.connect(new StdioClientTransport({ command: process.execPath, args: [fileURLToPath(new URL("../index.js", import.meta.url))], env: { ...process.env as Record<string, string>, TYBIM_MCP_CONFIG: bridgeConfig }, stderr: "pipe" }));
     this.tools = (await this.client.listTools()).tools;
@@ -40,7 +52,15 @@ export class McpGateway implements ToolGateway {
       let info: any;
       if (args.documentId === 'application' && name === 'revit_study_open_document') info = { documentId: 'application', title: 'Revit（尚未開啟模型）' };
       else {
-        const project = await this.client.callTool({ name: 'revit_project_info', arguments: { documentId: args.documentId } }, undefined, { timeout: 65000 });
+        let project: any;
+        try { project = await this.client.callTool({ name: 'revit_project_info', arguments: { documentId: args.documentId } }, undefined, { timeout: 65000 }); }
+        catch { throw new RevitUnavailableError("REVIT_READ_UNAVAILABLE"); }
+        const blocked = readBlock(project as ToolResult);
+        if (blocked) {
+          this.emit({ event: "toolCompleted", name: "revit_project_info", result: project });
+          this.emit({ event: "status", text: new RevitUnavailableError(blocked).message });
+          throw new RevitUnavailableError(blocked);
+        }
         if (project.isError) return textResult('目前專案已變更或無法讀取，請重新讀取專案。', true);
         info = JSON.parse((project.content as any[]).find(c => c.type === 'text')?.text ?? '{}');
       }
@@ -81,6 +101,12 @@ export class McpGateway implements ToolGateway {
     if (writes && !["completed", "rolledBack", "failed"].includes(data?.status)) this.unknownOperations.add(operationKey);
     if ((name === "revit_get_door_operation_status" || name === "revit_upstream_operation_status") && ["completed", "rolledBack", "failed", "preview"].includes(data?.status)) this.unknownOperations.delete(operationKey);
     this.emit({ event: "toolCompleted", name, result, data });
+    const blocked = !writes ? readBlock(result) : undefined;
+    if (blocked) {
+      const error = new RevitUnavailableError(blocked);
+      this.emit({ event: "status", text: error.message });
+      throw error;
+    }
     return result;
   }
   async idle(): Promise<void> { await Promise.allSettled([...this.inFlight]); }

@@ -1,6 +1,8 @@
 import { mkdir, writeFile, access } from "node:fs/promises";
 import { join } from "node:path";
 import { RpcProcess } from "./rpc-process.js";
+import { RevitUnavailableError } from "./gateway.js";
+import { codexInput, type ChatAttachment } from "./attachments.js";
 import { instructions, textResult, type ChatProvider, type EventSink, type ModelOption, type ProviderSettings, type ToolGateway } from "./types.js";
 
 export class CodexProvider implements ChatProvider {
@@ -11,7 +13,9 @@ export class CodexProvider implements ChatProvider {
   private signal?: AbortSignal;
   private finish?: (error?: Error) => void;
   private streamedItems = new Set<string>();
-  constructor(private readonly settings: ProviderSettings, private readonly gateway: ToolGateway, private readonly emit: EventSink, private readonly stateDirectory: string) { }
+  private toolFailure?: Error;
+  constructor(private readonly settings: ProviderSettings, private readonly gateway: ToolGateway, private readonly emit: EventSink, private readonly stateDirectory: string,
+    private readonly createRpc: (...args: ConstructorParameters<typeof RpcProcess>) => RpcProcess = (...args) => new RpcProcess(...args)) { }
   async start(): Promise<void> {
     const home = join(this.stateDirectory, "codex");
     const workspace = join(this.stateDirectory, "workspace");
@@ -21,16 +25,27 @@ export class CodexProvider implements ChatProvider {
     const env = { ...process.env, CODEX_HOME: home } as NodeJS.ProcessEnv;
     // This adapter explicitly offers ChatGPT login, not inherited API billing.
     for (const name of ["OPENAI_API_KEY", "CODEX_API_KEY", "CODEX_ACCESS_TOKEN", "OPENAI_ACCESS_TOKEN"]) delete env[name];
-    this.rpc = new RpcProcess(this.settings.codexExecutable || "codex", ["app-server", "--listen", "stdio://",
+    this.rpc = this.createRpc(this.settings.codexExecutable || "codex", ["app-server", "--listen", "stdio://",
       // Dynamic Revit tools also run through Code Mode; disabling its host leaves
       // text generation working but makes every tool call fail at runtime.
       "-c", 'forced_login_method="chatgpt"', "-c", "features.shell_tool=false", "-c", "features.unified_exec=false", "-c", "features.code_mode_host=true", "-c", "features.daemon_auto_start=false", "-c", 'web_search="disabled"', "-c", "mcp_servers={}"], env, workspace);
     this.rpc.onRequest = async (method, params) => {
       if (method === "item/tool/call") {
         if (params.threadId !== this.threadId || !this.signal) throw new Error("Unexpected tool call outside current conversation");
+        if (this.toolFailure) return { contentItems: [{ type: "inputText", text: this.toolFailure.message }], success: false };
         let result;
         try { result = await this.gateway.call(params.tool, params.arguments ?? {}, this.signal); }
-        catch (error) { result = textResult(error instanceof Error ? error.message : String(error), true); }
+        catch (error) {
+          result = textResult(error instanceof Error ? error.message : String(error), true);
+          if (error instanceof RevitUnavailableError) {
+            this.toolFailure = error;
+            // Abort the model round after reporting the failed tool instead of allowing a retry loop.
+            const turnId = this.turnId ?? params.turnId;
+            const finish = this.finish;
+            if (turnId) void this.rpc.request("turn/interrupt", { threadId: this.threadId, turnId }).catch(() => finish?.(error));
+            else this.finish?.(error);
+          }
+        }
         return { contentItems: result.content.map(c => c.type === 'text' ? ({ type: "inputText", text: c.text }) : ({ type: 'inputImage', imageUrl: `data:${c.mimeType};base64,${c.data}` })), success: !result.isError };
       }
       if (method === "item/commandExecution/requestApproval" || method === "item/fileChange/requestApproval") return { decision: "decline" };
@@ -50,11 +65,11 @@ export class CodexProvider implements ChatProvider {
       if (method === "item/completed" && p.item?.type === "agentMessage" && !this.streamedItems.has(p.item.id)) this.emit({ event: "textDelta", text: p.item.text ?? "" });
       if (method === "turn/completed") {
         const turn = p.turn;
-        this.finish?.(turn.status === "completed" ? undefined : new Error(turn.error?.message ?? (turn.status === "interrupted" ? "已停止" : "Codex 回合失敗")));
+        this.finish?.(this.toolFailure ?? (turn.status === "completed" ? undefined : new Error(turn.error?.message ?? (turn.status === "interrupted" ? "已停止" : "Codex 回合失敗"))));
       }
     };
     this.rpc.onExit = error => this.finish?.(error);
-    await this.rpc.request("initialize", { clientInfo: { name: "tybim_revit", title: "TYBIM Revit AI", version: "0.7.1" }, capabilities: { experimentalApi: true } });
+    await this.rpc.request("initialize", { clientInfo: { name: "tybim_revit", title: "TYBIM Revit AI", version: "0.8.2" }, capabilities: { experimentalApi: true } });
     this.rpc.notify("initialized");
   }
   async status(): Promise<string> {
@@ -71,7 +86,7 @@ export class CodexProvider implements ChatProvider {
     const result = await this.rpc.request("model/list", { includeHidden: false, limit: 100 });
     return (result.data ?? []).map((m: any) => ({ id: m.model ?? m.id, name: m.displayName ?? m.model ?? m.id }));
   }
-  async send(text: string, signal: AbortSignal): Promise<void> {
+  async send(text: string, signal: AbortSignal, attachments: ChatAttachment[] = []): Promise<void> {
     if (!this.settings.model) throw new Error("請先選擇模型。");
     if (!this.threadId) {
       const result = await this.rpc.request("thread/start", { model: this.settings.model, sandbox: "read-only", approvalPolicy: "on-request", developerInstructions: instructions,
@@ -80,6 +95,7 @@ export class CodexProvider implements ChatProvider {
     }
     signal.throwIfAborted();
     this.signal = signal;
+    this.toolFailure = undefined;
     this.streamedItems.clear();
     const abort = () => { if (this.turnId) void this.rpc.request("turn/interrupt", { threadId: this.threadId, turnId: this.turnId }).catch(() => {}); };
     signal.addEventListener("abort", abort, { once: true });
@@ -91,7 +107,7 @@ export class CodexProvider implements ChatProvider {
     // Attach a handler immediately: a turn can finish before turn/start returns.
     void completed.catch(() => {});
     try {
-      const started = await this.rpc.request("turn/start", { threadId: this.threadId, input: [{ type: "text", text, text_elements: [] }] });
+      const started = await this.rpc.request("turn/start", { threadId: this.threadId, input: codexInput(text, attachments) });
       this.turnId = started.turn.id;
       if (signal.aborted) abort();
       await completed;

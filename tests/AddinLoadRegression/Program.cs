@@ -34,6 +34,12 @@ internal static class Program
             {
                 var identity = AssemblyName.GetAssemblyName(file);
                 var assembly = Assembly.LoadFile(file);
+                if(identity.Name=="Tybim.Revit.Upstream")
+                {
+                    using(var icon=assembly.GetManifestResourceStream("Tybim.Mcp.TYBIM.ico"))
+                        if(icon==null || icon.Length<6 || icon.ReadByte()!=0 || icon.ReadByte()!=0 || icon.ReadByte()!=1 || icon.ReadByte()!=0)
+                            throw new Exception("Missing or invalid packaged TYBIM window icon");
+                }
                 if (assembly.GetName().Version != entry.GetName().Version) throw new Exception("Mixed release: " + file);
                 string target = null;
                 foreach (var attribute in assembly.GetCustomAttributesData())
